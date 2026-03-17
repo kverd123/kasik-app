@@ -34,11 +34,33 @@ workflows:
           echo "WORKSPACE=$WORKSPACE" >> $CM_ENV
           echo "SCHEME=$SCHEME" >> $CM_ENV
           echo "Using workspace: $WORKSPACE, scheme: $SCHEME"
+      - name: Create export options
+        script: |
+          cat > /tmp/ExportOptions.plist << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>teamID</key>
+            <string>${CODE_SIGN_TEAM_ID}</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.kasik.ekgida</key>
+              <string>${CM_PROVISIONING_PROFILE_NAME}</string>
+            </dict>
+          </dict>
+          </plist>
+          PLIST
       - name: Build iOS
         script: |
           xcode-project build-ipa \
             --workspace "$WORKSPACE" \
-            --scheme "$SCHEME"
+            --scheme "$SCHEME" \
+            --export-options-plist /tmp/ExportOptions.plist
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
