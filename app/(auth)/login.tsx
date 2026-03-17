@@ -1,0 +1,325 @@
+/**
+ * Kaşık — Login Screen
+ * Email/password login with Google & Apple Sign-In options
+ */
+
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import { Link, router } from 'expo-router';
+import { useColors } from '../../hooks/useColors';
+import {
+  FontFamily,
+  FontSize,
+  Spacing,
+  BorderRadius,
+  Shadow,
+  Typography,
+} from '../../constants/theme';
+import { Button } from '../../components/ui/Button';
+import { useAuthStore } from '../../stores/authStore';
+import { analytics } from '../../lib/analytics';
+
+export default function LoginScreen() {
+  const colors = useColors();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const { login, isLoading, error, clearError } = useAuthStore();
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Hata', 'E-posta ve şifre alanları boş bırakılamaz.');
+      return;
+    }
+
+    try {
+      await login(email.trim(), password);
+      analytics.login('email');
+      // Giriş başarılı — direkt yönlendir
+      router.replace('/(tabs)/plan');
+    } catch {
+      // Error is set in the store
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={[styles.container, { backgroundColor: colors.cream }]}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header with mascot */}
+        <View style={styles.header}>
+          <Text style={styles.mascotEmoji}>🥄</Text>
+          <Text style={[styles.title, { color: colors.sage }]}>Kaşık</Text>
+          <Text style={[styles.subtitle, { color: colors.textLight }]}>Ek Gıda Rehberi</Text>
+        </View>
+
+        {/* Welcome text */}
+        <Text style={styles.welcomeText}>Tekrar hoş geldiniz!</Text>
+        <Text style={[styles.welcomeSubtext, { color: colors.textLight }]}>
+          Hesabınıza giriş yaparak devam edin.
+        </Text>
+
+        {/* Error message */}
+        {error && (
+          <View style={styles.errorBanner}>
+            <Text style={[styles.errorText, { color: colors.warningDark }]}>⚠️ {error}</Text>
+            <TouchableOpacity onPress={clearError}>
+              <Text style={[styles.errorDismiss, { color: colors.warningDark }]}>✕</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Form */}
+        <View style={styles.form}>
+          {/* Email */}
+          <View style={styles.inputGroup}>
+            <Text style={[styles.inputLabel, { color: colors.textMid }]}>E-posta</Text>
+            <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
+              <Text style={styles.inputIcon}>✉️</Text>
+              <TextInput
+                style={[styles.input, { color: colors.textDark }]}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="ornek@email.com"
+                placeholderTextColor={colors.border}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+          </View>
+
+          {/* Password */}
+          <View style={styles.inputGroup}>
+            <Text style={[styles.inputLabel, { color: colors.textMid }]}>Şifre</Text>
+            <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
+              <Text style={styles.inputIcon}>🔒</Text>
+              <TextInput
+                style={[styles.input, { color: colors.textDark }]}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Şifrenizi girin"
+                placeholderTextColor={colors.border}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.showPassword}
+              >
+                <Text style={styles.showPasswordText}>
+                  {showPassword ? '🙈' : '👁️'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Forgot Password */}
+          <Link href="/(auth)/forgot-password" asChild>
+            <TouchableOpacity style={styles.forgotPassword}>
+              <Text style={[styles.forgotPasswordText, { color: colors.sage }]}>Şifremi unuttum</Text>
+            </TouchableOpacity>
+          </Link>
+
+          {/* Login Button */}
+          <Button
+            title="Giriş Yap"
+            onPress={handleLogin}
+            loading={isLoading}
+            fullWidth
+            size="lg"
+          />
+
+          {/* Divider */}
+          <View style={styles.divider}>
+            <View style={[styles.dividerLine, { backgroundColor: colors.creamDark }]} />
+            <Text style={[styles.dividerText, { color: colors.textLight }]}>veya</Text>
+            <View style={[styles.dividerLine, { backgroundColor: colors.creamDark }]} />
+          </View>
+
+          {/* Social Login Buttons */}
+          <Button
+            title="Google ile Giriş Yap"
+            onPress={() => {
+              // TODO: Google Sign-In implementation
+              Alert.alert('Bilgi', 'Google giriş yakında aktif olacak.');
+            }}
+            variant="outline"
+            fullWidth
+            size="lg"
+            icon={<Text style={{ fontSize: 18 }}>🔵</Text>}
+          />
+
+          <View style={{ height: Spacing.md }} />
+
+          <Button
+            title="Apple ile Giriş Yap"
+            onPress={() => {
+              // TODO: Apple Sign-In implementation
+              Alert.alert('Bilgi', 'Apple giriş yakında aktif olacak.');
+            }}
+            variant="outline"
+            fullWidth
+            size="lg"
+            icon={<Text style={{ fontSize: 18 }}>🍎</Text>}
+          />
+        </View>
+
+        {/* Register Link */}
+        <View style={styles.registerRow}>
+          <Text style={[styles.registerText, { color: colors.textLight }]}>Hesabınız yok mu? </Text>
+          <Link href="/(auth)/register" asChild>
+            <TouchableOpacity>
+              <Text style={[styles.registerLink, { color: colors.sage }]}>Kayıt Ol</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: Spacing.xxl,
+    paddingTop: 80,
+    paddingBottom: 40,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: Spacing.xxxl,
+  },
+  mascotEmoji: {
+    fontSize: 56,
+    marginBottom: Spacing.sm,
+  },
+  title: {
+    fontFamily: FontFamily.extraBold,
+    fontSize: FontSize.xxxl,
+  },
+  subtitle: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.sm,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    marginTop: Spacing.xs,
+  },
+  welcomeText: {
+    ...Typography.h2,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  welcomeSubtext: {
+    ...Typography.bodySmall,
+    textAlign: 'center',
+    marginBottom: Spacing.xxl,
+  },
+  errorBanner: {
+    backgroundColor: '#FFF0E0',
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing.lg,
+  },
+  errorText: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.sm,
+    flex: 1,
+  },
+  errorDismiss: {
+    fontSize: 16,
+    paddingLeft: Spacing.md,
+  },
+  form: {
+    gap: Spacing.lg,
+  },
+  inputGroup: {
+    gap: Spacing.sm,
+  },
+  inputLabel: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.md,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    paddingHorizontal: Spacing.lg,
+    height: 52,
+    ...Shadow.soft,
+  },
+  inputIcon: {
+    fontSize: 16,
+    marginRight: Spacing.md,
+  },
+  input: {
+    flex: 1,
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.base,
+  },
+  showPassword: {
+    padding: Spacing.xs,
+  },
+  showPasswordText: {
+    fontSize: 18,
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginTop: -Spacing.sm,
+  },
+  forgotPasswordText: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.sm,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Spacing.sm,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.sm,
+    marginHorizontal: Spacing.lg,
+  },
+  registerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.xxxl,
+  },
+  registerText: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.md,
+  },
+  registerLink: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.md,
+  },
+});

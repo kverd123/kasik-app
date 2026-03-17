@@ -1,0 +1,89 @@
+rules_version = '2';
+
+// Kasik App — Firebase Storage Guvenlik Kurallari
+// Firebase Console > Storage > Kurallar sekmesine yapistir
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ===== YARDIMCI =====
+
+    // Giris yapmis mi?
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Dosya boyutu limiti (MB cinsinden)
+    function maxSize(mb) {
+      return request.resource.size < mb * 1024 * 1024;
+    }
+
+    // Gorsel dosyasi mi?
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // ===== PROFIL FOTOGRAFLARI =====
+    // users/{userId}/profile.jpg
+    match /users/{userId}/{allPaths=**} {
+      // Herkes profil resmini gorebilir
+      allow read: if isAuthenticated();
+
+      // Sadece kendi profil resmini yukleyebilir
+      allow write: if isAuthenticated()
+        && request.auth.uid == userId
+        && isImage()
+        && maxSize(5); // Maks 5 MB
+    }
+
+    // ===== BEBEK FOTOGRAFLARI =====
+    // babies/{babyId}/{filename}
+    match /babies/{babyId}/{allPaths=**} {
+      // Giris yapmis herkes okuyabilir (bebek sahipligi Firestore'da kontrol edilir)
+      allow read: if isAuthenticated();
+
+      // Yukleme — giris yapmis kullanici, gorsel, maks 5 MB
+      allow write: if isAuthenticated()
+        && isImage()
+        && maxSize(5);
+    }
+
+    // ===== TARIF FOTOGRAFLARI =====
+    // recipes/{recipeId}/{filename}
+    match /recipes/{recipeId}/{allPaths=**} {
+      // Herkes gorebilir (tarifler herkese acik)
+      allow read: if isAuthenticated();
+
+      // Yukleme — giris yapmis, gorsel, maks 10 MB
+      allow write: if isAuthenticated()
+        && isImage()
+        && maxSize(10);
+    }
+
+    // ===== TOPLULUK POST FOTOGRAFLARI =====
+    // posts/{postId}/{filename}
+    match /posts/{postId}/{allPaths=**} {
+      // Herkes gorebilir
+      allow read: if isAuthenticated();
+
+      // Yukleme — giris yapmis, gorsel, maks 10 MB
+      allow write: if isAuthenticated()
+        && isImage()
+        && maxSize(10);
+    }
+
+    // ===== YORUM FOTOGRAFLARI =====
+    // comments/{commentId}/{filename}
+    match /comments/{commentId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated()
+        && isImage()
+        && maxSize(5);
+    }
+
+    // Diger her sey yasak
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
