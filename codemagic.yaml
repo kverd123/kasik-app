@@ -11,9 +11,9 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.kasik.ekgida
         provisioning_profiles:
-          - profile: Kasik App Store
+          - profile: kasik
         certificates:
-          - certificate: Apple Distribution
+          - certificate: kasik
       vars:
         BUNDLE_ID: "com.kasik.ekgida"
       node: 20
