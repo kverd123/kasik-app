@@ -38,6 +38,11 @@ yarn-error.*
 google-services.json
 GoogleService-Info.plist
 
+# iOS signing (certificates & profiles)
+*.cer
+*.p12
+*.mobileprovision
+
 # typescript
 *.tsbuildinfo
 

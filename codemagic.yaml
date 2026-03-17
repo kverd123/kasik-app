@@ -10,6 +10,10 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.kasik.ekgida
+        provisioning_profiles:
+          - profile: Kasik App Store
+        certificates:
+          - certificate: Apple Distribution
       vars:
         BUNDLE_ID: "com.kasik.ekgida"
       node: 18
