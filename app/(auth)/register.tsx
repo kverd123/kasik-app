@@ -217,14 +217,14 @@ export default function RegisterScreen() {
             Kayıt olarak{' '}
             <Text
               style={[styles.termsLink, { color: colors.sage }]}
-              onPress={() => Linking.openURL('https://kasik-app.com/terms')}
+              onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/terms.html')}
             >
               Kullanım Koşulları
             </Text>
             {' '}ve{' '}
             <Text
               style={[styles.termsLink, { color: colors.sage }]}
-              onPress={() => Linking.openURL('https://kasik-app.com/privacy')}
+              onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/privacy.html')}
             >
               Gizlilik Politikası
             </Text>
