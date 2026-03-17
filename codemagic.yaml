@@ -16,7 +16,7 @@ workflows:
           - certificate: Apple Distribution
       vars:
         BUNDLE_ID: "com.kasik.ekgida"
-      node: 18
+      node: 20
       xcode: latest
       cocoapods: default
     scripts:
@@ -29,11 +29,18 @@ workflows:
       - name: Set up code signing
         script: |
           xcode-project use-profiles
+      - name: Find workspace and scheme
+        script: |
+          WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 | head -1)
+          SCHEME=$(xcodebuild -list -workspace "$WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
+          echo "WORKSPACE=$WORKSPACE" >> $CM_ENV
+          echo "SCHEME=$SCHEME" >> $CM_ENV
+          echo "Using workspace: $WORKSPACE, scheme: $SCHEME"
       - name: Build iOS
         script: |
           xcode-project build-ipa \
-            --workspace "ios/kasikapp.xcworkspace" \
-            --scheme "kasikapp"
+            --workspace "$WORKSPACE" \
+            --scheme "$SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
@@ -52,7 +59,7 @@ workflows:
         - google_play_credentials
       vars:
         PACKAGE_NAME: "com.kasik.ekgida"
-      node: 18
+      node: 20
       java: 17
     scripts:
       - name: Install dependencies

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95500135299",
+    "project_id": "kasik-1f982",
+    "storage_bucket": "kasik-1f982.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95500135299:android:f127fa8681b1f117a524b6",
+        "android_client_info": {
+          "package_name": "com.kasik.ekgida"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvfhtVBSCRrwfQoenS3412DDrj-0gqqHk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

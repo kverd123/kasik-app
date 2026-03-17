@@ -34,14 +34,8 @@ yarn-error.*
 .env
 .env*.local
 
-# Firebase config (contains API keys)
-google-services.json
-GoogleService-Info.plist
-
 # iOS signing (certificates & profiles)
 *.cer
-*.p12
-*.mobileprovision
 
 # typescript
 *.tsbuildinfo
