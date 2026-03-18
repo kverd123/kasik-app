@@ -27,8 +27,6 @@ workflows:
       - name: Set up code signing
         script: |
           xcode-project use-profiles
-          # Xcode 16+ requires "app-store-connect" instead of "app-store"
-          sed -i '' 's/app-store/app-store-connect/g' /Users/builder/export_options.plist
       - name: Find workspace and scheme
         script: |
           WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 | head -1)
@@ -36,13 +34,36 @@ workflows:
           echo "WORKSPACE=$WORKSPACE" >> $CM_ENV
           echo "SCHEME=$SCHEME" >> $CM_ENV
           echo "Using workspace: $WORKSPACE, scheme: $SCHEME"
-      - name: Build iOS
+      - name: Build iOS archive
         script: |
-          xcode-project build-ipa \
-            --workspace "$WORKSPACE" \
-            --scheme "$SCHEME"
+          xcodebuild -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/ios/KasikApp.xcarchive \
+            archive \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            | xcpretty || true
+      - name: Export IPA
+        script: |
+          # Create proper export options plist
+          /usr/libexec/PlistBuddy -c "Add :method string app-store-connect" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :teamID string $APP_STORE_CONNECT_TEAM_ID" /tmp/ExportOptions.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :uploadBitcode bool false" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :uploadSymbols bool true" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :signingStyle string manual" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$BUNDLE_ID string kasik" /tmp/ExportOptions.plist
+
+          xcodebuild -exportArchive \
+            -archivePath build/ios/KasikApp.xcarchive \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist /tmp/ExportOptions.plist \
+            COMPILER_INDEX_STORE_ENABLE=NO
     artifacts:
       - build/ios/ipa/*.ipa
+      - build/ios/KasikApp.xcarchive
     publishing:
       app_store_connect:
         auth: integration
