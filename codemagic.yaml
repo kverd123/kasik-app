@@ -24,6 +24,10 @@ workflows:
       - name: Run Expo Prebuild
         script: |
           npx expo prebuild --platform ios --clean
+      - name: Disable Mac Catalyst
+        script: |
+          cd ios
+          ruby -i -pe 'sub(/post_install do \|installer\|/) { |m| m + "\n    installer.pods_project.targets.each do |target|\n      target.build_configurations.each do |config|\n        config.build_settings[\"SUPPORTS_MACCATALYST\"] = \"NO\"\n        config.build_settings[\"DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER\"] = \"NO\"\n      end\n    end" }' Podfile
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
