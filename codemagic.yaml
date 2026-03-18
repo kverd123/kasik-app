@@ -31,6 +31,12 @@ workflows:
           SCHEME=$(xcodebuild -list -workspace "$WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
           echo "WORKSPACE=$WORKSPACE" >> $CM_ENV
           echo "SCHEME=$SCHEME" >> $CM_ENV
+      - name: Save API key to file
+        script: |
+          mkdir -p /tmp/codemagic_keys
+          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/codemagic_keys/AuthKey.p8
+          API_KEY_PATH="/tmp/codemagic_keys/AuthKey.p8"
+          echo "API_KEY_PATH=$API_KEY_PATH" >> $CM_ENV
       - name: Build iOS archive
         script: |
           xcodebuild -workspace "$WORKSPACE" \
@@ -40,7 +46,7 @@ workflows:
             -archivePath build/ios/KasikApp.xcarchive \
             archive \
             -allowProvisioningUpdates \
-            -authenticationKeyPath "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            -authenticationKeyPath "$API_KEY_PATH" \
             -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             COMPILER_INDEX_STORE_ENABLE=NO \
@@ -51,7 +57,7 @@ workflows:
             -archivePath build/ios/KasikApp.xcarchive \
             -exportPath build/ios/ipa \
             -allowProvisioningUpdates \
-            -authenticationKeyPath "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            -authenticationKeyPath "$API_KEY_PATH" \
             -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             COMPILER_INDEX_STORE_ENABLE=NO
