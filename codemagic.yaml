@@ -13,7 +13,7 @@ workflows:
       vars:
         BUNDLE_ID: "com.kasik.ekgida"
       node: 20
-      xcode: 15.4
+      xcode: 16.2
       cocoapods: default
     scripts:
       - name: Install dependencies
@@ -31,12 +31,30 @@ workflows:
           SCHEME=$(xcodebuild -list -workspace "$WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
           echo "WORKSPACE=$WORKSPACE" >> $CM_ENV
           echo "SCHEME=$SCHEME" >> $CM_ENV
-          echo "Using workspace: $WORKSPACE, scheme: $SCHEME"
-      - name: Build iOS
+      - name: Build iOS archive
         script: |
-          xcode-project build-ipa \
-            --workspace "$WORKSPACE" \
-            --scheme "$SCHEME"
+          xcodebuild -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/ios/KasikApp.xcarchive \
+            archive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            | xcpretty || true
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
+            -archivePath build/ios/KasikApp.xcarchive \
+            -exportPath build/ios/ipa \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
+            COMPILER_INDEX_STORE_ENABLE=NO
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
