@@ -13,7 +13,7 @@ workflows:
       vars:
         BUNDLE_ID: "com.kasik.ekgida"
       node: 20
-      xcode: latest
+      xcode: 15.4
       cocoapods: default
     scripts:
       - name: Install dependencies
