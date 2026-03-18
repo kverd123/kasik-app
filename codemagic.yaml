@@ -27,6 +27,8 @@ workflows:
       - name: Set up code signing
         script: |
           xcode-project use-profiles
+          # Xcode 16+ requires "app-store-connect" instead of "app-store"
+          sed -i '' 's/app-store/app-store-connect/g' /Users/builder/export_options.plist
       - name: Find workspace and scheme
         script: |
           WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 | head -1)
