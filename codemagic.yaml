@@ -1,8 +1,8 @@
 workflows:
-  # === iOS Build & App Store Submit ===
+  # === iOS Build & TestFlight ===
   ios-production:
     name: iOS Production
-    max_build_duration: 60
+    max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
       app_store_connect: codemagic
@@ -16,63 +16,52 @@ workflows:
       xcode: 16.2
       cocoapods: default
     scripts:
-      - name: Install dependencies
+      - name: Install npm dependencies
         script: |
           npm ci
-      - name: Set up Expo
+      - name: Run Expo Prebuild
         script: |
           npx expo prebuild --platform ios --clean
-      - name: Set up code signing
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+      - name: Set up keychain
+        script: |
+          keychain initialize
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+      - name: Add certificates to keychain
+        script: |
+          keychain add-certificates
+      - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
       - name: Find workspace and scheme
         script: |
-          WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 | head -1)
-          SCHEME=$(xcodebuild -list -workspace "$WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
-          echo "WORKSPACE=$WORKSPACE" >> $CM_ENV
-          echo "SCHEME=$SCHEME" >> $CM_ENV
-      - name: Save API key to file
+          XCODE_WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 -print -quit)
+          XCODE_SCHEME=$(xcodebuild -list -workspace "$XCODE_WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
+          echo "XCODE_WORKSPACE=$XCODE_WORKSPACE" >> $CM_ENV
+          echo "XCODE_SCHEME=$XCODE_SCHEME" >> $CM_ENV
+          echo "Found workspace: $XCODE_WORKSPACE, scheme: $XCODE_SCHEME"
+      - name: Build ipa for distribution
         script: |
-          mkdir -p /tmp/codemagic_keys
-          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/codemagic_keys/AuthKey.p8
-          API_KEY_PATH="/tmp/codemagic_keys/AuthKey.p8"
-          echo "API_KEY_PATH=$API_KEY_PATH" >> $CM_ENV
-      - name: Build iOS archive
-        script: |
-          xcodebuild -workspace "$WORKSPACE" \
-            -scheme "$SCHEME" \
-            -configuration Release \
-            -sdk iphoneos \
-            -archivePath build/ios/KasikApp.xcarchive \
-            archive \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$API_KEY_PATH" \
-            -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            | xcpretty || true
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-            -archivePath build/ios/KasikApp.xcarchive \
-            -exportPath build/ios/ipa \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$API_KEY_PATH" \
-            -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
-            COMPILER_INDEX_STORE_ENABLE=NO
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
 
-  # === Android Build & Google Play Submit ===
+  # === Android Build & Google Play ===
   android-production:
     name: Android Production
-    max_build_duration: 60
+    max_build_duration: 120
     instance_type: linux_x2
     environment:
       groups:
@@ -82,10 +71,10 @@ workflows:
       node: 20
       java: 17
     scripts:
-      - name: Install dependencies
+      - name: Install npm dependencies
         script: |
           npm ci
-      - name: Set up Expo
+      - name: Run Expo Prebuild
         script: |
           npx expo prebuild --platform android --clean
       - name: Build Android AAB
