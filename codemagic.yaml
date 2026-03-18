@@ -24,10 +24,19 @@ workflows:
       - name: Run Expo Prebuild
         script: |
           npx expo prebuild --platform ios --clean
-      - name: Disable Mac Catalyst
+      - name: Patch Podfile - SKIP_INSTALL for pods
         script: |
           cd ios
-          ruby -i -pe 'sub(/post_install do \|installer\|/) { |m| m + "\n    installer.pods_project.targets.each do |target|\n      target.build_configurations.each do |config|\n        config.build_settings[\"SUPPORTS_MACCATALYST\"] = \"NO\"\n        config.build_settings[\"DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER\"] = \"NO\"\n      end\n    end" }' Podfile
+          # Insert SKIP_INSTALL fix inside existing post_install block
+          sed -i '' '/react_native_post_install/i\
+              installer.pods_project.targets.each do |target|\
+                target.build_configurations.each do |config|\
+                  config.build_settings["SKIP_INSTALL"] = "YES"\
+                end\
+              end
+          ' Podfile
+          echo "Podfile patched successfully"
+          grep -A 15 "post_install" Podfile
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
