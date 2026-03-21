@@ -300,7 +300,10 @@ export const useRecipeStore = create<RecipeStoreState>((set, get) => ({
     // Lokal tariflerin ID'leri ile çakışmayı önle
     const localIds = new Set(ALL_RECIPES.map((r) => r.id));
     const uniqueCommunity = communityRecipes.filter((r) => !localIds.has(r.id));
-    return [...ALL_RECIPES, ...uniqueCommunity];
+    // Boş/verisiz tarifleri filtrele — malzemesi veya adımı olmayan tarifleri gösterme
+    return [...ALL_RECIPES, ...uniqueCommunity].filter(
+      (r) => r.ingredients.length > 0 && r.steps.length > 0
+    );
   },
 
   getCommunityRecipeById: (id) => {

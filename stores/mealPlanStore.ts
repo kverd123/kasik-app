@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { debouncedSetItem } from '../lib/debouncedStorage';
 import { Meal, MealSlot } from '../types';
 import { usePantryStore } from './pantryStore';
-import { RECIPES_BY_ID } from '../constants/recipes';
+import { ALL_RECIPES, RECIPES_BY_ID, RecipeData } from '../constants/recipes';
 import { syncToFirestore } from '../lib/firestoreSync';
 import { getAllWeekMealPlans } from '../lib/firestore';
 
@@ -130,6 +130,7 @@ interface MealPlanState {
   getCompletedMealsThisWeek: () => number;
   getDayMeals: (dayIndex: number) => DayMeals;
   getWeekMeals: (weekKey: string) => Record<number, DayMeals>;
+  generateWeeklyPlan: (mealsPerDay: number, babyMonth: number, expiringIngredients?: string[]) => void;
 }
 
 const STORAGE_KEY = '@kasik_meal_plan';
@@ -502,6 +503,81 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
 
     getWeekMeals: (weekKey) => {
       return get().allWeekMeals[weekKey] || emptyWeek();
+    },
+
+    generateWeeklyPlan: (mealsPerDay, babyMonth, expiringIngredients = []) => {
+      const state = get();
+      const weekKey = state.currentWeekKey;
+
+      // Bebek ayına uygun tarifleri al
+      const ageFilter: '6m' | '8m' | '12m+' = babyMonth < 8 ? '6m' : babyMonth < 12 ? '8m' : '12m+';
+      const ageOrder: Record<string, number> = { '6m': 0, '8m': 1, '12m+': 2 };
+      const ageLevel = ageOrder[ageFilter];
+      const availableRecipes: RecipeData[] = ALL_RECIPES.filter(
+        (r: RecipeData) => r.ingredients.length > 0 && r.steps.length > 0 && ageOrder[r.ageGroup] <= ageLevel
+      );
+
+      if (availableRecipes.length === 0) return;
+
+      // Bayatlayacak malzemeleri içeren tariflere öncelik ver
+      const expiringLower = expiringIngredients.map((e) => e.toLowerCase());
+      const priorityRecipes = expiringLower.length > 0
+        ? availableRecipes.filter((r) =>
+            r.ingredients.some((ing) =>
+              expiringLower.some((exp) => ing.name.toLowerCase().includes(exp) || exp.includes(ing.name.toLowerCase()))
+            )
+          )
+        : [];
+
+      const slots: MealSlot[] = ['breakfast', 'lunch', 'snack', 'dinner'].slice(0, mealsPerDay) as MealSlot[];
+      const newWeek: Record<number, DayMeals> = {};
+
+      for (let day = 0; day < 7; day++) {
+        const dayMeals = emptyDay();
+        const usedIds = new Set<string>();
+
+        for (const slot of slots) {
+          // Bayatlayacak malzeme içeren tarifi öncelikle seç
+          let recipe: typeof availableRecipes[0] | undefined;
+          if (priorityRecipes.length > 0) {
+            recipe = priorityRecipes.find((r) => !usedIds.has(r.id));
+          }
+          if (!recipe) {
+            // Rastgele tarif seç (aynı gün tekrar etmesin)
+            const candidates = availableRecipes.filter((r) => !usedIds.has(r.id));
+            recipe = candidates[Math.floor(Math.random() * candidates.length)] || availableRecipes[0];
+          }
+          usedIds.add(recipe.id);
+
+          const meal: Meal = {
+            id: `gen-${day}-${slot}-${Date.now()}`,
+            slot,
+            recipeId: recipe.id,
+            foodName: recipe.title,
+            emoji: recipe.emoji,
+            ageGroup: recipe.ageGroup,
+            calories: recipe.calories,
+            completed: false,
+            isFirstTry: false,
+            allergenWarning: recipe.allergens.length > 0 ? recipe.allergens : undefined,
+            nutrients: recipe.nutrients.slice(0, 2).map((n) => ({
+              name: n.name,
+              value: n.value,
+              unit: n.unit,
+            })),
+          };
+          dayMeals[slot].push(meal);
+        }
+        newWeek[day] = dayMeals;
+      }
+
+      const updatedAll = { ...state.allWeekMeals, [weekKey]: newWeek };
+      set({
+        allWeekMeals: updatedAll,
+        weekMeals: newWeek,
+      });
+      persistToStorage(updatedAll);
+      syncToFirestore('mealPlan.saveWeek', (userId) => [userId, weekKey, newWeek]);
     },
   };
 });

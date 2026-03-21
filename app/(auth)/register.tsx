@@ -61,8 +61,10 @@ export default function RegisterScreen() {
     try {
       await register(email.trim(), password, displayName.trim());
       analytics.register('email');
-      // Kayıt başarılı — onboarding'e yönlendir
-      router.replace('/(onboarding)/welcome');
+      // Kayıt başarılı — state güncellemesi tamamlandıktan sonra yönlendir
+      setTimeout(() => {
+        router.replace('/(onboarding)/welcome');
+      }, 100);
     } catch {
       // Error handled in store
     }

@@ -3,6 +3,7 @@
     "name": "Kaşık - Ek Gıda Rehberi",
     "slug": "kasik-app",
     "version": "1.0.0",
+    "description": "Bebeğinizin ek gıda yolculuğunda yanınızda! 200+ tarif, haftalık yemek planı, alerjen takibi ve daha fazlası.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -20,8 +21,16 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Tarif ve topluluk paylaşımları için fotoğraf çekmek amacıyla kamera erişimi gereklidir.",
         "NSPhotoLibraryUsageDescription": "Tarif ve topluluk paylaşımlarına fotoğraf eklemek için galeri erişimi gereklidir.",
-        "UIBackgroundModes": ["remote-notification"]
-      }
+        "UIBackgroundModes": [
+          "remote-notification"
+        ],
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPrivacyPolicyURL": "https://kverd123.github.io/kasik-app/privacy.html"
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": []
+      },
+      "usesAppleSignIn": true
     },
     "android": {
       "package": "com.kasik.ekgida",
@@ -37,7 +46,8 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.SCHEDULE_EXACT_ALARM",
-        "android.permission.POST_NOTIFICATIONS"
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO"
       ],
       "googleServicesFile": "./google-services.json"
     },
@@ -63,7 +73,15 @@
           "defaultChannel": "general",
           "sounds": []
         }
-      ]
-    ]
+      ],
+      "@react-native-google-signin/google-signin"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "105a5ea5-566d-40e1-8e3b-a2044081ff97"
+      }
+    },
+    "owner": "kverd"
   }
 }

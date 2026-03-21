@@ -16,6 +16,9 @@ import {
   Alert,
 } from 'react-native';
 import { Link, router } from 'expo-router';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useColors } from '../../hooks/useColors';
 import {
   FontFamily,
@@ -29,13 +32,85 @@ import { Button } from '../../components/ui/Button';
 import { useAuthStore } from '../../stores/authStore';
 import { analytics } from '../../lib/analytics';
 
+// Configure Google Sign-In
+GoogleSignin.configure({
+  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+});
+
 export default function LoginScreen() {
   const colors = useColors();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const { login, isLoading, error, clearError } = useAuthStore();
+  const { login, loginWithGoogle, loginWithApple, isLoading, error, clearError } = useAuthStore();
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      const idToken = response.data?.idToken;
+      if (!idToken) {
+        Alert.alert('Hata', 'Google giriş başarısız oldu.');
+        return;
+      }
+      await loginWithGoogle(idToken);
+      analytics.login('google');
+      // Yeni kullanıcıysa onboarding'e, mevcut kullanıcıysa plan'a yönlendir
+      const { user } = useAuthStore.getState();
+      setTimeout(() => {
+        if (user && !user.onboardingCompleted) {
+          router.replace('/(onboarding)/welcome');
+        } else {
+          router.replace('/(tabs)/plan');
+        }
+      }, 100);
+    } catch (error: any) {
+      if (error.code !== 'SIGN_IN_CANCELLED') {
+        Alert.alert('Hata', 'Google ile giriş yapılamadı.');
+      }
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    try {
+      const nonce = Math.random().toString(36).substring(2, 10);
+      const hashedNonce = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        nonce
+      );
+
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+        nonce: hashedNonce,
+      });
+
+      if (!credential.identityToken) {
+        Alert.alert('Hata', 'Apple giriş başarısız oldu.');
+        return;
+      }
+
+      await loginWithApple(credential.identityToken, nonce, credential.fullName ?? undefined);
+      analytics.login('apple');
+      // Yeni kullanıcıysa onboarding'e, mevcut kullanıcıysa plan'a yönlendir
+      const { user: appleUser } = useAuthStore.getState();
+      setTimeout(() => {
+        if (appleUser && !appleUser.onboardingCompleted) {
+          router.replace('/(onboarding)/welcome');
+        } else {
+          router.replace('/(tabs)/plan');
+        }
+      }, 100);
+    } catch (error: any) {
+      if (error.code !== 'ERR_REQUEST_CANCELED') {
+        Alert.alert('Hata', 'Apple ile giriş yapılamadı.');
+      }
+    }
+  };
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -46,8 +121,8 @@ export default function LoginScreen() {
     try {
       await login(email.trim(), password);
       analytics.login('email');
-      // Giriş başarılı — direkt yönlendir
-      router.replace('/(tabs)/plan');
+      // Giriş başarılı — state güncellemesi sonrası yönlendir
+      setTimeout(() => router.replace('/(tabs)/plan'), 100);
     } catch {
       // Error is set in the store
     }
@@ -156,10 +231,7 @@ export default function LoginScreen() {
           {/* Social Login Buttons */}
           <Button
             title="Google ile Giriş Yap"
-            onPress={() => {
-              // TODO: Google Sign-In implementation
-              Alert.alert('Bilgi', 'Google giriş yakında aktif olacak.');
-            }}
+            onPress={handleGoogleSignIn}
             variant="outline"
             fullWidth
             size="lg"
@@ -168,17 +240,15 @@ export default function LoginScreen() {
 
           <View style={{ height: Spacing.md }} />
 
-          <Button
-            title="Apple ile Giriş Yap"
-            onPress={() => {
-              // TODO: Apple Sign-In implementation
-              Alert.alert('Bilgi', 'Apple giriş yakında aktif olacak.');
-            }}
-            variant="outline"
-            fullWidth
-            size="lg"
-            icon={<Text style={{ fontSize: 18 }}>🍎</Text>}
-          />
+          {Platform.OS === 'ios' && (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={12}
+              style={{ width: '100%', height: 52 }}
+              onPress={handleAppleSignIn}
+            />
+          )}
         </View>
 
         {/* Register Link */}

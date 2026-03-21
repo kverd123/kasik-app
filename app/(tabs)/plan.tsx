@@ -1,10 +1,11 @@
 /**
- * Kaşık — Daily Meal Plan Screen (Plan Tab)
+ * Kasik — Daily Meal Plan Screen (Plan Tab)
  * Day selector, meal cards with allergen warnings, progress bar
- * mealPlanStore ile persist, ExpiringBanner, gelişmiş ekleme modalı
+ * mealPlanStore ile persist, ExpiringBanner, gelismis ekleme modali
+ * Gunluk / Haftalik goruntuleme toggle
  */
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -16,6 +17,7 @@ import {
   TextInput,
   Platform,
   RefreshControl,
+  Animated,
 } from 'react-native';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
@@ -54,15 +56,18 @@ import { haptics } from '../../lib/haptics';
 import { analytics } from '../../lib/analytics';
 import { MealSlotSkeleton } from '../../components/ui/SkeletonLoader';
 
+type ViewMode = 'daily' | 'weekly';
+
 export default function PlanScreen() {
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  // Bugünün gün indeksini bul (0=Pzt, 6=Paz)
+  // Bugunun gun indeksini bul (0=Pzt, 6=Paz)
   const todayIndex = useMemo(() => {
     const day = new Date().getDay(); // 0=Paz, 1=Pzt...
     return day === 0 ? 6 : day - 1; // Pazartesi=0 olarak ayarla
   }, []);
 
+  const [viewMode, setViewMode] = useState<ViewMode>('daily');
   const [selectedDayIndex, setSelectedDayIndex] = useState(todayIndex);
   const [refreshing, setRefreshing] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -80,6 +85,10 @@ export default function PlanScreen() {
   const [recipeSearch, setRecipeSearch] = useState('');
   const [detailMeal, setDetailMeal] = useState<Meal | null>(null);
   const [detailProgram, setDetailProgram] = useState<AllergenIntroProgramConfig | null>(null);
+  const [showExpiringWarning, setShowExpiringWarning] = useState(true);
+  const [isShuffling, setIsShuffling] = useState(false);
+  const [shuffleKey, setShuffleKey] = useState(0);
+  const expiringTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const notifPrefs = useNotificationStore((s) => s.preferences);
   const baby = useBabyStore((s) => s.baby);
@@ -111,10 +120,55 @@ export default function PlanScreen() {
   const thisWeekKey = useMemo(() => getCurrentWeekKey(), []);
   const isCurrentWeek = currentWeekKey === thisWeekKey;
 
+  // Expiring items from pantry
+  const expiringItems = useMemo(
+    () => pantryStore.getExpiringItems(3),
+    [pantryStore.items]
+  );
+
+  // Shopping item count from week meals
+  const shoppingItemCount = useMemo(() => {
+    let count = 0;
+    for (const dayIndex of Object.keys(weekMeals)) {
+      const dayMeals = weekMeals[Number(dayIndex)];
+      if (dayMeals) {
+        for (const slot of Object.keys(dayMeals) as MealSlot[]) {
+          count += dayMeals[slot]?.length || 0;
+        }
+      }
+    }
+    return count;
+  }, [weekMeals]);
+
   useEffect(() => {
     if (!recipeBookLoaded) loadRecipeBook();
     if (!planLoaded) loadPlan();
   }, []);
+
+  // Auto-hide expiring warning after 10 seconds
+  useEffect(() => {
+    if (showExpiringWarning && expiringItems.length > 0) {
+      expiringTimerRef.current = setTimeout(() => {
+        setShowExpiringWarning(false);
+      }, 10000);
+    }
+    return () => {
+      if (expiringTimerRef.current) {
+        clearTimeout(expiringTimerRef.current);
+      }
+    };
+  }, [showExpiringWarning, expiringItems.length]);
+
+  // Eksik malzeme kontrolü: tarif malzemelerini dolaptaki ürünlerle karşılaştır
+  const getMissingIngredients = useCallback((meal: Meal): string[] => {
+    if (!meal.recipeId) return [];
+    const recipe = RECIPES_BY_ID[meal.recipeId];
+    if (!recipe || !recipe.ingredients.length) return [];
+    const pantryNames = pantryStore.items.map((p) => p.name.toLowerCase());
+    return recipe.ingredients
+      .filter((ing) => !pantryNames.some((pn) => pn.includes(ing.name.toLowerCase()) || ing.name.toLowerCase().includes(pn)))
+      .map((ing) => ing.name);
+  }, [pantryStore.items]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -125,7 +179,7 @@ export default function PlanScreen() {
     }
   }, [loadPlan, loadRecipeBook]);
 
-  // Hafta değiştiğinde gün seçimini sıfırla
+  // Hafta degistiginde gun secimini sifirla
   useEffect(() => {
     if (isCurrentWeek) {
       setSelectedDayIndex(todayIndex);
@@ -163,7 +217,7 @@ export default function PlanScreen() {
     addMealToSlot(selectedDayIndex, addingSlot, newMeal);
     setAddModalVisible(false);
 
-    // Öğün hatırlatması zamanla
+    // Ogun hatirlatmasi zamanla
     if (notifPrefs.mealReminders && baby?.name) {
       scheduleMealReminder(addingSlot, baby.name).catch(console.error);
     }
@@ -177,14 +231,14 @@ export default function PlanScreen() {
     };
 
     if (Platform.OS === 'web') {
-      if (window.confirm('Bu öğünü plandan kaldırmak istiyor musunuz?')) {
+      if (window.confirm('Bu ogunu plandan kaldirmak istiyor musunuz?')) {
         doRemove();
       }
     } else {
       const { Alert } = require('react-native');
-      Alert.alert('Öğünü Kaldır', 'Bu öğünü plandan kaldırmak istiyor musunuz?', [
-        { text: 'İptal', style: 'cancel' },
-        { text: 'Kaldır', style: 'destructive', onPress: doRemove },
+      Alert.alert('Ogunu Kaldir', 'Bu ogunu plandan kaldirmak istiyor musunuz?', [
+        { text: 'Iptal', style: 'cancel' },
+        { text: 'Kaldir', style: 'destructive', onPress: doRemove },
       ]);
     }
   }, [selectedDayIndex, removeMeal]);
@@ -193,7 +247,7 @@ export default function PlanScreen() {
   const weekDays = useMemo(() => {
     const dates = getWeekDates(currentWeekKey);
     const today = new Date();
-    return ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((label, i) => ({
+    return ['Pzt', 'Sal', 'Car', 'Per', 'Cum', 'Cmt', 'Paz'].map((label, i) => ({
       label,
       date: dates[i].getDate(),
       isToday: isSameDay(dates[i], today),
@@ -202,7 +256,7 @@ export default function PlanScreen() {
 
   const weekLabel = useMemo(() => getWeekLabel(currentWeekKey), [currentWeekKey]);
 
-  // Seçilen günün yemekleri
+  // Secilen gunun yemekleri
   const meals = getDayMeals(selectedDayIndex);
 
   // Calculate progress
@@ -211,7 +265,44 @@ export default function PlanScreen() {
   const totalCount = allMeals.length;
   const progress = totalCount > 0 ? completedCount / totalCount : 0;
 
-  // Arama ile filtrelenen tüm tarifler
+  // Weekly overview: meal counts per day
+  const weeklyMealCounts = useMemo(() => {
+    return [0, 1, 2, 3, 4, 5, 6].map((dayIdx) => {
+      const dayMeals = getDayMeals(dayIdx);
+      return Object.values(dayMeals).flat().length;
+    });
+  }, [weekMeals, currentWeekKey, shuffleKey]);
+
+  const generateWeeklyPlan = useMealPlanStore((s) => s.generateWeeklyPlan);
+
+  // Shuffle handler — ogün sayisi sor ve plan olustur
+  const handleShuffle = useCallback(() => {
+    const { Alert } = require('react-native');
+    const babyMonth = baby?.currentStage === '6m' ? 6 : baby?.currentStage === '8m' ? 8 : 12;
+    const expiringNames = expiringItems.map((item: any) => item.name);
+
+    Alert.alert(
+      'Haftalik Plan Olustur',
+      'Gunluk kac ogun olsun?',
+      [
+        { text: '2 Ogun', onPress: () => doGenerate(2, babyMonth, expiringNames) },
+        { text: '3 Ogun', onPress: () => doGenerate(3, babyMonth, expiringNames) },
+        { text: '4 Ogun', onPress: () => doGenerate(4, babyMonth, expiringNames) },
+        { text: 'Iptal', style: 'cancel' },
+      ]
+    );
+  }, [baby, expiringItems]);
+
+  const doGenerate = useCallback((mealsPerDay: number, babyMonth: number, expiringNames: string[]) => {
+    setIsShuffling(true);
+    setTimeout(() => {
+      generateWeeklyPlan(mealsPerDay, babyMonth, expiringNames);
+      setShuffleKey((prev) => prev + 1);
+      setIsShuffling(false);
+    }, 800);
+  }, [generateWeeklyPlan]);
+
+  // Arama ile filtrelenen tum tarifler
   const filteredAllRecipes = useMemo(() => {
     const q = recipeSearch.toLowerCase().trim();
     if (!q) return ALL_RECIPES;
@@ -222,7 +313,7 @@ export default function PlanScreen() {
     );
   }, [recipeSearch]);
 
-  // Saved recipe IDs — saved olanları "Tüm Tarifler" bölümünde göstermeyeceğiz (duplicate olmasın)
+  // Saved recipe IDs — saved olanlari "Tum Tarifler" bolumunde gostermeyecegiz (duplicate olmasin)
   const savedRecipeIds = useMemo(() => new Set(savedRecipes.map((r) => r.id)), [savedRecipes]);
 
   // Filtered saved recipes
@@ -242,382 +333,546 @@ export default function PlanScreen() {
   }, [filteredAllRecipes, savedRecipeIds]);
 
   const greetingText = new Date().getHours() < 12
-    ? 'Günaydın! 🌞'
+    ? 'Gunaydin! \u{1F31E}'
     : new Date().getHours() < 18
-    ? 'İyi günler! ☀️'
-    : 'İyi akşamlar! 🌙';
+    ? 'Iyi gunler! \u{2600}\u{FE0F}'
+    : 'Iyi aksamlar! \u{1F319}';
 
   const subtitleText = !isCurrentWeek
-    ? `${['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'][selectedDayIndex]} planı`
+    ? `${['Pazartesi', 'Sali', 'Carsamba', 'Persembe', 'Cuma', 'Cumartesi', 'Pazar'][selectedDayIndex]} plani`
     : selectedDayIndex === todayIndex
-    ? 'Bugünkü beslenme planınız hazır.'
-    : `${['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'][selectedDayIndex]} planı`;
+    ? 'Bugunku beslenme planiniz hazir.'
+    : `${['Pazartesi', 'Sali', 'Carsamba', 'Persembe', 'Cuma', 'Cumartesi', 'Pazar'][selectedDayIndex]} plani`;
+
+  // Handle day tap from weekly view
+  const handleWeeklyDayTap = useCallback((dayIndex: number) => {
+    setSelectedDayIndex(dayIndex);
+    setViewMode('daily');
+  }, []);
 
   return (
     <View style={styles.container}>
       <ScreenHeader
         title={greetingText}
         subtitle={subtitleText}
-        emoji="🥄"
+        emoji="\u{1F944}"
         rightActions={[
-          { icon: '🛒', onPress: () => setShoppingModalVisible(true) },
+          { icon: '\u{1F6D2}', onPress: () => setShoppingModalVisible(true) },
         ]}
       />
 
-      {/* Week Navigator */}
-      <View style={styles.weekNavigator}>
-        <TouchableOpacity onPress={() => { goToPreviousWeek(); analytics.weekNavigate('previous'); }} style={styles.weekNavBtn}>
-          <Text style={styles.weekNavArrow}>◀</Text>
-        </TouchableOpacity>
-        <View style={styles.weekNavCenter}>
-          <Text style={styles.weekNavLabel}>{weekLabel}</Text>
-          {!isCurrentWeek && (
-            <TouchableOpacity onPress={() => { goToCurrentWeek(); analytics.weekNavigate('current'); }} style={styles.weekNavTodayBtn}>
-              <Text style={styles.weekNavTodayText}>Bugüne Dön</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        <TouchableOpacity onPress={() => { goToNextWeek(); analytics.weekNavigate('next'); }} style={styles.weekNavBtn}>
-          <Text style={styles.weekNavArrow}>▶</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Day Selector */}
-      <View style={styles.daySelectorContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.daySelector}>
-          {weekDays.map((day, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedDayIndex(index)}
-              style={[
-                styles.dayItem,
-                selectedDayIndex === index && styles.dayItemActive,
-                day.isToday && selectedDayIndex !== index && styles.dayItemToday,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.dayLabel,
-                  selectedDayIndex === index && styles.dayLabelActive,
-                ]}
-              >
-                {day.label}
-              </Text>
-              <Text
-                style={[
-                  styles.dayNumber,
-                  selectedDayIndex === index && styles.dayNumberActive,
-                ]}
-              >
-                {day.date}
-              </Text>
-              {day.isToday && selectedDayIndex !== index && (
-                <View style={styles.todayDot} />
-              )}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* Meal List */}
-      <ScrollView
-        style={styles.mealList}
-        contentContainerStyle={styles.mealListContent}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.sage}
-            colors={[colors.sage]}
-          />
-        }
-      >
-        {/* Expiring Banner */}
-        <ExpiringBanner
-          withinDays={3}
-          onRecipePress={(recipe) => {
-            router.push(`/recipe/${recipe.id}` as any);
-          }}
-          onAddToPlan={(recipe) => {
-            // Seçili güne ilk boş slot'a ekle
-            const dayMeals = getDayMeals(selectedDayIndex);
-            const slots: MealSlot[] = ['lunch', 'dinner', 'snack', 'breakfast'];
-            const targetSlot = slots.find((s) => dayMeals[s].length === 0) || 'lunch';
-            const newMeal: Meal = {
-              id: `expiring-${Date.now()}`,
-              slot: targetSlot,
-              recipeId: recipe.id,
-              foodName: recipe.title,
-              emoji: recipe.emoji,
-              ageGroup: recipe.ageGroup,
-              calories: recipe.calories,
-              completed: false,
-              isFirstTry: false,
-              allergenWarning: recipe.allergens.length > 0 ? recipe.allergens : undefined,
-              nutrients: recipe.nutrients.slice(0, 2).map((n) => ({
-                name: n.name,
-                value: n.value,
-                unit: n.unit,
-              })),
-            };
-            addMealToSlot(selectedDayIndex, targetSlot, newMeal);
-            if (notifPrefs.mealReminders && baby?.name) {
-              scheduleMealReminder(targetSlot, baby.name).catch(console.error);
-            }
-          }}
-        />
-
-        {/* Alerjen açma programı */}
-        {[...getActivePrograms(), ...getPausedPrograms()].length > 0 ? (
-          [...getActivePrograms(), ...getPausedPrograms()].map((prog) => {
-            const report = getProgramReport(prog.id);
-            const dayStatus = getProgramDayStatus(prog.id);
-            const progress = report && report.totalMeals > 0 ? report.completedMeals / report.totalMeals : 0;
-            const isPaused = prog.status === 'paused';
-            const allergenName = prog.allergenType === 'other' && prog.customAllergenName
-              ? prog.customAllergenName
-              : getAllergenLabel(prog.allergenType);
-            const lastSev = dayStatus?.lastReaction ? SEVERITY_LABELS[dayStatus.lastReaction.severity] : null;
-
-            return (
-              <TouchableOpacity
-                key={prog.id}
-                style={[styles.allergenProgramBanner, isPaused && styles.allergenProgramPaused]}
-                onPress={() => setDetailProgram(prog)}
-                activeOpacity={0.7}
-              >
-                <Text style={{ fontSize: 28 }}>{getAllergenEmoji(prog.allergenType)}</Text>
-                <View style={{ flex: 1, gap: 6 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
-                    <Text style={styles.allergenProgramTitle}>
-                      {allergenName} Açma
-                    </Text>
-                    {isPaused && (
-                      <View style={styles.pausedBadge}>
-                        <Text style={styles.pausedBadgeText}>⏸ Duraklatıldı</Text>
-                      </View>
-                    )}
-                  </View>
-                  {/* İlerleme */}
-                  <View style={styles.allergenProgressRow}>
-                    <Text style={styles.allergenProgramSub}>
-                      {dayStatus ? `Gün ${dayStatus.currentDay}/${prog.totalDays}` : `${prog.totalDays} gün`}
-                      {' · '}{report?.completedMeals || 0}/{report?.totalMeals || 0} öğün
-                    </Text>
-                    {lastSev && (
-                      <Text style={[styles.allergenReactionBadge, { color: lastSev.color }]}>
-                        {lastSev.emoji} {lastSev.label}
-                      </Text>
-                    )}
-                  </View>
-                  {/* Progress bar */}
-                  <View style={styles.allergenProgressBg}>
-                    <View style={[styles.allergenProgressFill, { width: `${progress * 100}%` }]} />
-                  </View>
-                  {/* Bugünkü durum */}
-                  {dayStatus && !isPaused && (
-                    <Text style={styles.allergenTodayStatus}>
-                      Bugün: {dayStatus.todayCompleted}/{dayStatus.todayMeals} öğün {dayStatus.todayCompleted >= dayStatus.todayMeals && dayStatus.todayMeals > 0 ? '✓' : ''}
-                    </Text>
-                  )}
-                </View>
-                {/* Aksiyon butonları */}
-                <View style={{ gap: 6 }}>
-                  {isPaused ? (
-                    <TouchableOpacity
-                      style={styles.allergenResumeBtn}
-                      onPress={(e) => { e.stopPropagation(); resumeProgram(prog.id); }}
-                    >
-                      <Text style={styles.allergenResumeBtnText}>▶</Text>
-                    </TouchableOpacity>
-                  ) : (
-                    <Text style={styles.allergenDetailArrow}>▶</Text>
-                  )}
-                </View>
-              </TouchableOpacity>
-            );
-          })
-        ) : null}
-        {getActivePrograms().length === 0 && getPausedPrograms().length === 0 && (
+      {/* View Mode Toggle: Gunluk / Haftalik */}
+      <View style={styles.toggleContainer}>
+        <View style={styles.togglePills}>
           <TouchableOpacity
-            style={styles.allergenStartBtn}
-            onPress={() => setAllergenModalVisible(true)}
+            style={[
+              styles.togglePill,
+              viewMode === 'daily' && styles.togglePillActive,
+            ]}
+            onPress={() => setViewMode('daily')}
             activeOpacity={0.7}
           >
-            <Text style={{ fontSize: 20 }}>⚕️</Text>
-            <Text style={styles.allergenStartText}>Alerjen Açma Programı Başlat</Text>
-            <Text style={styles.allergenStartArrow}>→</Text>
+            <Text
+              style={[
+                styles.togglePillText,
+                viewMode === 'daily' && styles.togglePillTextActive,
+              ]}
+            >
+              Gunluk
+            </Text>
           </TouchableOpacity>
-        )}
+          <TouchableOpacity
+            style={[
+              styles.togglePill,
+              viewMode === 'weekly' && styles.togglePillActive,
+            ]}
+            onPress={() => setViewMode('weekly')}
+            activeOpacity={0.7}
+          >
+            <Text
+              style={[
+                styles.togglePillText,
+                viewMode === 'weekly' && styles.togglePillTextActive,
+              ]}
+            >
+              Haftalik
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-        {!planLoaded ? (
-          <MealSlotSkeleton count={3} />
-        ) : null}
-
-        {(Object.keys(MEAL_SLOT_LABELS) as MealSlot[]).map((slot) => (
-          <View key={slot} style={styles.mealSection}>
-            {/* Section Header */}
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>
-                {MEAL_SLOT_LABELS[slot].emoji} {MEAL_SLOT_LABELS[slot].label.toUpperCase()}
-              </Text>
-              <TouchableOpacity onPress={() => openAddModal(slot)}>
-                <Text style={styles.addButton}>+ Ekle</Text>
-              </TouchableOpacity>
+      {viewMode === 'weekly' ? (
+        /* ======================== WEEKLY VIEW ======================== */
+        <ScrollView
+          style={styles.mealList}
+          contentContainerStyle={styles.mealListContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.sage}
+              colors={[colors.sage]}
+            />
+          }
+        >
+          {/* Week Navigator */}
+          <View style={styles.weekNavigator}>
+            <TouchableOpacity onPress={() => { goToPreviousWeek(); analytics.weekNavigate('previous'); }} style={styles.weekNavBtn}>
+              <Text style={styles.weekNavArrow}>{'\u25C0'}</Text>
+            </TouchableOpacity>
+            <View style={styles.weekNavCenter}>
+              <Text style={styles.weekNavLabel}>{weekLabel}</Text>
+              {!isCurrentWeek && (
+                <TouchableOpacity onPress={() => { goToCurrentWeek(); analytics.weekNavigate('current'); }} style={styles.weekNavTodayBtn}>
+                  <Text style={styles.weekNavTodayText}>Bugune Don</Text>
+                </TouchableOpacity>
+              )}
             </View>
+            <TouchableOpacity onPress={() => { goToNextWeek(); analytics.weekNavigate('next'); }} style={styles.weekNavBtn}>
+              <Text style={styles.weekNavArrow}>{'\u25B6'}</Text>
+            </TouchableOpacity>
+          </View>
 
-            {/* Meal Cards */}
-            {meals[slot].length > 0 ? (
-              meals[slot].map((meal) => (
-                <Card
-                  key={meal.id}
-                  variant={meal.allergenWarning?.length ? 'warning' : 'default'}
-                  padding="md"
-                  style={styles.mealCard}
-                  onPress={() => setDetailMeal(meal)}
-                >
-                  <View style={styles.mealCardContent}>
-                    {/* Emoji circle */}
-                    <View style={styles.emojiCircle}>
-                      <Text style={styles.emoji}>{meal.emoji}</Text>
-                    </View>
-
-                    {/* Info */}
-                    <View style={styles.mealInfo}>
-                      <Text style={styles.mealName}>{meal.foodName}</Text>
-                      <Text style={styles.mealMeta}>
-                        {meal.ageGroup === '6m' ? '6+' : meal.ageGroup === '8m' ? '8+' : '12+'} ay
-                        {meal.calories ? ` · ${meal.calories} kcal` : ''}
-                        {meal.prepTime ? ` · ${meal.prepTime} dk` : ''}
-                      </Text>
-                      {(meal.ingredients?.length || meal.steps?.length) ? (
-                        <Text style={styles.mealRecipeHint}>
-                          {meal.ingredients?.length ? `🥕 ${meal.ingredients.length} malzeme` : ''}
-                          {meal.ingredients?.length && meal.steps?.length ? '  ' : ''}
-                          {meal.steps?.length ? `📝 ${meal.steps.length} adım` : ''}
-                        </Text>
-                      ) : null}
-                      {/* Tags */}
-                      <View style={styles.tagRow}>
-                        {meal.nutrients?.map((n) => (
-                          <NutrientBadge key={n.name} label={n.name} />
-                        ))}
-                        {meal.isFirstTry && <FirstTryBadge />}
-                        {meal.allergenWarning?.map((a) => (
-                          <AllergenBadge key={a} label="Alerjen" />
-                        ))}
-                      </View>
-                    </View>
-
-                    {/* Actions: checkbox + delete */}
-                    <View style={styles.mealActions}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          haptics.success();
-                          if (!meal.completed) analytics.mealComplete(meal.foodName);
-                          toggleMealCompleted(selectedDayIndex, meal.id);
-
-                          // İlk deneme öğünü tamamlandıysa alerjen takip bildirimi zamanla
-                          if (!meal.completed && meal.isFirstTry && notifPrefs.allergenTracking && baby?.name) {
-                            scheduleAllergenCheck(meal.foodName, baby.name).catch(console.error);
-                          }
-
-                          // Alerjen içeren öğün tamamlandıysa ve aktif program varsa → reaksiyon modal aç
-                          if (!meal.completed && meal.allergenWarning?.length) {
-                            const activeProgs = getActivePrograms();
-                            const matchingProg = activeProgs.find((p) =>
-                              meal.allergenWarning!.includes(p.allergenType)
-                            );
-                            if (matchingProg) {
-                              // Hangi gün olduğunu bul
-                              const dayPlan = matchingProg.dailyPlan.find((d) =>
-                                d.meals.some((m) => m.id === meal.id)
-                              );
-                              if (dayPlan) {
-                                setReactionModal({
-                                  visible: true,
-                                  allergenType: matchingProg.allergenType,
-                                  programId: matchingProg.id,
-                                  day: dayPlan.day,
-                                  mealId: meal.id,
-                                  mealName: meal.foodName,
-                                });
-                              }
-                            }
-                          }
-                        }}
+          {/* Weekly Overview Card */}
+          <View style={styles.weeklyCard}>
+            <Text style={styles.weeklyCardTitle}>Haftalik Plan Ozeti</Text>
+            <View style={styles.weeklyDaysRow}>
+              {weekDays.map((day, index) => {
+                const mealCount = weeklyMealCounts[index];
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.weeklyDayItem,
+                      day.isToday && styles.weeklyDayItemToday,
+                    ]}
+                    onPress={() => handleWeeklyDayTap(index)}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={[
+                        styles.weeklyDayLabel,
+                        day.isToday && styles.weeklyDayLabelToday,
+                      ]}
+                    >
+                      {day.label}
+                    </Text>
+                    <View
+                      style={[
+                        styles.weeklyDayCircle,
+                        mealCount > 0 && styles.weeklyDayCircleFilled,
+                        day.isToday && styles.weeklyDayCircleToday,
+                      ]}
+                    >
+                      <Text
                         style={[
-                          styles.checkbox,
-                          meal.completed && styles.checkboxDone,
+                          styles.weeklyDayCount,
+                          mealCount > 0 && styles.weeklyDayCountFilled,
+                          day.isToday && styles.weeklyDayCountToday,
                         ]}
-                        accessibilityRole="checkbox"
-                        accessibilityLabel={`${meal.foodName} ${meal.completed ? 'tamamlandı' : 'tamamlanmadı'}`}
-                        accessibilityState={{ checked: meal.completed }}
                       >
-                        {meal.completed && (
-                          <Text style={styles.checkmark}>✓</Text>
-                        )}
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => handleRemoveMeal(meal.id, meal.foodName)}
-                        accessibilityRole="button"
-                        accessibilityLabel={`${meal.foodName} öğünü kaldır`}
-                        style={styles.removeBtn}
-                      >
-                        <Text style={styles.removeIcon}>✕</Text>
-                      </TouchableOpacity>
+                        {mealCount}
+                      </Text>
                     </View>
-                  </View>
-                </Card>
-              ))
-            ) : (
+                    <Text style={styles.weeklyDayMealLabel}>ogun</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Shuffle Button */}
+          <TouchableOpacity
+            style={[styles.shuffleButton, isShuffling && styles.shuffleButtonDisabled]}
+            onPress={handleShuffle}
+            activeOpacity={0.7}
+            disabled={isShuffling}
+          >
+            <Text style={styles.shuffleIcon}>{'\u{1F500}'}</Text>
+            <Text style={styles.shuffleText}>
+              {isShuffling ? 'Karistiriliyor...' : 'Tarifleri Karistir'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Ad Banner */}
+          <AdBanner />
+        </ScrollView>
+      ) : (
+        /* ======================== DAILY VIEW ======================== */
+        <>
+          {/* Week Navigator */}
+          <View style={styles.weekNavigator}>
+            <TouchableOpacity onPress={() => { goToPreviousWeek(); analytics.weekNavigate('previous'); }} style={styles.weekNavBtn}>
+              <Text style={styles.weekNavArrow}>{'\u25C0'}</Text>
+            </TouchableOpacity>
+            <View style={styles.weekNavCenter}>
+              <Text style={styles.weekNavLabel}>{weekLabel}</Text>
+              {!isCurrentWeek && (
+                <TouchableOpacity onPress={() => { goToCurrentWeek(); analytics.weekNavigate('current'); }} style={styles.weekNavTodayBtn}>
+                  <Text style={styles.weekNavTodayText}>Bugune Don</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <TouchableOpacity onPress={() => { goToNextWeek(); analytics.weekNavigate('next'); }} style={styles.weekNavBtn}>
+              <Text style={styles.weekNavArrow}>{'\u25B6'}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Day Selector */}
+          <View style={styles.daySelectorContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.daySelector}>
+              {weekDays.map((day, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setSelectedDayIndex(index)}
+                  style={[
+                    styles.dayItem,
+                    selectedDayIndex === index && styles.dayItemActive,
+                    day.isToday && selectedDayIndex !== index && styles.dayItemToday,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.dayLabel,
+                      selectedDayIndex === index && styles.dayLabelActive,
+                    ]}
+                  >
+                    {day.label}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.dayNumber,
+                      selectedDayIndex === index && styles.dayNumberActive,
+                    ]}
+                  >
+                    {day.date}
+                  </Text>
+                  {day.isToday && selectedDayIndex !== index && (
+                    <View style={styles.todayDot} />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+
+          {/* Meal List */}
+          <ScrollView
+            style={styles.mealList}
+            contentContainerStyle={styles.mealListContent}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                tintColor={colors.sage}
+                colors={[colors.sage]}
+              />
+            }
+          >
+            {/* Alerjen acma programi */}
+            {[...getActivePrograms(), ...getPausedPrograms()].length > 0 ? (
+              [...getActivePrograms(), ...getPausedPrograms()].map((prog) => {
+                const report = getProgramReport(prog.id);
+                const dayStatus = getProgramDayStatus(prog.id);
+                const progress = report && report.totalMeals > 0 ? report.completedMeals / report.totalMeals : 0;
+                const isPaused = prog.status === 'paused';
+                const allergenName = prog.allergenType === 'other' && prog.customAllergenName
+                  ? prog.customAllergenName
+                  : getAllergenLabel(prog.allergenType);
+                const lastSev = dayStatus?.lastReaction ? SEVERITY_LABELS[dayStatus.lastReaction.severity] : null;
+
+                return (
+                  <TouchableOpacity
+                    key={prog.id}
+                    style={[styles.allergenProgramBanner, isPaused && styles.allergenProgramPaused]}
+                    onPress={() => setDetailProgram(prog)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={{ fontSize: 28 }}>{getAllergenEmoji(prog.allergenType)}</Text>
+                    <View style={{ flex: 1, gap: 6 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
+                        <Text style={styles.allergenProgramTitle}>
+                          {allergenName} Acma
+                        </Text>
+                        {isPaused && (
+                          <View style={styles.pausedBadge}>
+                            <Text style={styles.pausedBadgeText}>{'\u23F8'} Duraklatildi</Text>
+                          </View>
+                        )}
+                      </View>
+                      {/* Ilerleme */}
+                      <View style={styles.allergenProgressRow}>
+                        <Text style={styles.allergenProgramSub}>
+                          {dayStatus ? `Gun ${dayStatus.currentDay}/${prog.totalDays}` : `${prog.totalDays} gun`}
+                          {' \u00B7 '}{report?.completedMeals || 0}/{report?.totalMeals || 0} ogun
+                        </Text>
+                        {lastSev && (
+                          <Text style={[styles.allergenReactionBadge, { color: lastSev.color }]}>
+                            {lastSev.emoji} {lastSev.label}
+                          </Text>
+                        )}
+                      </View>
+                      {/* Progress bar */}
+                      <View style={styles.allergenProgressBg}>
+                        <View style={[styles.allergenProgressFill, { width: `${progress * 100}%` }]} />
+                      </View>
+                      {/* Bugunku durum */}
+                      {dayStatus && !isPaused && (
+                        <Text style={styles.allergenTodayStatus}>
+                          Bugun: {dayStatus.todayCompleted}/{dayStatus.todayMeals} ogun {dayStatus.todayCompleted >= dayStatus.todayMeals && dayStatus.todayMeals > 0 ? '\u2713' : ''}
+                        </Text>
+                      )}
+                    </View>
+                    {/* Aksiyon butonlari */}
+                    <View style={{ gap: 6 }}>
+                      {isPaused ? (
+                        <TouchableOpacity
+                          style={styles.allergenResumeBtn}
+                          onPress={(e) => { e.stopPropagation(); resumeProgram(prog.id); }}
+                        >
+                          <Text style={styles.allergenResumeBtnText}>{'\u25B6'}</Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <Text style={styles.allergenDetailArrow}>{'\u25B6'}</Text>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                );
+              })
+            ) : null}
+            {getActivePrograms().length === 0 && getPausedPrograms().length === 0 && (
               <TouchableOpacity
-                style={styles.emptySlot}
-                onPress={() => openAddModal(slot)}
+                style={styles.allergenStartBtn}
+                onPress={() => setAllergenModalVisible(true)}
+                activeOpacity={0.7}
               >
-                <Text style={styles.emptySlotText}>
-                  + Öğün eklemek için dokunun
-                </Text>
+                <Text style={{ fontSize: 20 }}>{'\u2695\uFE0F'}</Text>
+                <Text style={styles.allergenStartText}>Alerjen Acma Programi Baslat</Text>
+                <Text style={styles.allergenStartArrow}>{'\u2192'}</Text>
               </TouchableOpacity>
             )}
-          </View>
-        ))}
 
-        {/* Progress Bar */}
-        <Card padding="lg" style={styles.progressCard}>
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressTitle}>Günlük İlerleme</Text>
-            <Text style={styles.progressCount}>
-              {completedCount}/{totalCount} tamamlandı
-            </Text>
-          </View>
-          <View style={styles.progressBarBg}>
-            <View
-              style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
-            />
-          </View>
-        </Card>
+            {!planLoaded ? (
+              <MealSlotSkeleton count={3} />
+            ) : null}
 
-        {/* Alışveriş Listesi Butonu */}
-        <TouchableOpacity
-          style={styles.shoppingButton}
-          onPress={() => setShoppingModalVisible(true)}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.shoppingButtonEmoji}>🛒</Text>
-          <View style={styles.shoppingButtonInfo}>
-            <Text style={styles.shoppingButtonTitle}>Haftalık Alışveriş Listesi</Text>
-            <Text style={styles.shoppingButtonSub}>
-              Tüm tariflerin malzemelerini görüntüle
-            </Text>
-          </View>
-          <Text style={styles.shoppingButtonArrow}>→</Text>
-        </TouchableOpacity>
+            {(Object.keys(MEAL_SLOT_LABELS) as MealSlot[]).map((slot) => (
+              <View key={slot} style={styles.mealSection}>
+                {/* Section Header */}
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>
+                    {MEAL_SLOT_LABELS[slot].emoji} {MEAL_SLOT_LABELS[slot].label.toUpperCase()}
+                  </Text>
+                  <TouchableOpacity onPress={() => openAddModal(slot)}>
+                    <Text style={styles.addButton}>+ Ekle</Text>
+                  </TouchableOpacity>
+                </View>
 
-        {/* Ad Banner */}
-        <AdBanner />
-      </ScrollView>
+                {/* Meal Cards */}
+                {meals[slot].length > 0 ? (
+                  meals[slot].map((meal) => (
+                    <Card
+                      key={meal.id}
+                      variant={meal.allergenWarning?.length ? 'warning' : 'default'}
+                      padding="md"
+                      style={styles.mealCard}
+                      onPress={() => setDetailMeal(meal)}
+                    >
+                      <View style={styles.mealCardContent}>
+                        {/* Emoji circle */}
+                        <View style={styles.emojiCircle}>
+                          <Text style={styles.emoji}>{meal.emoji}</Text>
+                        </View>
+
+                        {/* Info */}
+                        <View style={styles.mealInfo}>
+                          <Text style={styles.mealName}>{meal.foodName}</Text>
+                          <Text style={styles.mealMeta}>
+                            {meal.ageGroup === '6m' ? '6+' : meal.ageGroup === '8m' ? '8+' : '12+'} ay
+                            {meal.calories ? ` \u00B7 ${meal.calories} kcal` : ''}
+                            {meal.prepTime ? ` \u00B7 ${meal.prepTime} dk` : ''}
+                          </Text>
+                          {(meal.ingredients?.length || meal.steps?.length) ? (
+                            <Text style={styles.mealRecipeHint}>
+                              {meal.ingredients?.length ? `\u{1F955} ${meal.ingredients.length} malzeme` : ''}
+                              {meal.ingredients?.length && meal.steps?.length ? '  ' : ''}
+                              {meal.steps?.length ? `\u{1F4DD} ${meal.steps.length} adim` : ''}
+                            </Text>
+                          ) : null}
+                          {(() => {
+                            const missing = getMissingIngredients(meal);
+                            if (missing.length === 0) return null;
+                            return (
+                              <Text style={styles.missingIngredients}>
+                                {'\u26A0\uFE0F'} Eksik: {missing.slice(0, 3).join(', ')}{missing.length > 3 ? ` +${missing.length - 3}` : ''}
+                              </Text>
+                            );
+                          })()}
+                          {/* Tags */}
+                          <View style={styles.tagRow}>
+                            {meal.nutrients?.map((n) => (
+                              <NutrientBadge key={n.name} label={n.name} />
+                            ))}
+                            {meal.isFirstTry && <FirstTryBadge />}
+                            {meal.allergenWarning?.map((a) => (
+                              <AllergenBadge key={a} label="Alerjen" />
+                            ))}
+                          </View>
+                        </View>
+
+                        {/* Actions: checkbox + delete */}
+                        <View style={styles.mealActions}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              haptics.success();
+                              if (!meal.completed) analytics.mealComplete(meal.foodName);
+                              toggleMealCompleted(selectedDayIndex, meal.id);
+
+                              // Ilk deneme ogunu tamamlandiysa alerjen takip bildirimi zamanla
+                              if (!meal.completed && meal.isFirstTry && notifPrefs.allergenTracking && baby?.name) {
+                                scheduleAllergenCheck(meal.foodName, baby.name).catch(console.error);
+                              }
+
+                              // Alerjen iceren ogun tamamlandiysa ve aktif program varsa -> reaksiyon modal ac
+                              if (!meal.completed && meal.allergenWarning?.length) {
+                                const activeProgs = getActivePrograms();
+                                const matchingProg = activeProgs.find((p) =>
+                                  meal.allergenWarning!.includes(p.allergenType)
+                                );
+                                if (matchingProg) {
+                                  // Hangi gun oldugunu bul
+                                  const dayPlan = matchingProg.dailyPlan.find((d) =>
+                                    d.meals.some((m) => m.id === meal.id)
+                                  );
+                                  if (dayPlan) {
+                                    setReactionModal({
+                                      visible: true,
+                                      allergenType: matchingProg.allergenType,
+                                      programId: matchingProg.id,
+                                      day: dayPlan.day,
+                                      mealId: meal.id,
+                                      mealName: meal.foodName,
+                                    });
+                                  }
+                                }
+                              }
+                            }}
+                            style={[
+                              styles.checkbox,
+                              meal.completed && styles.checkboxDone,
+                            ]}
+                            accessibilityRole="checkbox"
+                            accessibilityLabel={`${meal.foodName} ${meal.completed ? 'tamamlandi' : 'tamamlanmadi'}`}
+                            accessibilityState={{ checked: meal.completed }}
+                          >
+                            {meal.completed && (
+                              <Text style={styles.checkmark}>{'\u2713'}</Text>
+                            )}
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => handleRemoveMeal(meal.id, meal.foodName)}
+                            accessibilityRole="button"
+                            accessibilityLabel={`${meal.foodName} ogunu kaldir`}
+                            style={styles.removeBtn}
+                          >
+                            <Text style={styles.removeIcon}>{'\u2715'}</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </Card>
+                  ))
+                ) : (
+                  <TouchableOpacity
+                    style={styles.emptySlot}
+                    onPress={() => openAddModal(slot)}
+                  >
+                    <Text style={styles.emptySlotText}>
+                      + Ogun eklemek icin dokunun
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))}
+
+            {/* Progress Bar */}
+            <Card padding="lg" style={styles.progressCard}>
+              <View style={styles.progressHeader}>
+                <Text style={styles.progressTitle}>Gunluk Ilerleme</Text>
+                <Text style={styles.progressCount}>
+                  {completedCount}/{totalCount} tamamlandi
+                </Text>
+              </View>
+              <View style={styles.progressBarBg}>
+                <View
+                  style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
+                />
+              </View>
+            </Card>
+
+            {/* Alisveris Modulu - Shopping Summary Card */}
+            <TouchableOpacity
+              style={styles.shoppingCard}
+              onPress={() => setShoppingModalVisible(true)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.shoppingCardIcon}>{'\u{1F6D2}'}</Text>
+              <View style={styles.shoppingCardInfo}>
+                <Text style={styles.shoppingCardTitle}>Alisveris Listesi</Text>
+                <Text style={styles.shoppingCardSub}>
+                  {shoppingItemCount > 0
+                    ? `${shoppingItemCount} urun alisveris listesinde`
+                    : 'Henuz urun eklenmedi'}
+                </Text>
+              </View>
+              <Text style={styles.shoppingCardArrow}>{'\u2192'}</Text>
+            </TouchableOpacity>
+
+            {/* Ad Banner */}
+            <AdBanner />
+
+            {/* Bayatlayacak Urunler Uyarisi - Dismissable */}
+            {showExpiringWarning && expiringItems.length > 0 && (
+              <View style={styles.expiringWarningBanner}>
+                <View style={styles.expiringWarningHeader}>
+                  <View style={styles.expiringWarningTitleRow}>
+                    <Text style={styles.expiringWarningIcon}>{'\u26A0\uFE0F'}</Text>
+                    <Text style={styles.expiringWarningTitle}>Bayatlayacak Urunler</Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowExpiringWarning(false);
+                      if (expiringTimerRef.current) {
+                        clearTimeout(expiringTimerRef.current);
+                      }
+                    }}
+                    style={styles.expiringWarningClose}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Text style={styles.expiringWarningCloseText}>{'\u2715'}</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.expiringWarningText}>
+                  {expiringItems.length} urun 3 gun icinde bayatlayacak!
+                </Text>
+                <View style={styles.expiringWarningItems}>
+                  {expiringItems.slice(0, 5).map((item) => (
+                    <View key={item.id} style={styles.expiringWarningChip}>
+                      <Text style={styles.expiringWarningChipEmoji}>{item.emoji}</Text>
+                      <Text style={styles.expiringWarningChipName}>{item.name}</Text>
+                      <Text style={styles.expiringWarningChipDays}>
+                        {item.daysLeft === 0 ? 'Bugun!' : `${item.daysLeft}g`}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            <View style={{ height: 40 }} />
+          </ScrollView>
+        </>
+      )}
 
       {/* Shopping List Modal */}
       <ShoppingListModal
@@ -662,7 +917,7 @@ export default function PlanScreen() {
         onClose={() => setDetailProgram(null)}
       />
 
-      {/* Add from Recipe Book Modal — Gelişmiş */}
+      {/* Add from Recipe Book Modal — Gelismis */}
       <Modal
         visible={addModalVisible}
         animationType="slide"
@@ -672,7 +927,7 @@ export default function PlanScreen() {
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setAddModalVisible(false)}>
-              <Text style={styles.modalClose}>✕</Text>
+              <Text style={styles.modalClose}>{'\u2715'}</Text>
             </TouchableOpacity>
             <Text style={styles.modalTitle}>
               {MEAL_SLOT_LABELS[addingSlot]?.emoji}{' '}
@@ -684,7 +939,7 @@ export default function PlanScreen() {
           {/* Arama */}
           <View style={styles.modalSearchContainer}>
             <View style={styles.modalSearchWrapper}>
-              <Text style={styles.modalSearchIcon}>🔍</Text>
+              <Text style={styles.modalSearchIcon}>{'\u{1F50D}'}</Text>
               <TextInput
                 style={styles.modalSearchInput}
                 value={recipeSearch}
@@ -694,7 +949,7 @@ export default function PlanScreen() {
               />
               {recipeSearch.length > 0 && (
                 <TouchableOpacity onPress={() => setRecipeSearch('')}>
-                  <Text style={styles.modalSearchClear}>✕</Text>
+                  <Text style={styles.modalSearchClear}>{'\u2715'}</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -708,7 +963,7 @@ export default function PlanScreen() {
             {/* From Recipe Book */}
             {filteredSavedRecipes.length > 0 && (
               <View style={styles.modalSection}>
-                <Text style={styles.modalSectionTitle}>📖 Tarif Defterimden</Text>
+                <Text style={styles.modalSectionTitle}>{'\u{1F4D6}'} Tarif Defterimden</Text>
                 {filteredSavedRecipes.map((recipe) => (
                   <TouchableOpacity
                     key={recipe.id}
@@ -722,16 +977,16 @@ export default function PlanScreen() {
                     <View style={styles.modalRecipeInfo}>
                       <Text style={styles.modalRecipeName}>{recipe.title}</Text>
                       <Text style={styles.modalRecipeMeta}>
-                        {recipe.prepTime} dk · {recipe.calories} kcal ·{' '}
+                        {recipe.prepTime} dk {'\u00B7'} {recipe.calories} kcal {'\u00B7'}{' '}
                         {recipe.ageGroup === '6m' ? '6+' : recipe.ageGroup === '8m' ? '8+' : '12+'} ay
                       </Text>
                       {recipe.allergens.length > 0 && (
                         <Text style={styles.modalRecipeAllergen}>
-                          ⚠️ Alerjen: {recipe.allergens.join(', ')}
+                          {'\u26A0\uFE0F'} Alerjen: {recipe.allergens.join(', ')}
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.modalRecipeAdd}>＋</Text>
+                    <Text style={styles.modalRecipeAdd}>{'\uFF0B'}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -740,7 +995,7 @@ export default function PlanScreen() {
             {/* All Recipes */}
             {filteredOtherRecipes.length > 0 && (
               <View style={styles.modalSection}>
-                <Text style={styles.modalSectionTitle}>🍽️ Tüm Tarifler</Text>
+                <Text style={styles.modalSectionTitle}>{'\u{1F37D}\uFE0F'} Tum Tarifler</Text>
                 {filteredOtherRecipes.slice(0, 20).map((recipe) => (
                   <TouchableOpacity
                     key={recipe.id}
@@ -754,16 +1009,16 @@ export default function PlanScreen() {
                     <View style={styles.modalRecipeInfo}>
                       <Text style={styles.modalRecipeName}>{recipe.title}</Text>
                       <Text style={styles.modalRecipeMeta}>
-                        {recipe.prepTime} dk · {recipe.calories} kcal ·{' '}
+                        {recipe.prepTime} dk {'\u00B7'} {recipe.calories} kcal {'\u00B7'}{' '}
                         {recipe.ageGroup === '6m' ? '6+' : recipe.ageGroup === '8m' ? '8+' : '12+'} ay
                       </Text>
                       {recipe.allergens.length > 0 && (
                         <Text style={styles.modalRecipeAllergen}>
-                          ⚠️ Alerjen: {recipe.allergens.join(', ')}
+                          {'\u26A0\uFE0F'} Alerjen: {recipe.allergens.join(', ')}
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.modalRecipeAdd}>＋</Text>
+                    <Text style={styles.modalRecipeAdd}>{'\uFF0B'}</Text>
                   </TouchableOpacity>
                 ))}
                 {filteredOtherRecipes.length > 20 && (
@@ -777,10 +1032,10 @@ export default function PlanScreen() {
             {/* Empty state */}
             {filteredSavedRecipes.length === 0 && filteredOtherRecipes.length === 0 && (
               <View style={styles.modalEmpty}>
-                <Text style={{ fontSize: 48 }}>🔍</Text>
-                <Text style={styles.modalEmptyTitle}>Sonuç bulunamadı</Text>
+                <Text style={{ fontSize: 48 }}>{'\u{1F50D}'}</Text>
+                <Text style={styles.modalEmptyTitle}>Sonuc bulunamadi</Text>
                 <Text style={styles.modalEmptyText}>
-                  Farklı bir arama terimi deneyin.
+                  Farkli bir arama terimi deneyin.
                 </Text>
               </View>
             )}
@@ -823,6 +1078,44 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   mascot: {
     fontSize: 40,
   },
+
+  // Toggle pills
+  toggleContainer: {
+    backgroundColor: colors.white,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.creamDark,
+    alignItems: 'center',
+  },
+  togglePills: {
+    flexDirection: 'row',
+    backgroundColor: colors.creamMid,
+    borderRadius: BorderRadius.round,
+    padding: 3,
+  },
+  togglePill: {
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.round,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: 90,
+  },
+  togglePillActive: {
+    backgroundColor: colors.sage,
+  },
+  togglePillText: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.md,
+    color: colors.textMid,
+  },
+  togglePillTextActive: {
+    color: colors.textOnPrimary,
+  },
+
+  // Week navigator
   weekNavigator: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -983,6 +1276,12 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     color: colors.sage,
     marginTop: 2,
   },
+  missingIngredients: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.xs,
+    color: '#E65100',
+    marginTop: 2,
+  },
   tagRow: {
     flexDirection: 'row',
     gap: Spacing.xs,
@@ -1013,17 +1312,17 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     color: colors.success,
   },
   removeBtn: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: colors.creamDark,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FFEBEE',
     justifyContent: 'center',
     alignItems: 'center',
   },
   removeIcon: {
     fontFamily: FontFamily.bold,
-    fontSize: 10,
-    color: colors.textLight,
+    fontSize: 12,
+    color: '#D32F2F',
   },
   emptySlot: {
     borderWidth: 1.5,
@@ -1180,7 +1479,210 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     color: colors.textLight,
   },
 
-  // Shopping List Button
+  // Shopping Summary Card
+  shoppingCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    marginTop: Spacing.md,
+    gap: Spacing.md,
+    ...Shadow.soft,
+  },
+  shoppingCardIcon: {
+    fontSize: 24,
+  },
+  shoppingCardInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  shoppingCardTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.md,
+    color: colors.textDark,
+  },
+  shoppingCardSub: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.xs,
+    color: colors.textLight,
+  },
+  shoppingCardArrow: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.xl,
+    color: colors.sage,
+  },
+
+  // Weekly View
+  weeklyCard: {
+    backgroundColor: colors.white,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    gap: Spacing.lg,
+    ...Shadow.card,
+  },
+  weeklyCardTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.lg,
+    color: colors.textDark,
+    textAlign: 'center',
+  },
+  weeklyDaysRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: Spacing.xs,
+  },
+  weeklyDayItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  weeklyDayItemToday: {
+    backgroundColor: colors.sagePale,
+    borderRadius: BorderRadius.md,
+  },
+  weeklyDayLabel: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.xs,
+    color: colors.textLight,
+  },
+  weeklyDayLabelToday: {
+    color: colors.sage,
+    fontFamily: FontFamily.bold,
+  },
+  weeklyDayCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.creamMid,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  weeklyDayCircleFilled: {
+    backgroundColor: colors.sageLight,
+  },
+  weeklyDayCircleToday: {
+    backgroundColor: colors.sage,
+  },
+  weeklyDayCount: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.md,
+    color: colors.textLight,
+  },
+  weeklyDayCountFilled: {
+    color: colors.sageDark,
+  },
+  weeklyDayCountToday: {
+    color: colors.textOnPrimary,
+  },
+  weeklyDayMealLabel: {
+    fontFamily: FontFamily.medium,
+    fontSize: 9,
+    color: colors.textLight,
+  },
+
+  // Shuffle Button
+  shuffleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.sage,
+    borderRadius: BorderRadius.xl,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    ...Shadow.soft,
+  },
+  shuffleButtonDisabled: {
+    opacity: 0.6,
+  },
+  shuffleIcon: {
+    fontSize: 18,
+  },
+  shuffleText: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.md,
+    color: colors.textOnPrimary,
+  },
+
+  // Expiring Warning Banner
+  expiringWarningBanner: {
+    backgroundColor: '#FFF3E0',
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    marginTop: Spacing.md,
+    borderWidth: 1,
+    borderColor: '#FFB74D',
+    gap: Spacing.sm,
+  },
+  expiringWarningHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  expiringWarningTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  expiringWarningIcon: {
+    fontSize: 18,
+  },
+  expiringWarningTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.md,
+    color: '#E65100',
+  },
+  expiringWarningClose: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(230, 81, 0, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  expiringWarningCloseText: {
+    fontFamily: FontFamily.bold,
+    fontSize: 14,
+    color: '#E65100',
+  },
+  expiringWarningText: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.sm,
+    color: '#BF360C',
+  },
+  expiringWarningItems: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.xs,
+  },
+  expiringWarningChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 183, 77, 0.2)',
+    borderRadius: BorderRadius.round,
+    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+    gap: 4,
+  },
+  expiringWarningChipEmoji: {
+    fontSize: 14,
+  },
+  expiringWarningChipName: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.xs,
+    color: '#BF360C',
+  },
+  expiringWarningChipDays: {
+    fontFamily: FontFamily.bold,
+    fontSize: 10,
+    color: '#E65100',
+  },
+
+  // Shopping List Button (legacy, kept for compatibility)
   shoppingButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1353,4 +1855,3 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     paddingHorizontal: Spacing.xl,
   },
 });
-

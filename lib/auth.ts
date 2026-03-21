@@ -12,6 +12,7 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
   GoogleAuthProvider,
+  OAuthProvider,
   signInWithCredential,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
@@ -71,6 +72,50 @@ export const signInWithGoogle = async (idToken: string): Promise<FirebaseUser> =
     await setDoc(doc(db, 'users', user.uid), {
       email: user.email,
       displayName: user.displayName,
+      photoURL: user.photoURL,
+      createdAt: serverTimestamp(),
+      onboardingCompleted: false,
+      isPremium: false,
+      preferences: {
+        language: 'tr',
+        notifications: true,
+        darkMode: false,
+      },
+    });
+  }
+
+  return user;
+};
+
+/**
+ * Sign in with Apple
+ */
+export const signInWithApple = async (
+  identityToken: string,
+  nonce: string,
+  fullName?: { givenName?: string | null; familyName?: string | null }
+): Promise<FirebaseUser> => {
+  const provider = new OAuthProvider('apple.com');
+  const credential = provider.credential({
+    idToken: identityToken,
+    rawNonce: nonce,
+  });
+  const { user } = await signInWithCredential(auth, credential);
+
+  // Check if user doc exists, create if not
+  const userDoc = await getDoc(doc(db, 'users', user.uid));
+  if (!userDoc.exists()) {
+    const displayName = fullName
+      ? [fullName.givenName, fullName.familyName].filter(Boolean).join(' ')
+      : user.displayName || 'Kullanıcı';
+
+    if (displayName && !user.displayName) {
+      await updateProfile(user, { displayName });
+    }
+
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      displayName: displayName || user.displayName || 'Kullanıcı',
       photoURL: user.photoURL,
       createdAt: serverTimestamp(),
       onboardingCompleted: false,

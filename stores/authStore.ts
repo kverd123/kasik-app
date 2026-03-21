@@ -10,6 +10,7 @@ import {
   registerWithEmail,
   signInWithEmail,
   signInWithGoogle,
+  signInWithApple,
   signOut as authSignOut,
   resetPassword,
   getUserProfile,
@@ -29,6 +30,7 @@ interface AuthState {
   register: (email: string, password: string, displayName: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: (idToken: string) => Promise<void>;
+  loginWithApple: (identityToken: string, nonce: string, fullName?: { givenName?: string | null; familyName?: string | null }) => Promise<void>;
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   clearError: () => void;
@@ -91,8 +93,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (email, password, displayName) => {
     try {
       set({ isLoading: true, error: null });
-      await registerWithEmail(email, password, displayName);
-      // Auth state listener will handle the rest
+      const user = await registerWithEmail(email, password, displayName);
+      // Profili hemen set et, auth listener'ı bekleme
+      set({
+        firebaseUser: user,
+        user: {
+          uid: user.uid,
+          email: user.email || email,
+          displayName: user.displayName || displayName,
+          photoURL: user.photoURL || null,
+          onboardingCompleted: false,
+          isPremium: false,
+        } as any,
+        isAuthenticated: true,
+        isLoading: false,
+      });
     } catch (error: any) {
       const message = getErrorMessage(error.code);
       set({ error: message, isLoading: false });
@@ -104,6 +119,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       await signInWithEmail(email, password);
+      set({ isLoading: false });
     } catch (error: any) {
       const message = getErrorMessage(error.code);
       set({ error: message, isLoading: false });
@@ -114,7 +130,48 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loginWithGoogle: async (idToken) => {
     try {
       set({ isLoading: true, error: null });
-      await signInWithGoogle(idToken);
+      const firebaseUser = await signInWithGoogle(idToken);
+      // Profili hemen set et, auth listener'ı bekleme
+      const profile = await getUserProfile(firebaseUser.uid);
+      set({
+        firebaseUser,
+        user: profile || {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email || '',
+          displayName: firebaseUser.displayName || '',
+          photoURL: firebaseUser.photoURL || null,
+          onboardingCompleted: false,
+          isPremium: false,
+        } as any,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+    } catch (error: any) {
+      const message = getErrorMessage(error.code);
+      set({ error: message, isLoading: false });
+      throw error;
+    }
+  },
+
+  loginWithApple: async (identityToken, nonce, fullName) => {
+    try {
+      set({ isLoading: true, error: null });
+      const firebaseUser = await signInWithApple(identityToken, nonce, fullName);
+      // Profili hemen set et, auth listener'ı bekleme
+      const profile = await getUserProfile(firebaseUser.uid);
+      set({
+        firebaseUser,
+        user: profile || {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email || '',
+          displayName: firebaseUser.displayName || '',
+          photoURL: firebaseUser.photoURL || null,
+          onboardingCompleted: false,
+          isPremium: false,
+        } as any,
+        isAuthenticated: true,
+        isLoading: false,
+      });
     } catch (error: any) {
       const message = getErrorMessage(error.code);
       set({ error: message, isLoading: false });

@@ -1,10 +1,11 @@
 /**
- * Kaşık — Pantry Management Screen (Dolabım Tab)
- * Zustand pantryStore ile yönetilir.
- * Liste layout + swipe-to-delete + düzenleme modalı
+ * Kasik — Pantry Management Screen (Dolabim Tab)
+ * Zustand pantryStore ile yonetilir.
+ * Liste layout + swipe-to-delete + duzenleme modali
+ * + First-use onboarding overlay + Expiring items section
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -18,6 +19,8 @@ import {
   KeyboardAvoidingView,
   RefreshControl,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
 import {
@@ -40,8 +43,45 @@ import { haptics } from '../../lib/haptics';
 import { analytics } from '../../lib/analytics';
 import { EmptyState } from '../../components/ui/EmptyState';
 
-// ===== BİRİM SEÇENEKLERİ =====
-const UNIT_OPTIONS = ['adet', 'gram', 'ml', 'bardak', 'kaşık', 'dilim', 'demet', 'porsiyon'];
+// ===== BIRIM SECENEKLERI =====
+const UNIT_OPTIONS = ['adet', 'gram', 'ml', 'bardak', 'kasik', 'dilim', 'demet', 'porsiyon'];
+
+const ONBOARDING_KEY = '@kasik_pantry_onboarding_done';
+
+// ===== HAZIR DOLAP DEFAULT ITEMS =====
+// ~18 common baby food pantry items covering all categories
+const DEFAULT_PANTRY_FOOD_IDS = [
+  // Sebzeler (5)
+  'havuc', 'patates', 'kabak', 'brokoli', 'tatli_patates',
+  // Meyveler (4)
+  'muz', 'elma', 'armut', 'avokado',
+  // Protein (4)
+  'tavuk', 'yumurta_sarisi', 'mercimek', 'somon',
+  // Tahillar (3)
+  'pirinc', 'yulaf', 'bulgur',
+  // Sut Urunleri (2)
+  'yogurt', 'tereyagi',
+];
+
+function getDefaultAmountAndUnit(food: FoodItem): { amount: number; unit: string } {
+  switch (food.category) {
+    case 'tahil':
+      return { amount: 500, unit: 'gram' };
+    case 'sut_urunleri':
+      if (food.id === 'tereyagi') return { amount: 200, unit: 'gram' };
+      return { amount: 2, unit: 'bardak' };
+    case 'protein':
+      if (food.id === 'mercimek') return { amount: 500, unit: 'gram' };
+      if (food.id === 'yumurta_sarisi') return { amount: 6, unit: 'adet' };
+      return { amount: 2, unit: 'adet' };
+    case 'meyve':
+      return { amount: 3, unit: 'adet' };
+    case 'sebze':
+      return { amount: 3, unit: 'adet' };
+    default:
+      return { amount: 1, unit: 'adet' };
+  }
+}
 
 // GestureHandlerRootView wrapper (native only)
 function GestureWrapper({ children }: { children: React.ReactNode }) {
@@ -74,6 +114,63 @@ export default function PantryScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const loadPantry = usePantryStore((s) => s.loadFromStorage);
 
+  // Onboarding overlay state
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
+
+  // Check onboarding status on mount
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const done = await AsyncStorage.getItem(ONBOARDING_KEY);
+        if (!done && isLoaded && items.length === 0) {
+          setShowOnboarding(true);
+        }
+      } catch (e) {
+        console.warn('Onboarding check failed:', e);
+      } finally {
+        setOnboardingChecked(true);
+      }
+    };
+    if (isLoaded) {
+      checkOnboarding();
+    }
+  }, [isLoaded, items.length]);
+
+  const dismissOnboarding = useCallback(async () => {
+    setShowOnboarding(false);
+    try {
+      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+    } catch (e) {
+      console.warn('Failed to save onboarding state:', e);
+    }
+  }, []);
+
+  const handleReadyPantry = useCallback(async () => {
+    // Add default items from FOODS constant
+    for (const foodId of DEFAULT_PANTRY_FOOD_IDS) {
+      const food = FOODS.find((f) => f.id === foodId);
+      if (!food) continue;
+      const { amount, unit } = getDefaultAmountAndUnit(food);
+      const freshDays = getDefaultFreshnessDays(food.name);
+      addItem({
+        name: food.name,
+        emoji: food.emoji,
+        category: food.category,
+        amount,
+        unit,
+        daysLeft: freshDays === 0 ? 7 : freshDays,
+      });
+    }
+    haptics.selection();
+    await dismissOnboarding();
+  }, [addItem, dismissOnboarding]);
+
+  const handleFillManually = useCallback(async () => {
+    await dismissOnboarding();
+    router.replace('/(tabs)/plan');
+  }, [dismissOnboarding]);
+
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -83,7 +180,7 @@ export default function PantryScreen() {
     }
   };
 
-  // Kategorilere göre grupla
+  // Kategorilere gore grupla
   const groupedItems = useMemo(() => getItemsByCategory(), [items]);
 
   // Convert pantry items to PantryItem[] for the AI modal
@@ -124,10 +221,10 @@ export default function PantryScreen() {
 
   const getFreshnessLabel = (daysLeft?: number) => {
     if (daysLeft === undefined) return '';
-    if (daysLeft === -1) return 'Kuru Gıda';
-    if (daysLeft <= 0) return 'Süresi Doldu!';
-    if (daysLeft === 1) return 'Son 1 gün';
-    return `${daysLeft} gün`;
+    if (daysLeft === -1) return 'Kuru Gida';
+    if (daysLeft <= 0) return 'Suresi Doldu!';
+    if (daysLeft === 1) return 'Son 1 gun';
+    return `${daysLeft} gun`;
   };
 
   const categoryOrder: PantryCategory[] = [
@@ -138,7 +235,7 @@ export default function PantryScreen() {
     <GestureWrapper>
       <View style={styles.container}>
         <ScreenHeader
-          title="Dolabım"
+          title="Dolabim"
           emoji="🗄️"
           rightActions={[
             { icon: '➕', onPress: () => setShowAddModal(true) },
@@ -161,7 +258,7 @@ export default function PantryScreen() {
             >
               {expiringCount}
             </Text>
-            <Text style={styles.statLabel}>Taze Tüketin</Text>
+            <Text style={styles.statLabel}>Taze Tuketin</Text>
           </View>
           <View style={styles.statDivider} />
           <TouchableOpacity
@@ -207,6 +304,26 @@ export default function PantryScreen() {
             />
           }
         >
+          {/* ===== EXPIRING ITEMS SECTION ===== */}
+          {expiringItems.length > 0 && (
+            <View style={styles.expiringSection}>
+              <View style={styles.expiringSectionHeader}>
+                <Text style={styles.expiringSectionTitle}>⚠️ Bayatlayacak Urunler</Text>
+              </View>
+              {expiringItems.map((item) => (
+                <View key={item.id} style={styles.expiringItemRow}>
+                  <Text style={styles.expiringItemEmoji}>{item.emoji}</Text>
+                  <Text style={styles.expiringItemName} numberOfLines={1}>{item.name}</Text>
+                  <Text style={styles.expiringItemDays}>
+                    {item.daysLeft !== undefined && item.daysLeft <= 0
+                      ? 'Suresi doldu!'
+                      : `${item.daysLeft} gun kaldi`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+
           {categoryOrder.map((category) => {
             const catItems = filteredGroups[category];
             if (!catItems || catItems.length === 0) return null;
@@ -237,7 +354,7 @@ export default function PantryScreen() {
                         {/* Emoji */}
                         <Text style={styles.itemEmoji}>{item.emoji}</Text>
 
-                        {/* İsim + Miktar */}
+                        {/* Isim + Miktar */}
                         <View style={styles.itemInfo}>
                           <Text style={styles.itemName} numberOfLines={1}>
                             {item.name}
@@ -285,8 +402,8 @@ export default function PantryScreen() {
           {items.length === 0 && isLoaded && (
             <EmptyState
               emoji="🗄️"
-              title="Dolabınız boş"
-              subtitle="Bebeğiniz için malzeme ekleyerek başlayın!"
+              title="Dolabiniz bos"
+              subtitle="Bebeginiz icin malzeme ekleyerek baslayin!"
               ctaLabel="Malzeme Ekle"
               onCtaPress={() => setShowAddModal(true)}
             />
@@ -294,6 +411,52 @@ export default function PantryScreen() {
 
           <AdBanner />
         </ScrollView>
+
+        {/* First-use Onboarding Overlay */}
+        <Modal
+          visible={showOnboarding}
+          animationType="fade"
+          transparent
+          onRequestClose={dismissOnboarding}
+        >
+          <View style={styles.onboardingOverlay}>
+            <View style={styles.onboardingCard}>
+              <Text style={styles.onboardingEmoji}>🧊</Text>
+              <Text style={styles.onboardingTitle}>Dolabinda neler var?</Text>
+              <Text style={styles.onboardingSubtitle}>
+                Bebeginizin beslenme planini olusturmak icin dolabin icini bilmemiz lazim.
+              </Text>
+
+              <TouchableOpacity
+                style={styles.onboardingBtnPrimary}
+                onPress={handleReadyPantry}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.onboardingBtnPrimaryEmoji}>✨</Text>
+                <View style={styles.onboardingBtnTextWrap}>
+                  <Text style={styles.onboardingBtnPrimaryText}>Hazir Dolap</Text>
+                  <Text style={styles.onboardingBtnPrimarySubtext}>
+                    Temel malzemelerle doldur
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.onboardingBtnSecondary}
+                onPress={handleFillManually}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.onboardingBtnSecondaryEmoji}>➕</Text>
+                <View style={styles.onboardingBtnTextWrap}>
+                  <Text style={styles.onboardingBtnSecondaryText}>Dolduralim</Text>
+                  <Text style={styles.onboardingBtnSecondarySubtext}>
+                    Kendim eklemek istiyorum
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
         {/* Add Pantry Item Modal */}
         <AddPantryItemModal
@@ -347,7 +510,7 @@ export default function PantryScreen() {
   );
 }
 
-// ===== DÜZENLEME MODALI =====
+// ===== DUZENLEME MODALI =====
 
 interface EditPantryItemModalProps {
   visible: boolean;
@@ -366,7 +529,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
   const [freshnessDay, setFreshnessDay] = useState('');
   const [isDry, setIsDry] = useState(false);
 
-  // Item değiştiğinde form'u güncelle
+  // Item degistiginde form'u guncelle
   React.useEffect(() => {
     if (item) {
       setAmount(String(item.amount));
@@ -398,14 +561,14 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
 
   const handleDelete = () => {
     if (Platform.OS === 'web') {
-      if (window.confirm('Bu malzemeyi dolaptan kaldırmak istiyor musunuz?')) {
+      if (window.confirm('Bu malzemeyi dolaptan kaldirmak istiyor musunuz?')) {
         onDelete(item.id);
       }
     } else {
       const { Alert } = require('react-native');
-      Alert.alert('Kaldır', 'Bu malzemeyi dolaptan kaldırmak istiyor musunuz?', [
-        { text: 'İptal', style: 'cancel' },
-        { text: 'Kaldır', style: 'destructive', onPress: () => onDelete(item.id) },
+      Alert.alert('Kaldir', 'Bu malzemeyi dolaptan kaldirmak istiyor musunuz?', [
+        { text: 'Iptal', style: 'cancel' },
+        { text: 'Kaldir', style: 'destructive', onPress: () => onDelete(item.id) },
       ]);
     }
   };
@@ -423,7 +586,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
           <TouchableOpacity onPress={onClose}>
             <Text style={modalStyles.closeBtn}>✕</Text>
           </TouchableOpacity>
-          <Text style={modalStyles.title}>✏️ Düzenle</Text>
+          <Text style={modalStyles.title}>✏️ Duzenle</Text>
           <TouchableOpacity onPress={handleDelete}>
             <Text style={editStyles.deleteHeaderBtn}>🗑️</Text>
           </TouchableOpacity>
@@ -438,7 +601,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            {/* Seçilen ürün gösterimi */}
+            {/* Secilen urun gosterimi */}
             <View style={modalStyles.selectedCard}>
               <Text style={modalStyles.selectedEmoji}>{item.emoji}</Text>
               <Text style={modalStyles.selectedName}>{item.name}</Text>
@@ -506,7 +669,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
 
             {/* Tazelik */}
             <View style={modalStyles.fieldGroup}>
-              <Text style={modalStyles.fieldLabel}>Tazelik Süresi</Text>
+              <Text style={modalStyles.fieldLabel}>Tazelik Suresi</Text>
 
               <TouchableOpacity
                 style={[
@@ -519,7 +682,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
                 }}
               >
                 <Text style={modalStyles.dryToggleText}>
-                  {isDry ? '✅' : '⬜'} Kuru gıda (bayatlamaz)
+                  {isDry ? '✅' : '⬜'} Kuru gida (bayatlamaz)
                 </Text>
               </TouchableOpacity>
 
@@ -534,7 +697,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
                     placeholderTextColor={colors.border}
                     textAlign="center"
                   />
-                  <Text style={modalStyles.freshnessUnit}>gün</Text>
+                  <Text style={modalStyles.freshnessUnit}>gun</Text>
                 </View>
               )}
             </View>
@@ -560,7 +723,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
   );
 }
 
-// ===== ÜRÜN EKLEME MODALI =====
+// ===== URUN EKLEME MODALI =====
 
 interface AddPantryItemModalProps {
   visible: boolean;
@@ -579,7 +742,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
   const [freshnessDay, setFreshnessDay] = useState('');
   const [isDry, setIsDry] = useState(false);
 
-  // Custom ürün için
+  // Custom urun icin
   const [customName, setCustomName] = useState('');
   const [customEmoji, setCustomEmoji] = useState('🍽️');
   const [customCategory, setCustomCategory] = useState<PantryCategory>('diger');
@@ -609,7 +772,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
     );
   }, [searchQuery]);
 
-  // Kategoriye göre grupla
+  // Kategoriye gore grupla
   const foodsByCategory = useMemo(() => {
     const groups: Record<string, FoodItem[]> = {};
     for (const food of filteredFoods) {
@@ -621,7 +784,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
 
   const selectFood = (food: FoodItem) => {
     setSelectedFood(food);
-    // Varsayılan tazelik gününü öner
+    // Varsayilan tazelik gununu oner
     const defaultDays = getDefaultFreshnessDays(food.name);
     if (defaultDays === -1) {
       setIsDry(true);
@@ -631,7 +794,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
       setFreshnessDay(String(defaultDays));
     } else {
       setIsDry(false);
-      setFreshnessDay('7'); // Bilinmiyorsa 7 gün
+      setFreshnessDay('7'); // Bilinmiyorsa 7 gun
     }
     setStep('details');
   };
@@ -697,7 +860,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
         </View>
 
         {step === 'select' ? (
-          /* ===== STEP 1: ÜRÜN SEÇ ===== */
+          /* ===== STEP 1: URUN SEC ===== */
           <>
             {/* Search */}
             <View style={modalStyles.searchContainer}>
@@ -707,7 +870,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
                   style={modalStyles.searchInput}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                  placeholder="Ürün ara..."
+                  placeholder="Urun ara..."
                   placeholderTextColor={colors.border}
                   autoFocus
                 />
@@ -719,7 +882,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
             >
-              {/* Diğer / Custom ürün */}
+              {/* Diger / Custom urun */}
               <TouchableOpacity
                 style={modalStyles.customBtn}
                 onPress={selectCustom}
@@ -767,7 +930,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
             </ScrollView>
           </>
         ) : (
-          /* ===== STEP 2: MİKTAR + TAZELİK ===== */
+          /* ===== STEP 2: MIKTAR + TAZELIK ===== */
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
             style={{ flex: 1 }}
@@ -777,25 +940,25 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
             >
-              {/* Seçilen ürün gösterimi */}
+              {/* Secilen urun gosterimi */}
               <View style={modalStyles.selectedCard}>
                 <Text style={modalStyles.selectedEmoji}>
                   {selectedFood ? selectedFood.emoji : customEmoji}
                 </Text>
                 <Text style={modalStyles.selectedName}>
-                  {selectedFood ? selectedFood.name : 'Özel Ürün'}
+                  {selectedFood ? selectedFood.name : 'Ozel Urun'}
                 </Text>
               </View>
 
-              {/* Custom ürün bilgileri */}
+              {/* Custom urun bilgileri */}
               {!selectedFood && (
                 <View style={modalStyles.fieldGroup}>
-                  <Text style={modalStyles.fieldLabel}>Ürün Adı</Text>
+                  <Text style={modalStyles.fieldLabel}>Urun Adi</Text>
                   <TextInput
                     style={modalStyles.textInput}
                     value={customName}
                     onChangeText={setCustomName}
-                    placeholder="Ör: Kereviz"
+                    placeholder="Or: Kereviz"
                     placeholderTextColor={colors.border}
                   />
 
@@ -882,7 +1045,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
 
               {/* Tazelik */}
               <View style={modalStyles.fieldGroup}>
-                <Text style={modalStyles.fieldLabel}>Tazelik Süresi</Text>
+                <Text style={modalStyles.fieldLabel}>Tazelik Suresi</Text>
 
                 <TouchableOpacity
                   style={[
@@ -895,7 +1058,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
                   }}
                 >
                   <Text style={modalStyles.dryToggleText}>
-                    {isDry ? '✅' : '⬜'} Kuru gıda (bayatlamaz)
+                    {isDry ? '✅' : '⬜'} Kuru gida (bayatlamaz)
                   </Text>
                 </TouchableOpacity>
 
@@ -910,11 +1073,11 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
                       placeholderTextColor={colors.border}
                       textAlign="center"
                     />
-                    <Text style={modalStyles.freshnessUnit}>gün</Text>
+                    <Text style={modalStyles.freshnessUnit}>gun</Text>
                     {selectedFood && (
                       <Text style={modalStyles.freshnessSuggestion}>
-                        (önerilen: {getDefaultFreshnessDays(selectedFood.name) > 0
-                          ? `${getDefaultFreshnessDays(selectedFood.name)} gün`
+                        (onerilen: {getDefaultFreshnessDays(selectedFood.name) > 0
+                          ? `${getDefaultFreshnessDays(selectedFood.name)} gun`
                           : 'bilinmiyor'})
                       </Text>
                     )}
@@ -1101,9 +1264,139 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     color: colors.border,
     marginLeft: 4,
   },
+
+  // ===== EXPIRING ITEMS SECTION =====
+  expiringSection: {
+    backgroundColor: colors.warningBg,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.xl,
+    borderWidth: 1,
+    borderColor: colors.warning,
+  },
+  expiringSectionHeader: {
+    marginBottom: Spacing.md,
+  },
+  expiringSectionTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.base,
+    color: colors.warningDark,
+  },
+  expiringItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.xs,
+    gap: Spacing.sm,
+  },
+  expiringItemEmoji: {
+    fontSize: 20,
+    width: 28,
+    textAlign: 'center',
+  },
+  expiringItemName: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.sm,
+    color: colors.textDark,
+    flex: 1,
+  },
+  expiringItemDays: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.sm,
+    color: colors.heart,
+  },
+
+  // ===== ONBOARDING OVERLAY =====
+  onboardingOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+  },
+  onboardingCard: {
+    backgroundColor: colors.white,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xxl,
+    width: '100%',
+    maxWidth: 360,
+    alignItems: 'center',
+    ...Shadow.soft,
+  },
+  onboardingEmoji: {
+    fontSize: 56,
+    marginBottom: Spacing.md,
+  },
+  onboardingTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.xxl,
+    color: colors.textDark,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  onboardingSubtitle: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.sm,
+    color: colors.textLight,
+    textAlign: 'center',
+    marginBottom: Spacing.xxl,
+    lineHeight: 20,
+  },
+  onboardingBtnPrimary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.sage,
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    width: '100%',
+    marginBottom: Spacing.md,
+    gap: Spacing.md,
+  },
+  onboardingBtnPrimaryEmoji: {
+    fontSize: 28,
+  },
+  onboardingBtnTextWrap: {
+    flex: 1,
+  },
+  onboardingBtnPrimaryText: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.lg,
+    color: colors.white,
+  },
+  onboardingBtnPrimarySubtext: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.xs,
+    color: colors.white,
+    opacity: 0.85,
+    marginTop: 2,
+  },
+  onboardingBtnSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.creamMid,
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    width: '100%',
+    gap: Spacing.md,
+  },
+  onboardingBtnSecondaryEmoji: {
+    fontSize: 28,
+  },
+  onboardingBtnSecondaryText: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.lg,
+    color: colors.textDark,
+  },
+  onboardingBtnSecondarySubtext: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.xs,
+    color: colors.textLight,
+    marginTop: 2,
+  },
 });
 
-// ===== EDIT MODAL STİLLERİ =====
+// ===== EDIT MODAL STILLERI =====
 
 const createEditStyles = (colors: ThemeColors) => StyleSheet.create({
   deleteHeaderBtn: {
@@ -1119,7 +1412,7 @@ const createEditStyles = (colors: ThemeColors) => StyleSheet.create({
   },
 });
 
-// ===== MODAL STİLLERİ =====
+// ===== MODAL STILLERI =====
 
 const createModalStyles = (colors: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.cream },
