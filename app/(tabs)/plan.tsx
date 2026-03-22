@@ -302,16 +302,23 @@ export default function PlanScreen() {
     }, 800);
   }, [generateWeeklyPlan]);
 
+  // Verisi olan tarifler (bos/verisiz tarifleri filtrele)
+  const validRecipes = useMemo(() => {
+    return ALL_RECIPES.filter(
+      (r) => r.ingredients.length > 0 && r.steps.length > 0
+    );
+  }, []);
+
   // Arama ile filtrelenen tum tarifler
   const filteredAllRecipes = useMemo(() => {
     const q = recipeSearch.toLowerCase().trim();
-    if (!q) return ALL_RECIPES;
-    return ALL_RECIPES.filter(
+    if (!q) return validRecipes;
+    return validRecipes.filter(
       (r) =>
         r.title.toLowerCase().includes(q) ||
         r.ingredients.some((ing) => ing.name.toLowerCase().includes(q))
     );
-  }, [recipeSearch]);
+  }, [recipeSearch, validRecipes]);
 
   // Saved recipe IDs — saved olanlari "Tum Tarifler" bolumunde gostermeyecegiz (duplicate olmasin)
   const savedRecipeIds = useMemo(() => new Set(savedRecipes.map((r) => r.id)), [savedRecipes]);
@@ -669,9 +676,17 @@ export default function PlanScreen() {
                   </TouchableOpacity>
                 </View>
 
-                {/* Meal Cards */}
-                {meals[slot].length > 0 ? (
-                  meals[slot].map((meal) => (
+                {/* Meal Cards - bos/verisiz tarifleri filtrele */}
+                {meals[slot].filter((m) => {
+                  if (!m.recipeId) return true; // recipeId yok ise goster (manual eklenmis)
+                  const recipe = RECIPES_BY_ID[m.recipeId];
+                  return !recipe || (recipe.ingredients.length > 0 && recipe.steps.length > 0);
+                }).length > 0 ? (
+                  meals[slot].filter((m) => {
+                    if (!m.recipeId) return true;
+                    const recipe = RECIPES_BY_ID[m.recipeId];
+                    return !recipe || (recipe.ingredients.length > 0 && recipe.steps.length > 0);
+                  }).map((meal) => (
                     <Card
                       key={meal.id}
                       variant={meal.allergenWarning?.length ? 'warning' : 'default'}

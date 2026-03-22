@@ -57,15 +57,15 @@ export default function LoginScreen() {
       }
       await loginWithGoogle(idToken);
       analytics.login('google');
-      // Yeni kullanıcıysa onboarding'e, mevcut kullanıcıysa plan'a yönlendir
-      const { user } = useAuthStore.getState();
+      // State güncellemesi sonrası fresh state oku (race condition önleme)
       setTimeout(() => {
-        if (user && !user.onboardingCompleted) {
+        const { user: currentUser } = useAuthStore.getState();
+        if (currentUser && !currentUser.onboardingCompleted) {
           router.replace('/(onboarding)/welcome');
         } else {
           router.replace('/(tabs)/plan');
         }
-      }, 100);
+      }, 300);
     } catch (error: any) {
       if (error.code !== 'SIGN_IN_CANCELLED') {
         Alert.alert('Hata', 'Google ile giriş yapılamadı.');
@@ -96,15 +96,15 @@ export default function LoginScreen() {
 
       await loginWithApple(credential.identityToken, nonce, credential.fullName ?? undefined);
       analytics.login('apple');
-      // Yeni kullanıcıysa onboarding'e, mevcut kullanıcıysa plan'a yönlendir
-      const { user: appleUser } = useAuthStore.getState();
+      // State güncellemesi sonrası fresh state oku (race condition önleme)
       setTimeout(() => {
-        if (appleUser && !appleUser.onboardingCompleted) {
+        const { user: currentUser } = useAuthStore.getState();
+        if (currentUser && !currentUser.onboardingCompleted) {
           router.replace('/(onboarding)/welcome');
         } else {
           router.replace('/(tabs)/plan');
         }
-      }, 100);
+      }, 300);
     } catch (error: any) {
       if (error.code !== 'ERR_REQUEST_CANCELED') {
         Alert.alert('Hata', 'Apple ile giriş yapılamadı.');
@@ -121,8 +121,15 @@ export default function LoginScreen() {
     try {
       await login(email.trim(), password);
       analytics.login('email');
-      // Giriş başarılı — state güncellemesi sonrası yönlendir
-      setTimeout(() => router.replace('/(tabs)/plan'), 100);
+      // Giriş başarılı — state güncellemesi sonrası onboarding kontrolü
+      setTimeout(() => {
+        const { user: currentUser } = useAuthStore.getState();
+        if (currentUser && !currentUser.onboardingCompleted) {
+          router.replace('/(onboarding)/welcome');
+        } else {
+          router.replace('/(tabs)/plan');
+        }
+      }, 300);
     } catch {
       // Error is set in the store
     }

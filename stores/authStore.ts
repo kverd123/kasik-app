@@ -130,22 +130,38 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loginWithGoogle: async (idToken) => {
     try {
       set({ isLoading: true, error: null });
-      const firebaseUser = await signInWithGoogle(idToken);
-      // Profili hemen set et, auth listener'ı bekleme
-      const profile = await getUserProfile(firebaseUser.uid);
-      set({
-        firebaseUser,
-        user: profile || {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          displayName: firebaseUser.displayName || '',
-          photoURL: firebaseUser.photoURL || null,
-          onboardingCompleted: false,
-          isPremium: false,
-        } as any,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      const { user: firebaseUser, isNewUser } = await signInWithGoogle(idToken);
+      // Yeni kullanıcıysa onboardingCompleted: false olarak set et
+      if (isNewUser) {
+        set({
+          firebaseUser,
+          user: {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            displayName: firebaseUser.displayName || '',
+            photoURL: firebaseUser.photoURL || null,
+            onboardingCompleted: false,
+            isPremium: false,
+          } as any,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        const profile = await getUserProfile(firebaseUser.uid);
+        set({
+          firebaseUser,
+          user: profile || {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            displayName: firebaseUser.displayName || '',
+            photoURL: firebaseUser.photoURL || null,
+            onboardingCompleted: false,
+            isPremium: false,
+          } as any,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      }
     } catch (error: any) {
       const message = getErrorMessage(error.code);
       set({ error: message, isLoading: false });
@@ -156,22 +172,38 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loginWithApple: async (identityToken, nonce, fullName) => {
     try {
       set({ isLoading: true, error: null });
-      const firebaseUser = await signInWithApple(identityToken, nonce, fullName);
-      // Profili hemen set et, auth listener'ı bekleme
-      const profile = await getUserProfile(firebaseUser.uid);
-      set({
-        firebaseUser,
-        user: profile || {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          displayName: firebaseUser.displayName || '',
-          photoURL: firebaseUser.photoURL || null,
-          onboardingCompleted: false,
-          isPremium: false,
-        } as any,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      const { user: firebaseUser, isNewUser } = await signInWithApple(identityToken, nonce, fullName);
+      // Yeni kullanıcıysa onboardingCompleted: false olarak set et
+      if (isNewUser) {
+        set({
+          firebaseUser,
+          user: {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            displayName: firebaseUser.displayName || '',
+            photoURL: firebaseUser.photoURL || null,
+            onboardingCompleted: false,
+            isPremium: false,
+          } as any,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        const profile = await getUserProfile(firebaseUser.uid);
+        set({
+          firebaseUser,
+          user: profile || {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            displayName: firebaseUser.displayName || '',
+            photoURL: firebaseUser.photoURL || null,
+            onboardingCompleted: false,
+            isPremium: false,
+          } as any,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      }
     } catch (error: any) {
       const message = getErrorMessage(error.code);
       set({ error: message, isLoading: false });

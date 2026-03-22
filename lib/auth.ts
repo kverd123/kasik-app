@@ -62,13 +62,14 @@ export const signInWithEmail = async (
 /**
  * Sign in with Google
  */
-export const signInWithGoogle = async (idToken: string): Promise<FirebaseUser> => {
+export const signInWithGoogle = async (idToken: string): Promise<{ user: FirebaseUser; isNewUser: boolean }> => {
   const credential = GoogleAuthProvider.credential(idToken);
   const { user } = await signInWithCredential(auth, credential);
 
   // Check if user doc exists, create if not
   const userDoc = await getDoc(doc(db, 'users', user.uid));
-  if (!userDoc.exists()) {
+  const isNewUser = !userDoc.exists();
+  if (isNewUser) {
     await setDoc(doc(db, 'users', user.uid), {
       email: user.email,
       displayName: user.displayName,
@@ -84,7 +85,7 @@ export const signInWithGoogle = async (idToken: string): Promise<FirebaseUser> =
     });
   }
 
-  return user;
+  return { user, isNewUser };
 };
 
 /**
@@ -94,7 +95,7 @@ export const signInWithApple = async (
   identityToken: string,
   nonce: string,
   fullName?: { givenName?: string | null; familyName?: string | null }
-): Promise<FirebaseUser> => {
+): Promise<{ user: FirebaseUser; isNewUser: boolean }> => {
   const provider = new OAuthProvider('apple.com');
   const credential = provider.credential({
     idToken: identityToken,
@@ -104,7 +105,8 @@ export const signInWithApple = async (
 
   // Check if user doc exists, create if not
   const userDoc = await getDoc(doc(db, 'users', user.uid));
-  if (!userDoc.exists()) {
+  const isNewUser = !userDoc.exists();
+  if (isNewUser) {
     const displayName = fullName
       ? [fullName.givenName, fullName.familyName].filter(Boolean).join(' ')
       : user.displayName || 'Kullanıcı';
@@ -128,7 +130,7 @@ export const signInWithApple = async (
     });
   }
 
-  return user;
+  return { user, isNewUser };
 };
 
 /**
