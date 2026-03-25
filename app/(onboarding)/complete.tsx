@@ -21,16 +21,16 @@ import { useBabyStore } from '../../stores/babyStore';
 const CONFETTI = ['🎉', '🥳', '✨', '🎊', '⭐', '💚'];
 
 const CHECKLIST = [
-  { emoji: '✅', text: 'Bebek profili olusturuldu' },
+  { emoji: '✅', text: 'Bebek profili oluşturuldu' },
   { emoji: '✅', text: 'Alerjenler kaydedildi' },
-  { emoji: '✅', text: '100+ tarif hazir' },
-  { emoji: '✅', text: 'Beslenme plani aktif' },
+  { emoji: '✅', text: '100+ tarif hazır' },
+  { emoji: '✅', text: 'Beslenme planı aktif' },
 ];
 
 export default function CompleteScreen() {
   const colors = useColors();
   const { baby } = useBabyStore();
-  const babyName = baby?.name || 'Bebeginiz';
+  const babyName = baby?.name || 'Bebeğiniz';
 
   // Animations
   const scaleAnim = useRef(new Animated.Value(0)).current;
@@ -84,13 +84,13 @@ export default function CompleteScreen() {
         <Animated.View style={[styles.celebrationBlock, { transform: [{ scale: scaleAnim }] }]}>
           <Text style={styles.bigEmoji}>🥄</Text>
           <Text style={[styles.celebrationTitle, { color: colors.sage }]}>Harika!</Text>
-          <Text style={[styles.celebrationSubtitle, { color: colors.textMid }]}>Her sey hazir.</Text>
+          <Text style={[styles.celebrationSubtitle, { color: colors.textMid }]}>Her şey hazır.</Text>
         </Animated.View>
 
         {/* Personal message */}
         <Animated.View style={[styles.messageCard, { backgroundColor: colors.white, borderColor: colors.sageLight, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
           <Text style={[styles.messageText, { color: colors.textMid }]}>
-            {babyName} icin kisisellestirilmis beslenme plani olusturuldu. Simdi ek gida yolculuguna baslayabilirsiniz!
+            {babyName} için kişiselleştirilmiş beslenme planı oluşturuldu. Şimdi ek gıda yolculuğuna başlayabilirsiniz!
           </Text>
         </Animated.View>
 
@@ -107,7 +107,7 @@ export default function CompleteScreen() {
         {/* CTA */}
         <View style={styles.ctaContainer}>
           <Button
-            title="Planima Git →"
+            title="Planıma Git →"
             onPress={handleGoToPlan}
             fullWidth
             size="lg"

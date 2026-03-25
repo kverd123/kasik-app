@@ -116,8 +116,8 @@ export default function PostDetailScreen() {
   };
 
   const handleReport = () => {
-    Alert.alert('Gonderiyi Bildir', 'Bu gonderiyi uygunsuz olarak bildirmek istiyor musunuz?', [
-      { text: 'Iptal', style: 'cancel' },
+    Alert.alert('Gönderiyi Bildir', 'Bu gönderiyi uygunsuz olarak bildirmek istiyor musunuz?', [
+      { text: 'İptal', style: 'cancel' },
       {
         text: 'Bildir',
         style: 'destructive',
@@ -294,7 +294,7 @@ export default function PostDetailScreen() {
               <View style={styles.noComments}>
                 <Text style={{ fontSize: 32 }}>🥄</Text>
                 <Text style={styles.noCommentsText}>
-                  Henuz yorum yok. Ilk yorumu siz yapin!
+                  Henüz yorum yok. İlk yorumu siz yapın!
                 </Text>
               </View>
             ) : (

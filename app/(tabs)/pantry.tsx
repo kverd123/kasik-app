@@ -44,7 +44,7 @@ import { analytics } from '../../lib/analytics';
 import { EmptyState } from '../../components/ui/EmptyState';
 
 // ===== BIRIM SECENEKLERI =====
-const UNIT_OPTIONS = ['adet', 'gram', 'ml', 'bardak', 'kasik', 'dilim', 'demet', 'porsiyon'];
+const UNIT_OPTIONS = ['adet', 'gram', 'ml', 'bardak', 'kaşık', 'dilim', 'demet', 'porsiyon'];
 
 const ONBOARDING_KEY = '@kasik_pantry_onboarding_done';
 
@@ -221,10 +221,10 @@ export default function PantryScreen() {
 
   const getFreshnessLabel = (daysLeft?: number) => {
     if (daysLeft === undefined) return '';
-    if (daysLeft === -1) return 'Kuru Gida';
-    if (daysLeft <= 0) return 'Suresi Doldu!';
-    if (daysLeft === 1) return 'Son 1 gun';
-    return `${daysLeft} gun`;
+    if (daysLeft === -1) return 'Kuru Gıda';
+    if (daysLeft <= 0) return 'Süresi Doldu!';
+    if (daysLeft === 1) return 'Son 1 gün';
+    return `${daysLeft} gün`;
   };
 
   const categoryOrder: PantryCategory[] = [
@@ -235,7 +235,7 @@ export default function PantryScreen() {
     <GestureWrapper>
       <View style={styles.container}>
         <ScreenHeader
-          title="Dolabim"
+          title="Dolabım"
           emoji="🗄️"
           rightActions={[
             { icon: '➕', onPress: () => setShowAddModal(true) },
@@ -258,7 +258,7 @@ export default function PantryScreen() {
             >
               {expiringCount}
             </Text>
-            <Text style={styles.statLabel}>Taze Tuketin</Text>
+            <Text style={styles.statLabel}>Taze Tüketin</Text>
           </View>
           <View style={styles.statDivider} />
           <TouchableOpacity
@@ -308,7 +308,7 @@ export default function PantryScreen() {
           {expiringItems.length > 0 && (
             <View style={styles.expiringSection}>
               <View style={styles.expiringSectionHeader}>
-                <Text style={styles.expiringSectionTitle}>⚠️ Bayatlayacak Urunler</Text>
+                <Text style={styles.expiringSectionTitle}>⚠️ Bayatlayacak Ürünler</Text>
               </View>
               {expiringItems.map((item) => (
                 <View key={item.id} style={styles.expiringItemRow}>
@@ -316,8 +316,8 @@ export default function PantryScreen() {
                   <Text style={styles.expiringItemName} numberOfLines={1}>{item.name}</Text>
                   <Text style={styles.expiringItemDays}>
                     {item.daysLeft !== undefined && item.daysLeft <= 0
-                      ? 'Suresi doldu!'
-                      : `${item.daysLeft} gun kaldi`}
+                      ? 'Süresi doldu!'
+                      : `${item.daysLeft} gün kaldı`}
                   </Text>
                 </View>
               ))}
@@ -402,8 +402,8 @@ export default function PantryScreen() {
           {items.length === 0 && isLoaded && (
             <EmptyState
               emoji="🗄️"
-              title="Dolabiniz bos"
-              subtitle="Bebeginiz icin malzeme ekleyerek baslayin!"
+              title="Dolabınız boş"
+              subtitle="Bebeğiniz için malzeme ekleyerek başlayın!"
               ctaLabel="Malzeme Ekle"
               onCtaPress={() => setShowAddModal(true)}
             />
@@ -422,9 +422,9 @@ export default function PantryScreen() {
           <View style={styles.onboardingOverlay}>
             <View style={styles.onboardingCard}>
               <Text style={styles.onboardingEmoji}>🧊</Text>
-              <Text style={styles.onboardingTitle}>Dolabinda neler var?</Text>
+              <Text style={styles.onboardingTitle}>Dolabında neler var?</Text>
               <Text style={styles.onboardingSubtitle}>
-                Bebeginizin beslenme planini olusturmak icin dolabin icini bilmemiz lazim.
+                Bebeğinizin beslenme planını oluşturmak için dolabın içini bilmemiz lazım.
               </Text>
 
               <TouchableOpacity
@@ -434,7 +434,7 @@ export default function PantryScreen() {
               >
                 <Text style={styles.onboardingBtnPrimaryEmoji}>✨</Text>
                 <View style={styles.onboardingBtnTextWrap}>
-                  <Text style={styles.onboardingBtnPrimaryText}>Hazir Dolap</Text>
+                  <Text style={styles.onboardingBtnPrimaryText}>Hazır Dolap</Text>
                   <Text style={styles.onboardingBtnPrimarySubtext}>
                     Temel malzemelerle doldur
                   </Text>
@@ -448,7 +448,7 @@ export default function PantryScreen() {
               >
                 <Text style={styles.onboardingBtnSecondaryEmoji}>➕</Text>
                 <View style={styles.onboardingBtnTextWrap}>
-                  <Text style={styles.onboardingBtnSecondaryText}>Dolduralim</Text>
+                  <Text style={styles.onboardingBtnSecondaryText}>Dolduralım</Text>
                   <Text style={styles.onboardingBtnSecondarySubtext}>
                     Kendim eklemek istiyorum
                   </Text>
@@ -561,14 +561,14 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
 
   const handleDelete = () => {
     if (Platform.OS === 'web') {
-      if (window.confirm('Bu malzemeyi dolaptan kaldirmak istiyor musunuz?')) {
+      if (window.confirm('Bu malzemeyi dolaptan kaldırmak istiyor musunuz?')) {
         onDelete(item.id);
       }
     } else {
       const { Alert } = require('react-native');
-      Alert.alert('Kaldir', 'Bu malzemeyi dolaptan kaldirmak istiyor musunuz?', [
-        { text: 'Iptal', style: 'cancel' },
-        { text: 'Kaldir', style: 'destructive', onPress: () => onDelete(item.id) },
+      Alert.alert('Kaldır', 'Bu malzemeyi dolaptan kaldırmak istiyor musunuz?', [
+        { text: 'İptal', style: 'cancel' },
+        { text: 'Kaldır', style: 'destructive', onPress: () => onDelete(item.id) },
       ]);
     }
   };
@@ -586,7 +586,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
           <TouchableOpacity onPress={onClose}>
             <Text style={modalStyles.closeBtn}>✕</Text>
           </TouchableOpacity>
-          <Text style={modalStyles.title}>✏️ Duzenle</Text>
+          <Text style={modalStyles.title}>✏️ Düzenle</Text>
           <TouchableOpacity onPress={handleDelete}>
             <Text style={editStyles.deleteHeaderBtn}>🗑️</Text>
           </TouchableOpacity>
@@ -669,7 +669,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
 
             {/* Tazelik */}
             <View style={modalStyles.fieldGroup}>
-              <Text style={modalStyles.fieldLabel}>Tazelik Suresi</Text>
+              <Text style={modalStyles.fieldLabel}>Tazelik Süresi</Text>
 
               <TouchableOpacity
                 style={[
@@ -682,7 +682,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
                 }}
               >
                 <Text style={modalStyles.dryToggleText}>
-                  {isDry ? '✅' : '⬜'} Kuru gida (bayatlamaz)
+                  {isDry ? '✅' : '⬜'} Kuru gıda (bayatlamaz)
                 </Text>
               </TouchableOpacity>
 
@@ -697,7 +697,7 @@ function EditPantryItemModal({ visible, item, onClose, onSave, onDelete }: EditP
                     placeholderTextColor={colors.border}
                     textAlign="center"
                   />
-                  <Text style={modalStyles.freshnessUnit}>gun</Text>
+                  <Text style={modalStyles.freshnessUnit}>gün</Text>
                 </View>
               )}
             </View>
@@ -794,7 +794,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
       setFreshnessDay(String(defaultDays));
     } else {
       setIsDry(false);
-      setFreshnessDay('7'); // Bilinmiyorsa 7 gun
+      setFreshnessDay('7'); // Bilinmiyorsa 7 gün
     }
     setStep('details');
   };
@@ -870,7 +870,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
                   style={modalStyles.searchInput}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                  placeholder="Urun ara..."
+                  placeholder="Ürün ara..."
                   placeholderTextColor={colors.border}
                   autoFocus
                 />
@@ -946,14 +946,14 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
                   {selectedFood ? selectedFood.emoji : customEmoji}
                 </Text>
                 <Text style={modalStyles.selectedName}>
-                  {selectedFood ? selectedFood.name : 'Ozel Urun'}
+                  {selectedFood ? selectedFood.name : 'Özel Ürün'}
                 </Text>
               </View>
 
               {/* Custom urun bilgileri */}
               {!selectedFood && (
                 <View style={modalStyles.fieldGroup}>
-                  <Text style={modalStyles.fieldLabel}>Urun Adi</Text>
+                  <Text style={modalStyles.fieldLabel}>Ürün Adı</Text>
                   <TextInput
                     style={modalStyles.textInput}
                     value={customName}
@@ -1045,7 +1045,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
 
               {/* Tazelik */}
               <View style={modalStyles.fieldGroup}>
-                <Text style={modalStyles.fieldLabel}>Tazelik Suresi</Text>
+                <Text style={modalStyles.fieldLabel}>Tazelik Süresi</Text>
 
                 <TouchableOpacity
                   style={[
@@ -1058,7 +1058,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
                   }}
                 >
                   <Text style={modalStyles.dryToggleText}>
-                    {isDry ? '✅' : '⬜'} Kuru gida (bayatlamaz)
+                    {isDry ? '✅' : '⬜'} Kuru gıda (bayatlamaz)
                   </Text>
                 </TouchableOpacity>
 
@@ -1073,11 +1073,11 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
                       placeholderTextColor={colors.border}
                       textAlign="center"
                     />
-                    <Text style={modalStyles.freshnessUnit}>gun</Text>
+                    <Text style={modalStyles.freshnessUnit}>gün</Text>
                     {selectedFood && (
                       <Text style={modalStyles.freshnessSuggestion}>
-                        (onerilen: {getDefaultFreshnessDays(selectedFood.name) > 0
-                          ? `${getDefaultFreshnessDays(selectedFood.name)} gun`
+                        (önerilen: {getDefaultFreshnessDays(selectedFood.name) > 0
+                          ? `${getDefaultFreshnessDays(selectedFood.name)} gün`
                           : 'bilinmiyor'})
                       </Text>
                     )}

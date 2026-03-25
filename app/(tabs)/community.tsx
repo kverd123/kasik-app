@@ -28,6 +28,7 @@ import { CreatePostModal, CreatePostData, PostCategory } from '../../components/
 import ScreenHeader from '../../components/ui/ScreenHeader';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { notifyLike } from '../../lib/notifications';
+import { useAuthStore } from '../../stores/authStore';
 import { haptics } from '../../lib/haptics';
 import { analytics } from '../../lib/analytics';
 import { PostListSkeleton } from '../../components/ui/SkeletonLoader';
@@ -46,6 +47,7 @@ const keyExtractor = (item: CommunityPost) => item.id;
 export default function CommunityScreen() {
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState(0);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -53,6 +55,7 @@ export default function CommunityScreen() {
   const isRecipeSaved = useRecipeBookStore((s) => s.isRecipeSaved);
   const posts = useCommunityStore((s) => s.posts);
   const togglePostLike = useCommunityStore((s) => s.togglePostLike);
+  const deletePost = useCommunityStore((s) => s.deletePost);
   const addPostToStore = useCommunityStore((s) => s.addPost);
   const communityLoaded = useCommunityStore((s) => s.isLoaded);
   const publishRecipe = useRecipeStore((s) => s.publishRecipe);
@@ -107,8 +110,8 @@ export default function CommunityScreen() {
             nutrients: [],
             tip: '',
           },
-          'user-anonymous', // TODO: gerçek userId auth'dan alınacak
-          'Ben',
+          user?.uid || 'anonymous',
+          user?.displayName || 'Ben',
         );
       } catch (e) {
         console.error('Tarif paylaşılamadı:', e);
@@ -207,6 +210,7 @@ export default function CommunityScreen() {
             colors={colors}
             styles={styles}
             onToggleLike={toggleLike}
+            onDeletePost={deletePost}
             isRecipeSaved={isRecipeSaved}
             onSaveRecipe={saveRecipe}
           />

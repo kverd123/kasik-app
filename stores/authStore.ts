@@ -15,6 +15,7 @@ import {
   resetPassword,
   getUserProfile,
   onAuthChange,
+  deleteAccount as authDeleteAccount,
 } from '../lib/auth';
 
 interface AuthState {
@@ -32,6 +33,7 @@ interface AuthState {
   loginWithGoogle: (idToken: string) => Promise<void>;
   loginWithApple: (identityToken: string, nonce: string, fullName?: { givenName?: string | null; familyName?: string | null }) => Promise<void>;
   logout: () => Promise<void>;
+  deleteAccount: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   clearError: () => void;
   refreshProfile: () => Promise<void>;
@@ -214,9 +216,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: async () => {
     try {
       await authSignOut();
-      set({ firebaseUser: null, user: null, isAuthenticated: false });
+      set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false });
     } catch (error: any) {
-      set({ error: 'Çıkış yapılırken hata oluştu.' });
+      console.error('Çıkış hatası:', error);
+      // Hata olsa bile state'i temizle
+      set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false, error: 'Çıkış yapılırken hata oluştu.' });
+    }
+  },
+
+  deleteAccount: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      await authDeleteAccount();
+      set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false });
+    } catch (error: any) {
+      const message = error.code === 'auth/requires-recent-login'
+        ? 'Bu işlem için tekrar giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın.'
+        : 'Hesap silinirken hata oluştu.';
+      set({ error: message, isLoading: false });
+      throw error;
     }
   },
 

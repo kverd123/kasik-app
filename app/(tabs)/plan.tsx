@@ -51,6 +51,7 @@ import { MealDetailModal } from '../../components/plan/MealDetailModal';
 import { router } from 'expo-router';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { useBabyStore } from '../../stores/babyStore';
+import { useAuthStore } from '../../stores/authStore';
 import { scheduleMealReminder, scheduleAllergenCheck } from '../../lib/notifications';
 import { haptics } from '../../lib/haptics';
 import { analytics } from '../../lib/analytics';
@@ -92,6 +93,7 @@ export default function PlanScreen() {
 
   const notifPrefs = useNotificationStore((s) => s.preferences);
   const baby = useBabyStore((s) => s.baby);
+  const user = useAuthStore((s) => s.user);
   const entries = useRecipeBookStore((s) => s.entries);
   const loadRecipeBook = useRecipeBookStore((s) => s.loadFromStorage);
   const recipeBookLoaded = useRecipeBookStore((s) => s.isLoaded);
@@ -231,14 +233,14 @@ export default function PlanScreen() {
     };
 
     if (Platform.OS === 'web') {
-      if (window.confirm('Bu ogunu plandan kaldirmak istiyor musunuz?')) {
+      if (window.confirm('Bu öğünü plandan kaldırmak istiyor musunuz?')) {
         doRemove();
       }
     } else {
       const { Alert } = require('react-native');
-      Alert.alert('Ogunu Kaldir', 'Bu ogunu plandan kaldirmak istiyor musunuz?', [
-        { text: 'Iptal', style: 'cancel' },
-        { text: 'Kaldir', style: 'destructive', onPress: doRemove },
+      Alert.alert('Öğünü Kaldır', 'Bu öğünü plandan kaldırmak istiyor musunuz?', [
+        { text: 'İptal', style: 'cancel' },
+        { text: 'Kaldır', style: 'destructive', onPress: doRemove },
       ]);
     }
   }, [selectedDayIndex, removeMeal]);
@@ -282,13 +284,13 @@ export default function PlanScreen() {
     const expiringNames = expiringItems.map((item: any) => item.name);
 
     Alert.alert(
-      'Haftalik Plan Olustur',
-      'Gunluk kac ogun olsun?',
+      'Haftalık Plan Oluştur',
+      'Günlük kaç öğün olsun?',
       [
-        { text: '2 Ogun', onPress: () => doGenerate(2, babyMonth, expiringNames) },
-        { text: '3 Ogun', onPress: () => doGenerate(3, babyMonth, expiringNames) },
-        { text: '4 Ogun', onPress: () => doGenerate(4, babyMonth, expiringNames) },
-        { text: 'Iptal', style: 'cancel' },
+        { text: '2 Öğün', onPress: () => doGenerate(2, babyMonth, expiringNames) },
+        { text: '3 Öğün', onPress: () => doGenerate(3, babyMonth, expiringNames) },
+        { text: '4 Öğün', onPress: () => doGenerate(4, babyMonth, expiringNames) },
+        { text: 'İptal', style: 'cancel' },
       ]
     );
   }, [baby, expiringItems]);
@@ -339,17 +341,22 @@ export default function PlanScreen() {
     return filteredAllRecipes.filter((r) => !savedRecipeIds.has(r.id));
   }, [filteredAllRecipes, savedRecipeIds]);
 
-  const greetingText = new Date().getHours() < 12
-    ? 'Gunaydin! \u{1F31E}'
-    : new Date().getHours() < 18
-    ? 'Iyi gunler! \u{2600}\u{FE0F}'
-    : 'Iyi aksamlar! \u{1F319}';
+  const hour = new Date().getHours();
+  const userName = baby?.name || user?.displayName?.split(' ')[0] || '';
+  const greetingText = hour < 6
+    ? `İyi geceler${userName ? ', ' + userName : ''}! 🌙`
+    : hour < 12
+    ? `Günaydın${userName ? ', ' + userName : ''}! 🌞`
+    : hour < 18
+    ? `İyi günler${userName ? ', ' + userName : ''}! ☀️`
+    : `İyi akşamlar${userName ? ', ' + userName : ''}! 🌙`;
 
+  const DAY_NAMES = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
   const subtitleText = !isCurrentWeek
-    ? `${['Pazartesi', 'Sali', 'Carsamba', 'Persembe', 'Cuma', 'Cumartesi', 'Pazar'][selectedDayIndex]} plani`
+    ? `${DAY_NAMES[selectedDayIndex]} planı`
     : selectedDayIndex === todayIndex
-    ? 'Bugunku beslenme planiniz hazir.'
-    : `${['Pazartesi', 'Sali', 'Carsamba', 'Persembe', 'Cuma', 'Cumartesi', 'Pazar'][selectedDayIndex]} plani`;
+    ? 'Bugünkü beslenme planınız hazır.'
+    : `${DAY_NAMES[selectedDayIndex]} planı`;
 
   // Handle day tap from weekly view
   const handleWeeklyDayTap = useCallback((dayIndex: number) => {
@@ -385,7 +392,7 @@ export default function PlanScreen() {
                 viewMode === 'daily' && styles.togglePillTextActive,
               ]}
             >
-              Gunluk
+              Günlük
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -402,7 +409,7 @@ export default function PlanScreen() {
                 viewMode === 'weekly' && styles.togglePillTextActive,
               ]}
             >
-              Haftalik
+              Haftalık
             </Text>
           </TouchableOpacity>
         </View>
@@ -443,7 +450,7 @@ export default function PlanScreen() {
 
           {/* Weekly Overview Card */}
           <View style={styles.weeklyCard}>
-            <Text style={styles.weeklyCardTitle}>Haftalik Plan Ozeti</Text>
+            <Text style={styles.weeklyCardTitle}>Haftalık Plan Özeti</Text>
             <View style={styles.weeklyDaysRow}>
               {weekDays.map((day, index) => {
                 const mealCount = weeklyMealCounts[index];
@@ -498,7 +505,7 @@ export default function PlanScreen() {
           >
             <Text style={styles.shuffleIcon}>{'\u{1F500}'}</Text>
             <Text style={styles.shuffleText}>
-              {isShuffling ? 'Karistiriliyor...' : 'Tarifleri Karistir'}
+              {isShuffling ? 'Karıştırılıyor...' : 'Tarifleri Karıştır'}
             </Text>
           </TouchableOpacity>
 
@@ -627,7 +634,7 @@ export default function PlanScreen() {
                       {/* Bugunku durum */}
                       {dayStatus && !isPaused && (
                         <Text style={styles.allergenTodayStatus}>
-                          Bugun: {dayStatus.todayCompleted}/{dayStatus.todayMeals} ogun {dayStatus.todayCompleted >= dayStatus.todayMeals && dayStatus.todayMeals > 0 ? '\u2713' : ''}
+                          Bugün: {dayStatus.todayCompleted}/{dayStatus.todayMeals} öğün {dayStatus.todayCompleted >= dayStatus.todayMeals && dayStatus.todayMeals > 0 ? '\u2713' : ''}
                         </Text>
                       )}
                     </View>
@@ -813,7 +820,7 @@ export default function PlanScreen() {
             {/* Progress Bar */}
             <Card padding="lg" style={styles.progressCard}>
               <View style={styles.progressHeader}>
-                <Text style={styles.progressTitle}>Gunluk Ilerleme</Text>
+                <Text style={styles.progressTitle}>Günlük İlerleme</Text>
                 <Text style={styles.progressCount}>
                   {completedCount}/{totalCount} tamamlandi
                 </Text>

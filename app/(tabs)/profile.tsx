@@ -33,6 +33,7 @@ import { getAllergenLabel, getAllergenEmoji } from '../../constants/allergens';
 import { SEVERITY_LABELS, AllergenIntroProgramConfig } from '../../constants/allergenIntro';
 import { AllergenProgramDetailModal } from '../../components/allergen/AllergenProgramDetailModal';
 import Constants from 'expo-constants';
+import { Linking } from 'react-native';
 import ScreenHeader from '../../components/ui/ScreenHeader';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { useBabyStore } from '../../stores/babyStore';
@@ -143,6 +144,7 @@ export default function ProfileScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const deleteAccountAction = useAuthStore((s) => s.deleteAccount);
   const subscription = useSubscriptionStore((s) => s.subscription);
   const getActiveFeatures = useSubscriptionStore((s) => s.getActiveFeatures);
   const entries = useRecipeBookStore((s) => s.entries);
@@ -206,8 +208,47 @@ export default function ProfileScreen() {
   const handleLogout = () => {
     Alert.alert('Çıkış Yap', 'Hesabınızdan çıkış yapmak istiyor musunuz?', [
       { text: 'İptal', style: 'cancel' },
-      { text: 'Çıkış Yap', style: 'destructive', onPress: () => { analytics.logout(); logout(); } },
+      {
+        text: 'Çıkış Yap',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            analytics.logout();
+            await logout();
+          } catch (e) {
+            console.error('Çıkış hatası:', e);
+          }
+        },
+      },
     ]);
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Hesabı Sil',
+      'Bu işlem geri alınamaz. Tüm verileriniz kalıcı olarak silinecektir. Devam etmek istiyor musunuz?',
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Hesabımı Sil',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteAccountAction();
+            } catch (e: any) {
+              if (e.code === 'auth/requires-recent-login') {
+                Alert.alert(
+                  'Tekrar Giriş Gerekli',
+                  'Güvenlik nedeniyle hesabınızı silmeden önce tekrar giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın.',
+                );
+              } else {
+                Alert.alert('Hata', 'Hesap silinirken bir hata oluştu.');
+              }
+            }
+          },
+        },
+      ],
+    );
   };
 
   const handleRemoveRecipe = (recipeId: string, title: string) => {
@@ -233,7 +274,7 @@ export default function ProfileScreen() {
         variant="large"
         emoji="👤"
         rightActions={[
-          { icon: '⚙️', onPress: () => {} },
+          { icon: '⚙️', onPress: () => Alert.alert('Ayarlar', 'Aşağıda ayar seçeneklerini bulabilirsiniz.') },
         ]}
       />
       <ScrollView
@@ -264,7 +305,22 @@ export default function ProfileScreen() {
                 <Badge label="Ücretsiz Plan" variant="neutral" size="md" />
               )}
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              Alert.prompt ? Alert.prompt('İsim Değiştir', 'Yeni isminizi yazın:', async (newName) => {
+                if (newName && newName.trim()) {
+                  try {
+                    const { updateProfile: fbUpdateProfile } = await import('firebase/auth');
+                    const { auth } = await import('../../lib/firebase');
+                    if (auth.currentUser) {
+                      await fbUpdateProfile(auth.currentUser, { displayName: newName.trim() });
+                      Alert.alert('Başarılı', 'İsminiz güncellendi.');
+                    }
+                  } catch (e) {
+                    Alert.alert('Hata', 'İsim güncellenemedi.');
+                  }
+                }
+              }, 'plain-text', user?.displayName || '') : Alert.alert('Profil', 'Profil düzenleme yakında eklenecek.');
+            }}>
               <Text style={styles.editIcon}>✏️</Text>
             </TouchableOpacity>
           </View>
@@ -274,19 +330,27 @@ export default function ProfileScreen() {
         <Card padding="xl" style={styles.sectionCard}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>👶 Bebek Bilgileri</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(onboarding)/baby-info' as any)}>
               <Text style={styles.editLink}>Düzenle</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.babyInfo}>
             <View style={styles.babyAvatar}>
-              <Text style={{ fontSize: 40 }}>👶</Text>
+              <Text style={{ fontSize: 40 }}>{baby?.gender === 'female' ? '👧' : baby?.gender === 'male' ? '👦' : '👶'}</Text>
             </View>
             <View style={styles.babyDetails}>
-              <Text style={styles.babyName}>Elif Bebek</Text>
-              <Text style={styles.babyAge}>8 aylık · Kız</Text>
-              <Text style={styles.babySolids}>Ek gıdaya başlama: 6. ay</Text>
+              <Text style={styles.babyName}>{baby?.name || 'Bebek'}</Text>
+              <Text style={styles.babyAge}>
+                {baby?.birthDate
+                  ? `${Math.floor((Date.now() - new Date(baby.birthDate).getTime()) / (1000 * 60 * 60 * 24 * 30))} aylık`
+                  : ''
+                }
+                {baby?.gender === 'female' ? ' · Kız' : baby?.gender === 'male' ? ' · Erkek' : ''}
+              </Text>
+              <Text style={styles.babySolids}>
+                {baby?.currentStage === '6m' ? 'Püre dönemi' : baby?.currentStage === '8m' ? 'Ezme dönemi' : baby?.currentStage === '12m+' ? 'Parmak gıda dönemi' : 'Ek gıda dönemi'}
+              </Text>
             </View>
           </View>
 
@@ -619,30 +683,30 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>⚙️ Ayarlar</Text>
 
           <View style={styles.settingsList}>
-            <TouchableOpacity style={styles.settingItem}>
+            <View style={styles.settingItem}>
               <Text style={styles.settingLabel}>Dil</Text>
               <Text style={styles.settingValue}>Türkçe 🇹🇷</Text>
-            </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity style={styles.settingItem} onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/privacy.html')}>
               <Text style={styles.settingLabel}>Gizlilik Politikası</Text>
               <Text style={styles.settingArrow}>→</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity style={styles.settingItem} onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/terms.html')}>
               <Text style={styles.settingLabel}>Kullanım Koşulları</Text>
               <Text style={styles.settingArrow}>→</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.settingItem}>
+            <TouchableOpacity style={styles.settingItem} onPress={() => Alert.alert('Geri Yükleme', 'Satın alımlarınız kontrol ediliyor...', [{ text: 'Tamam' }])}>
               <Text style={styles.settingLabel}>Satın Alımları Geri Yükle</Text>
               <Text style={styles.settingArrow}>→</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.settingItem}>
+            <View style={styles.settingItem}>
               <Text style={styles.settingLabel}>Uygulama Versiyonu</Text>
-              <Text style={styles.settingValue}>1.0.0</Text>
-            </TouchableOpacity>
+              <Text style={styles.settingValue}>{Constants.expoConfig?.version ?? '1.0.0'}</Text>
+            </View>
           </View>
         </Card>
 
@@ -657,12 +721,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
 
         {/* Delete Account */}
-        <TouchableOpacity style={styles.deleteBtn} accessibilityRole="button" accessibilityLabel="Hesabımı sil" onPress={() => {
-          Alert.alert('Hesap Silme', 'Bu işlem geri alınamaz. Emin misiniz?', [
-            { text: 'İptal', style: 'cancel' },
-            { text: 'Hesabımı Sil', style: 'destructive', onPress: () => {} },
-          ]);
-        }}>
+        <TouchableOpacity style={styles.deleteBtn} accessibilityRole="button" accessibilityLabel="Hesabımı sil" onPress={handleDeleteAccount}>
           <Text style={styles.deleteText}>Hesabımı Sil</Text>
         </TouchableOpacity>
 

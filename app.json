@@ -74,7 +74,15 @@
           "sounds": []
         }
       ],
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "iosAppId": "ca-app-pub-8099877386187148~1136119394",
+          "androidAppId": "ca-app-pub-8099877386187148~1136119394",
+          "userTrackingUsageDescription": "Bebeğiniz için daha uygun içerikler sunabilmemiz amacıyla reklam kişiselleştirme izni istenmektedir."
+        }
+      ]
     ],
     "extra": {
       "router": {},

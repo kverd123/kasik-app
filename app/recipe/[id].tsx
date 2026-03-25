@@ -19,6 +19,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
+import { maybeShowInterstitial } from '../../lib/ads';
 import { Colors } from '../../constants/colors';
 import {
   FontFamily,
@@ -35,6 +36,7 @@ import { AllergenType } from '../../types';
 import { RECIPES_BY_ID, ALL_RECIPES, RecipeData } from '../../constants/recipes';
 import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { useRecipeStore } from '../../stores/recipeStore';
+import { useAuthStore } from '../../stores/authStore';
 
 const { width } = Dimensions.get('window');
 const HERO_HEIGHT = 260;
@@ -42,6 +44,7 @@ const HERO_HEIGHT = 260;
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const recipeId = id || '1';
+  const { user } = useAuthStore();
 
   // Önce lokal, yoksa community store'dan bak
   const { getCommunityRecipeById, toggleLike: toggleCommunityLike, incrementViews: incrementCommunityViews } = useRecipeStore();
@@ -55,6 +58,8 @@ export default function RecipeDetailScreen() {
     if (isCommunityRecipe && recipeId) {
       incrementCommunityViews(recipeId);
     }
+    // Her 3 tarif görüntülemede geçiş reklamı göster
+    maybeShowInterstitial();
   }, [recipeId, isCommunityRecipe]);
   const [isLiked, setIsLiked] = useState(recipe?.isLiked ?? false);
   const isSavedInBook = isRecipeSaved(recipeId);
@@ -136,7 +141,7 @@ export default function RecipeDetailScreen() {
 
     // Community tarif → Firestore'a sync
     if (isCommunityRecipe) {
-      toggleCommunityLike(recipeId, 'user-anonymous'); // TODO: gerçek userId
+      toggleCommunityLike(recipeId, user?.uid || 'anonymous');
     }
   };
 

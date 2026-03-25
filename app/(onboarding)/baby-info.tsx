@@ -23,20 +23,20 @@ import { useBabyStore } from '../../stores/babyStore';
 import { AgeStage } from '../../types';
 
 const GENDER_OPTIONS = [
-  { id: 'female' as const, label: 'Kiz', emoji: '👧' },
+  { id: 'female' as const, label: 'Kız', emoji: '👧' },
   { id: 'male' as const, label: 'Erkek', emoji: '👦' },
-  { id: 'other' as const, label: 'Belirtmek Istemiyorum', emoji: '👶' },
+  { id: 'other' as const, label: 'Belirtmek İstemiyorum', emoji: '👶' },
 ];
 
 const STAGE_OPTIONS = [
-  { id: '6m' as const, label: '6 Ay', desc: 'Ilk pureler ve lapa' },
+  { id: '6m' as const, label: '6 Ay', desc: 'İlk püreler ve lapa' },
   { id: '8m' as const, label: '8 Ay', desc: 'Daha sert dokular' },
-  { id: '12m+' as const, label: '12+ Ay', desc: 'Aile sofrasina gecis' },
+  { id: '12m+' as const, label: '12+ Ay', desc: 'Aile sofrasına geçiş' },
 ];
 
 const MONTHS = [
-  'Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran',
-  'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik',
+  'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık',
 ];
 
 const currentYear = new Date().getFullYear();
@@ -65,9 +65,9 @@ export default function BabyInfoScreen() {
     if (!birthDate) return null;
     const now = new Date();
     const months = (now.getFullYear() - birthDate.getFullYear()) * 12 + (now.getMonth() - birthDate.getMonth());
-    if (months < 1) return 'Yenidogan';
-    if (months === 1) return '1 aylik';
-    return `${months} aylik`;
+    if (months < 1) return 'Yenidoğan';
+    if (months === 1) return '1 aylık';
+    return `${months} aylık`;
   }, [birthDate]);
 
   const saveBabyData = () => {
@@ -101,20 +101,20 @@ export default function BabyInfoScreen() {
         {/* Mascot */}
         <View style={styles.mascotRow}>
           <Text style={styles.mascot}>🥄</Text>
-          <Text style={[styles.mascotText, { color: colors.textMid }]}>Bebeginizi taniyalim!</Text>
+          <Text style={[styles.mascotText, { color: colors.textMid }]}>Bebeğinizi tanıyalım!</Text>
         </View>
 
         <Text style={styles.title}>Bebek Bilgileri</Text>
 
         {/* Name */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.textMid }]}>Bebeginizin adi</Text>
+          <Text style={[styles.label, { color: colors.textMid }]}>Bebeğinizin adı</Text>
           <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
             <TextInput
               style={[styles.input, { color: colors.textDark }]}
               value={babyName}
               onChangeText={setBabyName}
-              placeholder="Bebeginizin adini yazin"
+              placeholder="Bebeğinizin adını yazın"
               placeholderTextColor={colors.border}
               autoCapitalize="words"
             />
@@ -152,7 +152,7 @@ export default function BabyInfoScreen() {
 
         {/* Birth Date */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.textMid }]}>Dogum tarihi</Text>
+          <Text style={[styles.label, { color: colors.textMid }]}>Doğum tarihi</Text>
           <View style={styles.dateRow}>
             {/* Month picker */}
             <View style={styles.datePickerGroup}>
@@ -185,7 +185,7 @@ export default function BabyInfoScreen() {
             </View>
             {/* Year picker */}
             <View style={styles.datePickerGroup}>
-              <Text style={[styles.datePickerLabel, { color: colors.textLight }]}>Yil</Text>
+              <Text style={[styles.datePickerLabel, { color: colors.textLight }]}>Yıl</Text>
               <View style={styles.yearRow}>
                 {YEARS.map((year) => (
                   <TouchableOpacity
@@ -218,7 +218,7 @@ export default function BabyInfoScreen() {
 
         {/* Stage */}
         <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.textMid }]}>Ek gida asamasi</Text>
+          <Text style={[styles.label, { color: colors.textMid }]}>Ek gıda aşaması</Text>
           <View style={styles.stageList}>
             {STAGE_OPTIONS.map((opt) => (
               <TouchableOpacity
@@ -262,7 +262,7 @@ export default function BabyInfoScreen() {
             disabled={!canContinue}
           />
           <TouchableOpacity onPress={handleSkip}>
-            <Text style={[styles.skipText, { color: colors.textLight }]}>Simdilik gec</Text>
+            <Text style={[styles.skipText, { color: colors.textLight }]}>Şimdilik geç</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

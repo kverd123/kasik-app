@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { router } from 'expo-router';
 import { ThemeColors } from '../../constants/colors';
@@ -26,6 +27,7 @@ export interface PostCardProps {
   colors: ThemeColors;
   styles: ReturnType<typeof StyleSheet.create>;
   onToggleLike: (id: string) => void;
+  onDeletePost?: (id: string) => void;
   isRecipeSaved: (id: string) => boolean;
   onSaveRecipe: (recipeId: string, category?: 'favorites' | 'try_later' | 'made_it') => void;
 }
@@ -36,9 +38,29 @@ const PostCard = React.memo(function PostCard({
   colors,
   styles,
   onToggleLike,
+  onDeletePost,
   isRecipeSaved,
   onSaveRecipe,
 }: PostCardProps) {
+  const handleMorePress = () => {
+    Alert.alert(
+      'Gönderi Seçenekleri',
+      '',
+      [
+        ...(onDeletePost ? [{
+          text: 'Gönderiyi Sil',
+          style: 'destructive' as const,
+          onPress: () => {
+            Alert.alert('Sil', 'Bu gönderiyi silmek istediğinize emin misiniz?', [
+              { text: 'İptal', style: 'cancel' },
+              { text: 'Sil', style: 'destructive', onPress: () => onDeletePost(post.id) },
+            ]);
+          },
+        }] : []),
+        { text: 'İptal', style: 'cancel' },
+      ],
+    );
+  };
   return (
     <React.Fragment>
       <Card padding="lg" style={styles.postCard} onPress={() => router.push(`/post/${post.id}`)}>
@@ -61,7 +83,7 @@ const PostCard = React.memo(function PostCard({
               {' · '}{post.time}{post.babyAge ? ` · ${post.babyAge}` : ''}
             </Text>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleMorePress}>
             <Text style={styles.moreIcon}>···</Text>
           </TouchableOpacity>
         </View>

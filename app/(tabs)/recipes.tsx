@@ -42,6 +42,7 @@ import { ALL_RECIPES, RecipeData } from '../../constants/recipes';
 import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { useRecipeStore } from '../../stores/recipeStore';
 import { haptics } from '../../lib/haptics';
+import { useAuthStore } from '../../stores/authStore';
 import { analytics } from '../../lib/analytics';
 import { RecipeGridSkeleton } from '../../components/ui/SkeletonLoader';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -101,6 +102,7 @@ const DEMO_PANTRY_FOR_AI: PantryItem[] = [
 export default function RecipesScreen() {
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const { user } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortMode, setSortMode] = useState<SortMode>('trending');
@@ -238,7 +240,7 @@ export default function RecipesScreen() {
 
     // Community tarif → Firestore'a da yaz
     if (recipe.source === 'community') {
-      toggleCommunityLike(id, 'user-anonymous'); // TODO: gerçek userId
+      toggleCommunityLike(id, user?.uid || 'anonymous');
     }
   }, [recipes, toggleCommunityLike]);
 

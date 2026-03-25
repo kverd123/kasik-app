@@ -10,12 +10,13 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   onAuthStateChanged,
+  deleteUser,
   User as FirebaseUser,
   GoogleAuthProvider,
   OAuthProvider,
   signInWithCredential,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { User } from '../types';
 
@@ -165,6 +166,24 @@ export const getUserProfile = async (uid: string): Promise<User | null> => {
  */
 export const onAuthChange = (callback: (user: FirebaseUser | null) => void) => {
   return onAuthStateChanged(auth, callback);
+};
+
+/**
+ * Delete user account and Firestore data
+ */
+export const deleteAccount = async (): Promise<void> => {
+  const user = auth.currentUser;
+  if (!user) throw new Error('Kullanıcı bulunamadı');
+
+  // Firestore'dan kullanıcı dokümanını sil
+  try {
+    await deleteDoc(doc(db, 'users', user.uid));
+  } catch (e) {
+    console.warn('Firestore kullanıcı dokümanı silinemedi:', e);
+  }
+
+  // Firebase Auth'dan kullanıcıyı sil
+  await deleteUser(user);
 };
 
 /**

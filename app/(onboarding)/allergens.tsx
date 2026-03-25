@@ -73,13 +73,13 @@ export default function AllergensScreen() {
       customAllergens.forEach((name) => addCustomAllergen(name));
     }
 
-    // Onboarding tamamlandi flag'ini Firestore'a yaz
+    // Onboarding tamamlandı flag'ini Firestore'a yaz
     if (user?.uid) {
       try {
         await completeOnboarding(user.uid);
         await refreshProfile();
       } catch (e) {
-        console.error('Onboarding tamamlama hatasi:', e);
+        console.error('Onboarding tamamlama hatası:', e);
       }
     }
 

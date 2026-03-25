@@ -20,6 +20,7 @@ import {
   clearBadge,
 } from '../lib/notifications';
 import { initAnalytics, setAnalyticsUser, clearAnalyticsUser } from '../lib/analytics';
+import { initInterstitialAds } from '../lib/ads';
 import { initializeSync } from '../lib/firestoreSync';
 import { flushQueue, onQueueChange } from '../lib/syncQueue';
 import { onNetworkChange } from '../lib/networkMonitor';
@@ -32,6 +33,7 @@ import { useCommunityStore } from '../stores/communityStore';
 import { useBabyStore } from '../stores/babyStore';
 import { useAllergenIntroStore } from '../stores/allergenIntroStore';
 import { useNotificationStore } from '../stores/notificationStore';
+import { useSubscriptionStore } from '../stores/subscriptionStore';
 
 export default function RootLayout() {
   const { initialize, user } = useAuthStore();
@@ -53,6 +55,7 @@ export default function RootLayout() {
     const unsubscribe = initialize();
     initAnalytics(); // Analytics sistemini başlat
     initializeSync(); // Offline sync sistemini başlat
+    initInterstitialAds(); // Reklam sistemini başlat
 
     // Sync status UI güncellemeleri
     const unsubQueue = onQueueChange((count) => {
@@ -88,10 +91,11 @@ export default function RootLayout() {
     _updateIsDark(systemColorScheme === 'dark');
   }, [systemColorScheme]);
 
-  // Analytics user tracking
+  // Analytics user tracking + RevenueCat
   useEffect(() => {
     if (user?.uid) {
       setAnalyticsUser(user.uid);
+      useSubscriptionStore.getState().initRevenueCat(user.uid);
     } else {
       clearAnalyticsUser();
     }

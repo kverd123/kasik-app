@@ -12,7 +12,9 @@
  */
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getAuth, initializeAuth } from 'firebase/auth';
+// @ts-ignore - getReactNativePersistence exists at runtime in React Native but is not in the type definitions for firebase v10+
+import { getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,7 +35,7 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Auth with AsyncStorage persistence for React Native
-let auth;
+let auth: ReturnType<typeof getAuth>;
 if (Platform.OS !== 'web') {
   auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage),
