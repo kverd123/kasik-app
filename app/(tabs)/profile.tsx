@@ -310,10 +310,12 @@ export default function ProfileScreen() {
                 if (newName && newName.trim()) {
                   try {
                     const { updateProfile: fbUpdateProfile } = await import('firebase/auth');
-                    const { auth } = await import('../../lib/firebase');
+                    const { doc, updateDoc } = await import('firebase/firestore');
+                    const { auth, db } = await import('../../lib/firebase');
                     if (auth.currentUser) {
                       await fbUpdateProfile(auth.currentUser, { displayName: newName.trim() });
-                      Alert.alert('Başarılı', 'İsminiz güncellendi.');
+                      await updateDoc(doc(db, 'users', auth.currentUser.uid), { displayName: newName.trim() });
+                      Alert.alert('Başarılı', 'İsminiz güncellendi. Uygulamayı yeniden açınca görünecek.');
                     }
                   } catch (e) {
                     Alert.alert('Hata', 'İsim güncellenemedi.');

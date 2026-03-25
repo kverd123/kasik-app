@@ -18,6 +18,9 @@ function TabIcon({ icon, label, focused }: { icon: string; label: string; focuse
         <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>{icon}</Text>
       </View>
       <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
         style={[
           styles.tabLabel,
           { color: colors.textLight },
@@ -103,6 +106,7 @@ const styles = StyleSheet.create({
   tabItem: {
     alignItems: 'center',
     gap: 3,
+    minWidth: 60,
   },
   iconWrap: {
     width: 44,

@@ -256,7 +256,7 @@ export default function RecipesScreen() {
         title="Tarifler"
         emoji="📖"
         rightActions={[
-          { icon: '⚙️', onPress: () => {} },
+          { icon: '⚙️', onPress: () => router.push('/(tabs)/profile') },
         ]}
       />
 

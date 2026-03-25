@@ -267,11 +267,18 @@ export default function PlanScreen() {
   const totalCount = allMeals.length;
   const progress = totalCount > 0 ? completedCount / totalCount : 0;
 
-  // Weekly overview: meal counts per day
+  // Weekly overview: meal counts and names per day
   const weeklyMealCounts = useMemo(() => {
     return [0, 1, 2, 3, 4, 5, 6].map((dayIdx) => {
       const dayMeals = getDayMeals(dayIdx);
       return Object.values(dayMeals).flat().length;
+    });
+  }, [weekMeals, currentWeekKey, shuffleKey]);
+
+  const weeklyMealNames = useMemo(() => {
+    return [0, 1, 2, 3, 4, 5, 6].map((dayIdx) => {
+      const dayMeals = getDayMeals(dayIdx);
+      return Object.values(dayMeals).flat().map((m: any) => m.name || m.title || '').filter(Boolean);
     });
   }, [weekMeals, currentWeekKey, shuffleKey]);
 
@@ -342,7 +349,7 @@ export default function PlanScreen() {
   }, [filteredAllRecipes, savedRecipeIds]);
 
   const hour = new Date().getHours();
-  const userName = baby?.name || user?.displayName?.split(' ')[0] || '';
+  const userName = user?.displayName?.split(' ')[0] || baby?.name || '';
   const greetingText = hour < 6
     ? `İyi geceler${userName ? ', ' + userName : ''}! 🌙`
     : hour < 12
@@ -369,9 +376,9 @@ export default function PlanScreen() {
       <ScreenHeader
         title={greetingText}
         subtitle={subtitleText}
-        emoji="\u{1F944}"
+        emoji="🥄"
         rightActions={[
-          { icon: '\u{1F6D2}', onPress: () => setShoppingModalVisible(true) },
+          { icon: '🛒', onPress: () => setShoppingModalVisible(true) },
         ]}
       />
 
@@ -439,7 +446,7 @@ export default function PlanScreen() {
               <Text style={styles.weekNavLabel}>{weekLabel}</Text>
               {!isCurrentWeek && (
                 <TouchableOpacity onPress={() => { goToCurrentWeek(); analytics.weekNavigate('current'); }} style={styles.weekNavTodayBtn}>
-                  <Text style={styles.weekNavTodayText}>Bugune Don</Text>
+                  <Text style={styles.weekNavTodayText}>Bugüne Dön</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -448,53 +455,44 @@ export default function PlanScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Weekly Overview Card */}
-          <View style={styles.weeklyCard}>
-            <Text style={styles.weeklyCardTitle}>Haftalık Plan Özeti</Text>
-            <View style={styles.weeklyDaysRow}>
-              {weekDays.map((day, index) => {
-                const mealCount = weeklyMealCounts[index];
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.weeklyDayItem,
-                      day.isToday && styles.weeklyDayItemToday,
-                    ]}
-                    onPress={() => handleWeeklyDayTap(index)}
-                    activeOpacity={0.7}
-                  >
-                    <Text
-                      style={[
-                        styles.weeklyDayLabel,
-                        day.isToday && styles.weeklyDayLabelToday,
-                      ]}
-                    >
-                      {day.label}
-                    </Text>
-                    <View
-                      style={[
-                        styles.weeklyDayCircle,
-                        mealCount > 0 && styles.weeklyDayCircleFilled,
-                        day.isToday && styles.weeklyDayCircleToday,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.weeklyDayCount,
-                          mealCount > 0 && styles.weeklyDayCountFilled,
-                          day.isToday && styles.weeklyDayCountToday,
-                        ]}
-                      >
-                        {mealCount}
+          {/* Weekly Overview — each day with recipe names */}
+          {weekDays.map((day, index) => {
+            const mealCount = weeklyMealCounts[index];
+            const mealNames = weeklyMealNames[index] || [];
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.weeklyDayCard,
+                  day.isToday && styles.weeklyDayCardToday,
+                ]}
+                onPress={() => handleWeeklyDayTap(index)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.weeklyDayHeader}>
+                  <View style={[styles.weeklyDayBadge, day.isToday && styles.weeklyDayBadgeToday]}>
+                    <Text style={[styles.weeklyDayBadgeLabel, day.isToday && styles.weeklyDayBadgeLabelToday]}>{day.label}</Text>
+                    <Text style={[styles.weeklyDayBadgeDate, day.isToday && styles.weeklyDayBadgeDateToday]}>{day.date}</Text>
+                  </View>
+                  <Text style={styles.weeklyDayMealCount}>{mealCount} öğün</Text>
+                </View>
+                {mealNames.length > 0 ? (
+                  <View style={styles.weeklyDayMeals}>
+                    {mealNames.slice(0, 4).map((name: string, i: number) => (
+                      <Text key={i} style={styles.weeklyDayMealName} numberOfLines={1}>
+                        {'🍽️ '}{name}
                       </Text>
-                    </View>
-                    <Text style={styles.weeklyDayMealLabel}>ogun</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
+                    ))}
+                    {mealNames.length > 4 && (
+                      <Text style={styles.weeklyDayMore}>+{mealNames.length - 4} daha</Text>
+                    )}
+                  </View>
+                ) : (
+                  <Text style={styles.weeklyDayEmpty}>Henüz öğün eklenmemiş</Text>
+                )}
+              </TouchableOpacity>
+            );
+          })}
 
           {/* Shuffle Button */}
           <TouchableOpacity
@@ -503,7 +501,7 @@ export default function PlanScreen() {
             activeOpacity={0.7}
             disabled={isShuffling}
           >
-            <Text style={styles.shuffleIcon}>{'\u{1F500}'}</Text>
+            <Text style={styles.shuffleIcon}>{'🔀'}</Text>
             <Text style={styles.shuffleText}>
               {isShuffling ? 'Karıştırılıyor...' : 'Tarifleri Karıştır'}
             </Text>
@@ -524,7 +522,7 @@ export default function PlanScreen() {
               <Text style={styles.weekNavLabel}>{weekLabel}</Text>
               {!isCurrentWeek && (
                 <TouchableOpacity onPress={() => { goToCurrentWeek(); analytics.weekNavigate('current'); }} style={styles.weekNavTodayBtn}>
-                  <Text style={styles.weekNavTodayText}>Bugune Don</Text>
+                  <Text style={styles.weekNavTodayText}>Bugüne Dön</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -607,7 +605,7 @@ export default function PlanScreen() {
                     <View style={{ flex: 1, gap: 6 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
                         <Text style={styles.allergenProgramTitle}>
-                          {allergenName} Acma
+                          {allergenName} Açma
                         </Text>
                         {isPaused && (
                           <View style={styles.pausedBadge}>
@@ -618,8 +616,8 @@ export default function PlanScreen() {
                       {/* Ilerleme */}
                       <View style={styles.allergenProgressRow}>
                         <Text style={styles.allergenProgramSub}>
-                          {dayStatus ? `Gun ${dayStatus.currentDay}/${prog.totalDays}` : `${prog.totalDays} gun`}
-                          {' \u00B7 '}{report?.completedMeals || 0}/{report?.totalMeals || 0} ogun
+                          {dayStatus ? `Gün ${dayStatus.currentDay}/${prog.totalDays}` : `${prog.totalDays} gün`}
+                          {' · '}{report?.completedMeals || 0}/{report?.totalMeals || 0} öğün
                         </Text>
                         {lastSev && (
                           <Text style={[styles.allergenReactionBadge, { color: lastSev.color }]}>
@@ -662,7 +660,7 @@ export default function PlanScreen() {
                 activeOpacity={0.7}
               >
                 <Text style={{ fontSize: 20 }}>{'\u2695\uFE0F'}</Text>
-                <Text style={styles.allergenStartText}>Alerjen Acma Programi Baslat</Text>
+                <Text style={styles.allergenStartText}>Alerjen Açma Programı Başlat</Text>
                 <Text style={styles.allergenStartArrow}>{'\u2192'}</Text>
               </TouchableOpacity>
             )}
@@ -717,9 +715,9 @@ export default function PlanScreen() {
                           </Text>
                           {(meal.ingredients?.length || meal.steps?.length) ? (
                             <Text style={styles.mealRecipeHint}>
-                              {meal.ingredients?.length ? `\u{1F955} ${meal.ingredients.length} malzeme` : ''}
+                              {meal.ingredients?.length ? `🥕 ${meal.ingredients.length} malzeme` : ''}
                               {meal.ingredients?.length && meal.steps?.length ? '  ' : ''}
-                              {meal.steps?.length ? `\u{1F4DD} ${meal.steps.length} adim` : ''}
+                              {meal.steps?.length ? `📝 ${meal.steps.length} adım` : ''}
                             </Text>
                           ) : null}
                           {(() => {
@@ -810,7 +808,7 @@ export default function PlanScreen() {
                     onPress={() => openAddModal(slot)}
                   >
                     <Text style={styles.emptySlotText}>
-                      + Ogun eklemek icin dokunun
+                      + Öğün eklemek için dokunun
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -838,7 +836,7 @@ export default function PlanScreen() {
               onPress={() => setShoppingModalVisible(true)}
               activeOpacity={0.7}
             >
-              <Text style={styles.shoppingCardIcon}>{'\u{1F6D2}'}</Text>
+              <Text style={styles.shoppingCardIcon}>{'🛒'}</Text>
               <View style={styles.shoppingCardInfo}>
                 <Text style={styles.shoppingCardTitle}>Alisveris Listesi</Text>
                 <Text style={styles.shoppingCardSub}>
@@ -961,7 +959,7 @@ export default function PlanScreen() {
           {/* Arama */}
           <View style={styles.modalSearchContainer}>
             <View style={styles.modalSearchWrapper}>
-              <Text style={styles.modalSearchIcon}>{'\u{1F50D}'}</Text>
+              <Text style={styles.modalSearchIcon}>{'🔍'}</Text>
               <TextInput
                 style={styles.modalSearchInput}
                 value={recipeSearch}
@@ -985,7 +983,7 @@ export default function PlanScreen() {
             {/* From Recipe Book */}
             {filteredSavedRecipes.length > 0 && (
               <View style={styles.modalSection}>
-                <Text style={styles.modalSectionTitle}>{'\u{1F4D6}'} Tarif Defterimden</Text>
+                <Text style={styles.modalSectionTitle}>{'📖'} Tarif Defterimden</Text>
                 {filteredSavedRecipes.map((recipe) => (
                   <TouchableOpacity
                     key={recipe.id}
@@ -1017,7 +1015,7 @@ export default function PlanScreen() {
             {/* All Recipes */}
             {filteredOtherRecipes.length > 0 && (
               <View style={styles.modalSection}>
-                <Text style={styles.modalSectionTitle}>{'\u{1F37D}\uFE0F'} Tum Tarifler</Text>
+                <Text style={styles.modalSectionTitle}>{'🍽️'} Tüm Tarifler</Text>
                 {filteredOtherRecipes.slice(0, 20).map((recipe) => (
                   <TouchableOpacity
                     key={recipe.id}
@@ -1054,7 +1052,7 @@ export default function PlanScreen() {
             {/* Empty state */}
             {filteredSavedRecipes.length === 0 && filteredOtherRecipes.length === 0 && (
               <View style={styles.modalEmpty}>
-                <Text style={{ fontSize: 48 }}>{'\u{1F50D}'}</Text>
+                <Text style={{ fontSize: 48 }}>{'🔍'}</Text>
                 <Text style={styles.modalEmptyTitle}>Sonuc bulunamadi</Text>
                 <Text style={styles.modalEmptyText}>
                   Farkli bir arama terimi deneyin.
@@ -1536,73 +1534,77 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
 
   // Weekly View
-  weeklyCard: {
+  // Weekly day cards
+  weeklyDayCard: {
     backgroundColor: colors.white,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
-    gap: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
     ...Shadow.card,
   },
-  weeklyCardTitle: {
-    fontFamily: FontFamily.bold,
-    fontSize: FontSize.lg,
-    color: colors.textDark,
-    textAlign: 'center',
+  weeklyDayCardToday: {
+    borderWidth: 2,
+    borderColor: colors.sage,
   },
-  weeklyDaysRow: {
+  weeklyDayHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: Spacing.xs,
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
   },
-  weeklyDayItem: {
-    flex: 1,
+  weeklyDayBadge: {
+    flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-  },
-  weeklyDayItemToday: {
-    backgroundColor: colors.sagePale,
-    borderRadius: BorderRadius.md,
-  },
-  weeklyDayLabel: {
-    fontFamily: FontFamily.semiBold,
-    fontSize: FontSize.xs,
-    color: colors.textLight,
-  },
-  weeklyDayLabelToday: {
-    color: colors.sage,
-    fontFamily: FontFamily.bold,
-  },
-  weeklyDayCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: colors.creamMid,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
   },
-  weeklyDayCircleFilled: {
-    backgroundColor: colors.sageLight,
-  },
-  weeklyDayCircleToday: {
+  weeklyDayBadgeToday: {
     backgroundColor: colors.sage,
   },
-  weeklyDayCount: {
+  weeklyDayBadgeLabel: {
     fontFamily: FontFamily.bold,
-    fontSize: FontSize.md,
-    color: colors.textLight,
+    fontSize: FontSize.sm,
+    color: colors.textDark,
   },
-  weeklyDayCountFilled: {
-    color: colors.sageDark,
+  weeklyDayBadgeLabelToday: {
+    color: colors.white,
   },
-  weeklyDayCountToday: {
-    color: colors.textOnPrimary,
-  },
-  weeklyDayMealLabel: {
+  weeklyDayBadgeDate: {
     fontFamily: FontFamily.medium,
-    fontSize: 9,
+    fontSize: FontSize.sm,
     color: colors.textLight,
+  },
+  weeklyDayBadgeDateToday: {
+    color: colors.white,
+  },
+  weeklyDayMealCount: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.sm,
+    color: colors.textLight,
+  },
+  weeklyDayMeals: {
+    gap: 4,
+  },
+  weeklyDayMealName: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.sm,
+    color: colors.textDark,
+    paddingLeft: Spacing.xs,
+  },
+  weeklyDayMore: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.xs,
+    color: colors.textLight,
+    paddingLeft: Spacing.xs,
+  },
+  weeklyDayEmpty: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.sm,
+    color: colors.textLight,
+    fontStyle: 'italic',
   },
 
   // Shuffle Button
