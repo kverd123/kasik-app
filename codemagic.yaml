@@ -14,6 +14,18 @@ workflows:
         - certificate_credentials
       vars:
         BUNDLE_ID: "com.kasik.ekgida"
+        EXPO_PUBLIC_FIREBASE_API_KEY: "AIzaSyBkgx0FNXB2bX6AmkU4eOM5VYVoIGEYsag"
+        EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: "kasik-1f982.firebaseapp.com"
+        EXPO_PUBLIC_FIREBASE_PROJECT_ID: "kasik-1f982"
+        EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET: "kasik-1f982.firebasestorage.app"
+        EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "95500135299"
+        EXPO_PUBLIC_FIREBASE_APP_ID: "1:95500135299:ios:a2a3d3e5f6g7h8i9"
+        EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: "95500135299-d1s02fuebgd5hahrsblla2b4g09p3lk8.apps.googleusercontent.com"
+        EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: "95500135299-d1s02fuebgd5hahrsblla2b4g09p3lk8.apps.googleusercontent.com"
+        EXPO_PUBLIC_ADMOB_APP_ID_IOS: "ca-app-pub-8099877386187148~1136119394"
+        EXPO_PUBLIC_ADMOB_BANNER_ID_IOS: "ca-app-pub-8099877386187148/3160748553"
+        EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS: "ca-app-pub-8099877386187148/2055416996"
+        EXPO_PUBLIC_REVENUECAT_API_KEY: "appl_kOTQHVFKEfnenNdYfeQyYpHBVSM"
       node: 20
       xcode: 16.2
       cocoapods: default
@@ -27,7 +39,6 @@ workflows:
       - name: Patch Podfile - SKIP_INSTALL for pods
         script: |
           cd ios
-          # Insert SKIP_INSTALL fix inside existing post_install block
           sed -i '' '/react_native_post_install/i\
               installer.pods_project.targets.each do |target|\
                 target.build_configurations.each do |config|\
@@ -36,7 +47,6 @@ workflows:
               end
           ' Podfile
           echo "Podfile patched successfully"
-          grep -A 15 "post_install" Podfile
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
@@ -59,13 +69,54 @@ workflows:
           echo "XCODE_WORKSPACE=$XCODE_WORKSPACE" >> $CM_ENV
           echo "XCODE_SCHEME=$XCODE_SCHEME" >> $CM_ENV
           echo "Found workspace: $XCODE_WORKSPACE, scheme: $XCODE_SCHEME"
-      - name: Build ipa for distribution
+      - name: Build archive with xcodebuild
         script: |
-          xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
+          xcodebuild -workspace "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -archivePath build/ios/kasik.xcarchive \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates \
+            archive \
+            COMPILER_INDEX_STORE_ENABLE=NO
+      - name: Export IPA
+        script: |
+          # ExportOptions.plist olustur
+          PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          PROFILE_UUID=$(ls "$PROFILES_DIR"/*.mobileprovision 2>/dev/null | head -1 | xargs -I{} /usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin 2>/dev/null || echo "")
+
+          # Alternatif: xcode-project kullanarak export
+          cat > /tmp/ExportOptions.plist << PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>destination</key>
+            <string>upload</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>teamID</key>
+            <string>32TLAQYSU6</string>
+            <key>uploadSymbols</key>
+            <true/>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.kasik.ekgida</key>
+              <string>match AppStore com.kasik.ekgida</string>
+            </dict>
+          </dict>
+          </plist>
+          PLIST
+
+          xcodebuild -exportArchive \
+            -archivePath build/ios/kasik.xcarchive \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist /tmp/ExportOptions.plist
     artifacts:
       - build/ios/ipa/*.ipa
+      - build/ios/kasik.xcarchive
       - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
