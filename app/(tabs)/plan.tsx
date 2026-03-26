@@ -147,28 +147,35 @@ export default function PlanScreen() {
     if (!planLoaded) loadPlan();
   }, []);
 
+  // Bebeğin gerçek ay hesabı
+  const babyMonth = useMemo(() => {
+    if (!baby) return 6;
+    const birthDate = baby.birthDate instanceof Date ? baby.birthDate : new Date(baby.birthDate);
+    const now = new Date();
+    const realMonth = Math.floor((now.getTime() - birthDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000));
+    const m = Math.max(6, Math.min(12, realMonth));
+    return isNaN(m) ? (baby.currentStage === '6m' ? 6 : baby.currentStage === '8m' ? 8 : 12) : m;
+  }, [baby]);
+
   // Haftalık plan boşsa otomatik oluştur
   useEffect(() => {
     if (!planLoaded) return;
-    const allMeals = Object.values(weekMeals || {}).flat();
-    const totalMeals = allMeals.reduce((sum: number, daySlots: any) => {
-      if (!daySlots) return sum;
-      return sum + Object.values(daySlots).flat().length;
-    }, 0);
-    if (totalMeals === 0 && baby) {
-      // Doğum tarihinden gerçek ay hesapla
-      const birthDate = baby.birthDate instanceof Date ? baby.birthDate : new Date(baby.birthDate);
-      const now = new Date();
-      const realMonth = Math.max(6, Math.min(12, Math.floor((now.getTime() - birthDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000))));
-      const babyMonth = isNaN(realMonth) ? (baby.currentStage === '6m' ? 6 : baby.currentStage === '8m' ? 8 : 12) : realMonth;
+    // weekMeals içindeki toplam öğün sayısını hesapla
+    let totalMeals = 0;
+    for (let d = 0; d < 7; d++) {
+      const dayData = weekMeals[d];
+      if (dayData) {
+        totalMeals += Object.values(dayData).flat().length;
+      }
+    }
+    if (totalMeals === 0) {
       const expiringNames = expiringItems.map((item: any) => item.name);
-      // Aya göre önerilen öğün sayısı
       const { getRecommendedMealsPerDay } = require('../../constants/foodDatabase');
       const recommendedMeals = getRecommendedMealsPerDay(babyMonth);
       generateWeeklyPlan(recommendedMeals, babyMonth, expiringNames);
       setShuffleKey((prev) => prev + 1);
     }
-  }, [planLoaded, baby]);
+  }, [planLoaded, babyMonth]);
 
   // Auto-hide expiring warning after 10 seconds
   useEffect(() => {
@@ -310,11 +317,6 @@ export default function PlanScreen() {
   // Shuffle handler — öğün sayısı sor ve plan oluştur
   const handleShuffle = useCallback(() => {
     const { Alert } = require('react-native');
-    // Doğum tarihinden gerçek ay hesapla
-    const birthDate = baby?.birthDate instanceof Date ? baby.birthDate : new Date(baby?.birthDate || Date.now());
-    const now = new Date();
-    const realMonth = Math.max(6, Math.min(12, Math.floor((now.getTime() - birthDate.getTime()) / (30.44 * 24 * 60 * 60 * 1000))));
-    const babyMonth = baby ? (isNaN(realMonth) ? (baby.currentStage === '6m' ? 6 : baby.currentStage === '8m' ? 8 : 12) : realMonth) : 6;
     const expiringNames = expiringItems.map((item: any) => item.name);
 
     Alert.alert(
@@ -327,7 +329,7 @@ export default function PlanScreen() {
         { text: 'İptal', style: 'cancel' },
       ]
     );
-  }, [baby, expiringItems]);
+  }, [babyMonth, expiringItems]);
 
   const doGenerate = useCallback((mealsPerDay: number, babyMonth: number, expiringNames: string[]) => {
     setIsShuffling(true);
