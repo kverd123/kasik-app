@@ -32,6 +32,7 @@ import {
 } from '../../constants/theme';
 import { Card } from '../../components/ui/Card';
 import { Badge, AllergenBadge } from '../../components/ui/Badge';
+import { getAllergenLabel, getAllergenEmoji } from '../../constants/allergens';
 import ScreenHeader from '../../components/ui/ScreenHeader';
 import { AdBanner } from '../../components/ui/AdBanner';
 import { AnimatedPressable } from '../../components/ui/AnimatedPressable';
@@ -396,11 +397,15 @@ export default function RecipesScreen() {
           >
             {/* Image / Emoji placeholder */}
             <View style={[styles.recipeImage, { backgroundColor: colors.creamMid }]}>
-              <Text style={styles.recipeEmoji}>{item.emoji}</Text>
+              {item.photoURL ? (
+                <Image source={{ uri: item.photoURL }} style={styles.recipePhoto} />
+              ) : (
+                <Text style={styles.recipeEmoji}>{item.emoji}</Text>
+              )}
               {/* Allergen badge */}
               {item.allergens.length > 0 && (
                 <View style={styles.allergenOverlay}>
-                  <AllergenBadge label={item.allergens[0] === 'fish' ? 'Balık' : item.allergens[0]} size="sm" />
+                  <AllergenBadge label={`${getAllergenEmoji(item.allergens[0])} ${getAllergenLabel(item.allergens[0])}`} size="sm" />
                 </View>
               )}
               {/* Community source badge */}
@@ -616,6 +621,11 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
+  recipePhoto: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  } as any,
   recipeEmoji: {
     fontSize: 42,
   },

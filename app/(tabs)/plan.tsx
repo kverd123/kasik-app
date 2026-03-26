@@ -721,11 +721,11 @@ export default function PlanScreen() {
                             </Text>
                           ) : null}
                           {(() => {
-                            const missing = getMissingIngredients(meal);
+                            const missing = meal.missingIngredients || getMissingIngredients(meal);
                             if (missing.length === 0) return null;
                             return (
                               <Text style={styles.missingIngredients}>
-                                {'\u26A0\uFE0F'} Eksik: {missing.slice(0, 3).join(', ')}{missing.length > 3 ? ` +${missing.length - 3}` : ''}
+                                {'⚠️'} Eksik: {missing.slice(0, 3).join(', ')}{missing.length > 3 ? ` +${missing.length - 3}` : ''}
                               </Text>
                             );
                           })()}
@@ -736,7 +736,7 @@ export default function PlanScreen() {
                             ))}
                             {meal.isFirstTry && <FirstTryBadge />}
                             {meal.allergenWarning?.map((a) => (
-                              <AllergenBadge key={a} label="Alerjen" />
+                              <AllergenBadge key={a} label={`${getAllergenEmoji(a)} ${getAllergenLabel(a)}`} />
                             ))}
                           </View>
                         </View>
@@ -1002,11 +1002,11 @@ export default function PlanScreen() {
                       </Text>
                       {recipe.allergens.length > 0 && (
                         <Text style={styles.modalRecipeAllergen}>
-                          {'\u26A0\uFE0F'} Alerjen: {recipe.allergens.join(', ')}
+                          {'⚠️'} Alerjen: {recipe.allergens.map((a: any) => getAllergenLabel(a)).join(', ')}
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.modalRecipeAdd}>{'\uFF0B'}</Text>
+                    <Text style={styles.modalRecipeAdd}>{'＋'}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -1034,11 +1034,11 @@ export default function PlanScreen() {
                       </Text>
                       {recipe.allergens.length > 0 && (
                         <Text style={styles.modalRecipeAllergen}>
-                          {'\u26A0\uFE0F'} Alerjen: {recipe.allergens.join(', ')}
+                          {'⚠️'} Alerjen: {recipe.allergens.map((a: any) => getAllergenLabel(a)).join(', ')}
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.modalRecipeAdd}>{'\uFF0B'}</Text>
+                    <Text style={styles.modalRecipeAdd}>{'＋'}</Text>
                   </TouchableOpacity>
                 ))}
                 {filteredOtherRecipes.length > 20 && (

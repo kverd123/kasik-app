@@ -519,38 +519,88 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
 
       if (availableRecipes.length === 0) return;
 
-      // Bayatlayacak malzemeleri içeren tariflere öncelik ver
+      // Dolaptaki ürünleri al
+      const pantryItems: string[] = [];
+      try {
+        const pantryStore = require('./pantryStore').usePantryStore.getState();
+        pantryItems.push(...(pantryStore.items || []).map((item: any) => item.name.toLowerCase()));
+      } catch {}
+
+      // Bayatlayacak malzemeleri içeren tariflere EN YÜKSEK öncelik
       const expiringLower = expiringIngredients.map((e) => e.toLowerCase());
-      const priorityRecipes = expiringLower.length > 0
-        ? availableRecipes.filter((r) =>
-            r.ingredients.some((ing) =>
-              expiringLower.some((exp) => ing.name.toLowerCase().includes(exp) || exp.includes(ing.name.toLowerCase()))
-            )
-          )
-        : [];
+
+      // Tarifleri puanla: dolap eşleşmesi + bayatlayacak malzeme
+      const scoredRecipes = availableRecipes.map((r) => {
+        let score = 0;
+        const ingNames = r.ingredients.map((ing) => ing.name.toLowerCase());
+
+        // Bayatlayacak malzeme eşleşmesi (+10 puan)
+        const expiringMatch = expiringLower.filter((exp) =>
+          ingNames.some((ing) => ing.includes(exp) || exp.includes(ing))
+        ).length;
+        score += expiringMatch * 10;
+
+        // Dolap eşleşmesi (+3 puan her eşleşme)
+        const pantryMatch = pantryItems.filter((p) =>
+          ingNames.some((ing) => ing.includes(p) || p.includes(ing))
+        ).length;
+        score += pantryMatch * 3;
+
+        // Çeşitlilik için küçük rastgele bonus
+        score += Math.random() * 2;
+
+        return { recipe: r, score };
+      });
+
+      // Puanına göre sırala (yüksekten düşüğe)
+      scoredRecipes.sort((a, b) => b.score - a.score);
 
       const slots: MealSlot[] = ['breakfast', 'lunch', 'snack', 'dinner'].slice(0, mealsPerDay) as MealSlot[];
       const newWeek: Record<number, DayMeals> = {};
+      const weekUsedIds = new Set<string>(); // Hafta boyunca tekrar kontrolü
 
       for (let day = 0; day < 7; day++) {
         const dayMeals = emptyDay();
-        const usedIds = new Set<string>();
+        const dayUsedIds = new Set<string>();
 
         for (const slot of slots) {
-          // Bayatlayacak malzeme içeren tarifi öncelikle seç
-          let recipe: typeof availableRecipes[0] | undefined;
-          if (priorityRecipes.length > 0) {
-            recipe = priorityRecipes.find((r) => !usedIds.has(r.id));
+          // Önce bu gün kullanılmamış ve bu hafta az kullanılmış tarifleri tercih et
+          let recipe: RecipeData | undefined;
+
+          // 1. Bayatlayacak + dolap eşleşmeli tarifler (henüz bu gün kullanılmamış)
+          for (const sr of scoredRecipes) {
+            if (!dayUsedIds.has(sr.recipe.id) && !weekUsedIds.has(sr.recipe.id)) {
+              recipe = sr.recipe;
+              break;
+            }
           }
+
+          // 2. Bu gün kullanılmamış ama haftada kullanılmış olabilir
           if (!recipe) {
-            // Rastgele tarif seç (aynı gün tekrar etmesin)
-            const candidates = availableRecipes.filter((r) => !usedIds.has(r.id));
-            recipe = candidates[Math.floor(Math.random() * candidates.length)] || availableRecipes[0];
+            for (const sr of scoredRecipes) {
+              if (!dayUsedIds.has(sr.recipe.id)) {
+                recipe = sr.recipe;
+                break;
+              }
+            }
           }
-          usedIds.add(recipe.id);
+
+          // 3. Fallback
+          if (!recipe) {
+            recipe = availableRecipes[Math.floor(Math.random() * availableRecipes.length)];
+          }
+
+          dayUsedIds.add(recipe.id);
+          weekUsedIds.add(recipe.id);
+
+          // Eksik malzeme kontrolü
+          const ingNames = recipe.ingredients.map((ing) => ing.name.toLowerCase());
+          const missingIngredients = recipe.ingredients.filter(
+            (ing) => !pantryItems.some((p) => p.includes(ing.name.toLowerCase()) || ing.name.toLowerCase().includes(p))
+          );
 
           const meal: Meal = {
-            id: `gen-${day}-${slot}-${Date.now()}`,
+            id: `gen-${day}-${slot}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
             slot,
             recipeId: recipe.id,
             foodName: recipe.title,
@@ -560,6 +610,7 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
             completed: false,
             isFirstTry: false,
             allergenWarning: recipe.allergens.length > 0 ? recipe.allergens : undefined,
+            missingIngredients: missingIngredients.length > 0 ? missingIngredients.map((i) => i.name) : undefined,
             nutrients: recipe.nutrients.slice(0, 2).map((n) => ({
               name: n.name,
               value: n.value,

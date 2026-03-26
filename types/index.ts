@@ -107,6 +107,8 @@ export interface Meal {
   ingredients?: MealIngredient[];
   steps?: string[];
   prepTime?: number;
+  // Dolapta eksik malzemeler
+  missingIngredients?: string[];
 }
 
 export interface NutrientInfo {

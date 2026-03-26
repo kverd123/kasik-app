@@ -147,6 +147,7 @@ export default function ProfileScreen() {
   const deleteAccountAction = useAuthStore((s) => s.deleteAccount);
   const subscription = useSubscriptionStore((s) => s.subscription);
   const getActiveFeatures = useSubscriptionStore((s) => s.getActiveFeatures);
+  const purchase = useSubscriptionStore((s) => s.purchase);
   const entries = useRecipeBookStore((s) => s.entries);
   const loadFromStorage = useRecipeBookStore((s) => s.loadFromStorage);
   const isLoaded = useRecipeBookStore((s) => s.isLoaded);
@@ -574,15 +575,24 @@ export default function ProfileScreen() {
 
         {/* Premium Upgrade (show only for free users) */}
         {!subscription.isPremium && (
-          <Card padding="xl" style={styles.premiumCard} onPress={() => {
-            Alert.alert('Premium', 'Premium abonelik sayfası yakında aktif olacak!');
+          <Card padding="xl" style={styles.premiumCard} onPress={async () => {
+            try {
+              if (user?.uid) {
+                await purchase(user.uid, 'monthly');
+                Alert.alert('Tebrikler!', 'Premium aboneliğiniz başarıyla aktif edildi!');
+              }
+            } catch (e: any) {
+              if (!e?.userCancelled) {
+                Alert.alert('Hata', 'Satın alma işlemi tamamlanamadı. Lütfen tekrar deneyin.');
+              }
+            }
           }}>
             <View style={styles.premiumContent}>
               <Text style={styles.premiumEmoji}>✨</Text>
               <View style={styles.premiumInfo}>
                 <Text style={styles.premiumTitle}>Premium'a Geç</Text>
                 <Text style={styles.premiumSubtitle}>
-                  Tüm reklamları kaldır
+                  Reklamsız + Sınırsız AI Tarif
                 </Text>
               </View>
               <Text style={styles.premiumArrow}>→</Text>
@@ -595,8 +605,8 @@ export default function ProfileScreen() {
               ))}
             </View>
             <View style={styles.premiumPricing}>
-              <Text style={styles.premiumPrice}>₺79.99/ay</Text>
-              <Text style={styles.premiumSave}>veya ₺549.99/yıl (%43 tasarruf)</Text>
+              <Text style={styles.premiumPrice}>₺19,99/ay</Text>
+              <Text style={styles.premiumSave}>Aylık otomatik yenilenir. İstediğiniz zaman iptal edin.</Text>
             </View>
           </Card>
         )}
@@ -700,7 +710,18 @@ export default function ProfileScreen() {
               <Text style={styles.settingArrow}>→</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.settingItem} onPress={() => Alert.alert('Geri Yükleme', 'Satın alımlarınız kontrol ediliyor...', [{ text: 'Tamam' }])}>
+            <TouchableOpacity style={styles.settingItem} onPress={async () => {
+              try {
+                if (user?.uid) {
+                  const restore = useSubscriptionStore.getState().restore;
+                  await restore(user.uid);
+                  const isPremium = useSubscriptionStore.getState().subscription.isPremium;
+                  Alert.alert(isPremium ? 'Başarılı' : 'Bilgi', isPremium ? 'Premium aboneliğiniz geri yüklendi!' : 'Aktif abonelik bulunamadı.');
+                }
+              } catch {
+                Alert.alert('Hata', 'Geri yükleme başarısız oldu.');
+              }
+            }}>
               <Text style={styles.settingLabel}>Satın Alımları Geri Yükle</Text>
               <Text style={styles.settingArrow}>→</Text>
             </TouchableOpacity>
