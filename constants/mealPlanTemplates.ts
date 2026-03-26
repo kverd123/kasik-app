@@ -55,58 +55,58 @@ const month6: MealPlanTemplate = {
     'Yulaf unu',
   ],
   days: [
-    // Gün 1-3: Kabak
-    { day: 1, meals: [{ slot: 'taste', name: 'Kabak püresi', description: '1 çay kaşığı ile başlayın', ingredients: ['Kabak', 'Zeytinyağı'], emoji: '🎃' }] },
-    { day: 2, meals: [{ slot: 'taste', name: 'Kabak püresi', description: '2 çay kaşığı', ingredients: ['Kabak', 'Zeytinyağı'], emoji: '🎃' }] },
-    { day: 3, meals: [{ slot: 'taste', name: 'Kabak püresi', description: '1 yemek kaşığına kadar artırın', ingredients: ['Kabak', 'Zeytinyağı'], emoji: '🎃' }] },
-    // Gün 4-6: Havuç + Kabak
-    { day: 4, meals: [{ slot: 'taste', name: 'Havuç püresi', description: 'Yeni besin: havuç tadımı', ingredients: ['Havuç', 'Zeytinyağı'], emoji: '🥕' }] },
-    { day: 5, meals: [{ slot: 'taste', name: 'Havuç-kabak püresi', ingredients: ['Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🥕' }] },
-    { day: 6, meals: [{ slot: 'taste', name: 'Havuç-kabak püresi', ingredients: ['Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🥕' }] },
-    // Gün 7-9: Patates
-    { day: 7, meals: [{ slot: 'taste', name: 'Patates püresi', description: 'Yeni besin: patates tadımı', ingredients: ['Patates', 'Zeytinyağı'], emoji: '🥔' }] },
-    { day: 8, meals: [{ slot: 'taste', name: 'Patates-havuç püresi', ingredients: ['Patates', 'Havuç', 'Zeytinyağı'], emoji: '🥔' }] },
-    { day: 9, meals: [{ slot: 'taste', name: 'Patates-kabak-havuç püresi', ingredients: ['Patates', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🥔' }] },
-    // Gün 10-12: Yoğurt
-    { day: 10, meals: [{ slot: 'taste', name: 'Yoğurt', description: 'Yeni besin: yoğurt tadımı', ingredients: ['Yoğurt'], emoji: '🥛' }] },
-    { day: 11, meals: [{ slot: 'taste', name: 'Yoğurt + kabak püresi', ingredients: ['Yoğurt', 'Kabak'], emoji: '🥛' }] },
-    { day: 12, meals: [{ slot: 'taste', name: 'Yoğurt + havuç püresi', ingredients: ['Yoğurt', 'Havuç'], emoji: '🥛' }] },
-    // Gün 13-15: Avokado
-    { day: 13, meals: [{ slot: 'taste', name: 'Avokado püresi', description: 'Yeni besin: avokado tadımı', ingredients: ['Avokado'], emoji: '🥑' }] },
-    { day: 14, meals: [{ slot: 'taste', name: 'Avokado + yoğurt', ingredients: ['Avokado', 'Yoğurt'], emoji: '🥑' }] },
-    { day: 15, meals: [{ slot: 'taste', name: 'Avokado-patates püresi', ingredients: ['Avokado', 'Patates', 'Zeytinyağı'], emoji: '🥑' }] },
-    // Gün 16-18: Elma
-    { day: 16, meals: [{ slot: 'taste', name: 'Elma püresi', description: 'Yeni besin: elma tadımı (pişmiş)', ingredients: ['Elma'], emoji: '🍎' }] },
-    { day: 17, meals: [{ slot: 'taste', name: 'Elma + yoğurt', ingredients: ['Elma', 'Yoğurt'], emoji: '🍎' }] },
-    { day: 18, meals: [{ slot: 'taste', name: 'Elma-havuç püresi', ingredients: ['Elma', 'Havuç', 'Zeytinyağı'], emoji: '🍎' }] },
-    // Gün 19-21: Armut
-    { day: 19, meals: [{ slot: 'taste', name: 'Armut püresi', description: 'Yeni besin: armut tadımı', ingredients: ['Armut'], emoji: '🍐' }] },
-    { day: 20, meals: [{ slot: 'taste', name: 'Armut + yoğurt', ingredients: ['Armut', 'Yoğurt'], emoji: '🍐' }] },
-    { day: 21, meals: [{ slot: 'taste', name: 'Armut-elma püresi', ingredients: ['Armut', 'Elma'], emoji: '🍐' }] },
-    // Gün 22-24: Yumurta sarısı
-    { day: 22, meals: [{ slot: 'taste', name: 'Yumurta sarısı', description: 'Yeni besin: yumurta sarısı tadımı', ingredients: ['Yumurta sarısı'], emoji: '🥚' }] },
-    { day: 23, meals: [{ slot: 'taste', name: 'Yumurta sarısı + patates püresi', ingredients: ['Yumurta sarısı', 'Patates', 'Zeytinyağı'], emoji: '🥚' }] },
-    { day: 24, meals: [{ slot: 'taste', name: 'Yumurta sarısı + avokado', ingredients: ['Yumurta sarısı', 'Avokado'], emoji: '🥚' }] },
-    // Gün 25-27: Lor peyniri
-    { day: 25, meals: [{ slot: 'taste', name: 'Lor peyniri', description: 'Yeni besin: lor peyniri tadımı', ingredients: ['Lor peyniri'], emoji: '🧀' }] },
-    { day: 26, meals: [{ slot: 'taste', name: 'Lor peyniri + armut', ingredients: ['Lor peyniri', 'Armut'], emoji: '🧀' }] },
-    { day: 27, meals: [{ slot: 'taste', name: 'Lor peyniri + avokado + yumurta sarısı', ingredients: ['Lor peyniri', 'Avokado', 'Yumurta sarısı'], emoji: '🧀' }] },
-    // Gün 28-30: Yulaf unu
-    { day: 28, meals: [{ slot: 'taste', name: 'Yulaf lapası', description: 'Yeni besin: yulaf unu tadımı', ingredients: ['Yulaf unu', 'Su'], emoji: '🥣' }] },
-    { day: 29, meals: [{ slot: 'taste', name: 'Yulaf lapası + elma', ingredients: ['Yulaf unu', 'Elma', 'Su'], emoji: '🥣' }] },
-    { day: 30, meals: [{ slot: 'taste', name: 'Yulaf lapası + armut + yoğurt', ingredients: ['Yulaf unu', 'Armut', 'Yoğurt'], emoji: '🥣' }] },
+    // Gün 1-3: Kabak tanıtımı
+    { day: 1, meals: [{ slot: 'taste', name: 'Kabak püresi', description: '1 çay kaşığı kabak', ingredients: ['Kabak', 'Zeytinyağı'], emoji: '🎃' }] },
+    { day: 2, meals: [{ slot: 'taste', name: 'Kabak püresi', description: '1 tatlı kaşığı kabak', ingredients: ['Kabak', 'Zeytinyağı'], emoji: '🎃' }] },
+    { day: 3, meals: [{ slot: 'taste', name: 'Kabak püresi', description: '1 yemek kaşığı kabak', ingredients: ['Kabak', 'Zeytinyağı'], emoji: '🎃' }] },
+    // Gün 4-6: Havuç tanıtımı
+    { day: 4, meals: [{ slot: 'taste', name: 'Havuç püresi', description: '1 çay kaşığı havuç', ingredients: ['Havuç', 'Zeytinyağı'], emoji: '🥕' }] },
+    { day: 5, meals: [{ slot: 'taste', name: 'Havuç + kabak püresi', description: '1 tatlı kaşığı havuç + kabak püresi', ingredients: ['Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🥕' }] },
+    { day: 6, meals: [{ slot: 'taste', name: 'Havuç + kabak püresi', description: '1 yemek kaşığı havuç + kabak püresi', ingredients: ['Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🥕' }] },
+    // Gün 7-9: Patates tanıtımı
+    { day: 7, meals: [{ slot: 'taste', name: 'Patates püresi', description: '1 çay kaşığı patates', ingredients: ['Patates', 'Zeytinyağı'], emoji: '🥔' }] },
+    { day: 8, meals: [{ slot: 'taste', name: 'Patates + havuç püresi', description: '1 tatlı kaşığı patates + havuç püresi', ingredients: ['Patates', 'Havuç', 'Zeytinyağı'], emoji: '🥔' }] },
+    { day: 9, meals: [{ slot: 'taste', name: 'Patates + kabak + havuç püresi', description: '1 yemek kaşığı patates + kabak, havuç püresi', ingredients: ['Patates', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🥔' }] },
+    // Gün 10-12: Yoğurt tanıtımı
+    { day: 10, meals: [{ slot: 'taste', name: 'Yoğurt', description: '1 çay kaşığı yoğurt', ingredients: ['Yoğurt'], emoji: '🥛' }] },
+    { day: 11, meals: [{ slot: 'taste', name: 'Yoğurt + patates püresi', description: '1 tatlı kaşığı yoğurt + patates püresi', ingredients: ['Yoğurt', 'Patates'], emoji: '🥛' }] },
+    { day: 12, meals: [{ slot: 'taste', name: 'Yoğurt + kabak + patates püresi', description: '1 yemek kaşığı yoğurt + kabak, patates püresi', ingredients: ['Yoğurt', 'Kabak', 'Patates'], emoji: '🥛' }] },
+    // Gün 13-15: Avokado tanıtımı
+    { day: 13, meals: [{ slot: 'taste', name: 'Avokado püresi', description: '1 çay kaşığı avokado', ingredients: ['Avokado'], emoji: '🥑' }] },
+    { day: 14, meals: [{ slot: 'taste', name: 'Avokado + patates', description: '1 tatlı kaşığı avokado + patates', ingredients: ['Avokado', 'Patates', 'Zeytinyağı'], emoji: '🥑' }] },
+    { day: 15, meals: [{ slot: 'taste', name: 'Avokado + kabak/yoğurt', description: '1 yemek kaşığı avokado + kabak/yoğurt', ingredients: ['Avokado', 'Kabak', 'Yoğurt'], emoji: '🥑' }] },
+    // Gün 16-18: Elma tanıtımı
+    { day: 16, meals: [{ slot: 'taste', name: 'Elma püresi', description: '1 çay kaşığı elma', ingredients: ['Elma'], emoji: '🍎' }] },
+    { day: 17, meals: [{ slot: 'taste', name: 'Elma + avokado', description: '1 tatlı kaşığı elma + avokado', ingredients: ['Elma', 'Avokado'], emoji: '🍎' }] },
+    { day: 18, meals: [{ slot: 'taste', name: 'Elma + avokado/yoğurt', description: '1 yemek kaşığı elma + avokado/yoğurt', ingredients: ['Elma', 'Avokado', 'Yoğurt'], emoji: '🍎' }] },
+    // Gün 19-21: Armut tanıtımı
+    { day: 19, meals: [{ slot: 'taste', name: 'Armut püresi', description: '1 çay kaşığı armut', ingredients: ['Armut'], emoji: '🍐' }] },
+    { day: 20, meals: [{ slot: 'taste', name: 'Armut + elma', description: '1 tatlı kaşığı armut + elma', ingredients: ['Armut', 'Elma'], emoji: '🍐' }] },
+    { day: 21, meals: [{ slot: 'taste', name: 'Armut + avokado', description: '1 yemek kaşığı armut + avokado', ingredients: ['Armut', 'Avokado'], emoji: '🍐' }] },
+    // Gün 22-24: Yumurta sarısı tanıtımı
+    { day: 22, meals: [{ slot: 'taste', name: 'Yumurta sarısı', description: 'Çeyrek yumurta sarısı', ingredients: ['Yumurta sarısı'], emoji: '🥚' }] },
+    { day: 23, meals: [{ slot: 'taste', name: 'Yumurta sarısı + patates püresi', description: 'Yarım yumurta sarısı + patates püresi', ingredients: ['Yumurta sarısı', 'Patates', 'Zeytinyağı'], emoji: '🥚' }] },
+    { day: 24, meals: [{ slot: 'taste', name: 'Yumurta sarısı + armut püresi', description: 'Tam yumurta sarısı + armut püresi', ingredients: ['Yumurta sarısı', 'Armut'], emoji: '🥚' }] },
+    // Gün 25-27: Lor peyniri tanıtımı
+    { day: 25, meals: [{ slot: 'taste', name: 'Lor peyniri', description: '1 çay kaşığı lor peyniri', ingredients: ['Lor peyniri'], emoji: '🧀' }] },
+    { day: 26, meals: [{ slot: 'taste', name: 'Lor peyniri + yumurta sarısı', description: '1 tatlı kaşığı lor peyniri + yumurta sarısı', ingredients: ['Lor peyniri', 'Yumurta sarısı'], emoji: '🧀' }] },
+    { day: 27, meals: [{ slot: 'taste', name: 'Lor peyniri + avokado', description: '1 yemek kaşığı lor peyniri + avokado', ingredients: ['Lor peyniri', 'Avokado'], emoji: '🧀' }] },
+    // Gün 28-30: Yulaf unu tanıtımı
+    { day: 28, meals: [{ slot: 'taste', name: 'Yulaf lapası + yumurta sarısı + lor peyniri', description: '1 çay kaşığı yulaf unu + yumurta sarısı + lor peyniri', ingredients: ['Yulaf unu', 'Yumurta sarısı', 'Lor peyniri'], emoji: '🥣' }] },
+    { day: 29, meals: [{ slot: 'taste', name: 'Yulaf lapası + yumurta sarısı + armut püresi', description: '1 tatlı kaşığı yulaf unu + yumurta sarısı + armut püresi', ingredients: ['Yulaf unu', 'Yumurta sarısı', 'Armut'], emoji: '🥣' }] },
+    { day: 30, meals: [{ slot: 'taste', name: 'Yulaf unu ile yoğurt çorbası', description: '1 yemek kaşığı yulaf unu ile yoğurt çorbası', ingredients: ['Yulaf unu', 'Yoğurt', 'Su'], emoji: '🥣' }] },
   ],
 };
 
 // ============================================================
-// 7. AY — 2 ÖĞÜN: Kahvaltı + Öğle/Ara Öğün
+// 7. AY — 2 ÖĞÜN: Kahvaltı + İkindi
 // Dr. Erdal Pazar rehberi: 6-8 ay arası günde 2 öğün
 // ============================================================
 const month7: MealPlanTemplate = {
   month: 7,
   title: '7. Ay - 2 Öğün Beslenme Planı',
   description:
-    'Günde 2 öğün: kahvaltı ve öğle yemeği. Yeni sebzeler, tahıllar ve et tanıtılır. Ispanak, domates, tavuk bu ay başlar.',
+    'Günde 2 öğün: kahvaltı ve ikindi. Pirinç, ceviz, kuzu kıyma, semizotu, bezelye, pekmez, kuru kayısı, tam buğday unu, bebek irmiği, domates (pişmiş), yeşil fasulye, labne peyniri ve salatalık tanıtılır.',
   mealSlots: ['breakfast', 'lunch'],
   notes: [
     'Tüm yemeklere zeytinyağı eklemeyi unutmayın.',
@@ -115,1154 +115,1146 @@ const month7: MealPlanTemplate = {
     'Pirinç günlük yapılmalı, saklama yapılmamalı.',
     'Pekmez ısıya maruz kalmamalı, yemeğe son anda eklenecek.',
     'İrmik su ile pişirilerek verilecek.',
-    'Ispanak haftada en fazla 2 kez verilmelidir.',
-    'Domates sadece pişmiş olarak kullanılacak.',
+    'Domates 12. aya kadar yalnızca pişmiş kullanılacak.',
+    'Her yemeğin 2 pişirim / 2 gün saklama hakkı vardır (pirinç hariç).',
+    'Bezelye buharda pişirilerek veya haşlanarak verilebilir.',
+    'Kuru kayısı olarak gün kurusu tercih edilmeli.',
   ],
   newFoodsIntroduced: [
-    'Ispanak',
-    'Taze soğan',
-    'Domates (pişmiş)',
-    'Sarımsak',
-    'Tavuk',
-    'Hindi',
     'Pirinç',
-    'Kıyma (çift çekilmiş kuzu)',
-    'Pekmez',
-    'Nane',
+    'Ceviz (toz)',
+    'Kuzu kıyma (çift çekilmiş)',
+    'Semizotu',
+    'Bezelye',
+    'Pekmez (soğuk sıkım)',
+    'Kuru kayısı',
+    'Tam buğday unu',
+    'Bebek irmiği',
+    'Domates (pişmiş)',
+    'Yeşil fasulye',
+    'Labne peyniri',
+    'Salatalık',
   ],
   days: [
-    // Gün 1-3: Ispanak tanıtımı
+    // Gün 1-3: Pirinç tanıtımı
     {
       day: 1,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + elma püresi', ingredients: ['Yoğurt', 'Elma'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Kabak çorbası', description: 'Yeni besin: ıspanak tadımı eklenir', ingredients: ['Kabak', 'Ispanak', 'Patates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Avokado + lor, yumurta sarısı, muz püresi', ingredients: ['Avokado', 'Lor peyniri', 'Yumurta sarısı', 'Muz', 'Zeytinyağı'], emoji: '🥑' },
+        { slot: 'lunch', name: 'Tatlı patates püresi + pirinç tadımlık, yoğurt', description: 'Tadım: Pirinç', ingredients: ['Tatlı patates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍠' },
       ],
     },
     {
       day: 2,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + armut', ingredients: ['Yulaf unu', 'Armut', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Ispanak-patates püresi', ingredients: ['Ispanak', 'Patates', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Avokado + labne, yumurta sarısı, elma püresi', ingredients: ['Avokado', 'Labne peyniri', 'Yumurta sarısı', 'Elma', 'Zeytinyağı'], emoji: '🥑' },
+        { slot: 'lunch', name: 'Havuç püresi + pirinç tadımlık, yoğurt', description: 'Tadım: Pirinç', ingredients: ['Havuç', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥕' },
       ],
     },
     {
       day: 3,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + lor peyniri + yumurta sarısı', ingredients: ['Avokado', 'Lor peyniri', 'Yumurta sarısı', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Ispanaklı sebze çorbası', ingredients: ['Ispanak', 'Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Avokado + lor, yumurta sarısı, armut püresi', ingredients: ['Avokado', 'Lor peyniri', 'Yumurta sarısı', 'Armut', 'Zeytinyağı'], emoji: '🥑' },
+        { slot: 'lunch', name: 'Kabak püresi + pirinç tadımlık, yoğurt', description: 'Tadım: Pirinç', ingredients: ['Kabak', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🎃' },
       ],
     },
-    // Gün 4-6: Pirinç tanıtımı
+    // Gün 4-6: Ceviz tanıtımı
     {
       day: 4,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + muz', ingredients: ['Yoğurt', 'Muz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Pirinç lapası', description: 'Yeni besin: pirinç. Günlük taze yapılmalı!', ingredients: ['Pirinç', 'Su', 'Zeytinyağı'], emoji: '🍚' },
+        { slot: 'breakfast', name: 'Avokado + labneli püre, yumurta sarısı ile omlet, toz ceviz tadımı', ingredients: ['Avokado', 'Labne peyniri', 'Yumurta sarısı', 'Ceviz', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Yoğurt çorbası, tel şehriye ile', description: 'Tadım: Ceviz', ingredients: ['Yoğurt', 'Tel şehriye', 'Zeytinyağı'], emoji: '🍲' },
       ],
     },
     {
       day: 5,
       meals: [
-        { slot: 'breakfast', name: 'Elma + armut püresi', ingredients: ['Elma', 'Armut'], emoji: '🍎' },
-        { slot: 'lunch', name: 'Pirinç lapası + havuç püresi', ingredients: ['Pirinç', 'Havuç', 'Zeytinyağı'], emoji: '🍚' },
+        { slot: 'breakfast', name: 'Avokado + labneli püre, yumurta sarısı ile pankek, toz ceviz tadımı', ingredients: ['Avokado', 'Labne peyniri', 'Yumurta sarısı', 'Ceviz', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Patates püresi, yoğurt', description: 'Tadım: Ceviz', ingredients: ['Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥔' },
       ],
     },
     {
       day: 6,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + avokado', ingredients: ['Lor peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Sebzeli pirinç lapası', ingredients: ['Pirinç', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🍚' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ve avokado püresi ile lor peyniri + toz ceviz, muz', ingredients: ['Yumurta sarısı', 'Avokado', 'Lor peyniri', 'Ceviz', 'Muz', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kabak püresi, yoğurt', description: 'Tadım: Ceviz', ingredients: ['Kabak', 'Yoğurt', 'Zeytinyağı'], emoji: '🎃' },
       ],
     },
-    // Gün 7-9: Kıyma tanıtımı
+    // Gün 7-8: Kıyma tanıtımı
     {
       day: 7,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + elma', ingredients: ['Yulaf unu', 'Elma', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Kıymalı sebze püresi', description: 'Yeni besin: kuzu kıyma (çift çekilmiş)', ingredients: ['Kuzu kıyma', 'Kabak', 'Patates', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'breakfast', name: 'Elmalı, yulaflı (haşlanmış), labne peynirli karışım; yanına 1 adet yumurta sarısı', ingredients: ['Elma', 'Yulaf unu', 'Labne peyniri', 'Yumurta sarısı', 'Zeytinyağı'], emoji: '🍎' },
+        { slot: 'lunch', name: 'Havuçlu, patatesli, pirinçli ve kuzu kıymalı yemek + yoğurt', description: 'Tadım: Kıyma', ingredients: ['Havuç', 'Patates', 'Pirinç', 'Kuzu kıyma', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
       ],
     },
     {
       day: 8,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + kayısı püresi', ingredients: ['Yoğurt', 'Kayısı'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Kıymalı havuç püresi', ingredients: ['Kuzu kıyma', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'breakfast', name: 'Tadımı yapılan sebzeler ile muffin (yumurta sarısı ile), avokado, labne', ingredients: ['Yumurta sarısı', 'Avokado', 'Labne peyniri', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Kabaklı ve şehriyeli kıymalı çorba + yoğurt', description: 'Tadım: Kıyma', ingredients: ['Kabak', 'Tel şehriye', 'Kuzu kıyma', 'Yoğurt', 'Zeytinyağı'], emoji: '🍲' },
       ],
     },
+    // Gün 9-11: Semizotu tanıtımı
     {
       day: 9,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta sarısı', ingredients: ['Avokado', 'Yumurta sarısı', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Kıymalı kabak', ingredients: ['Kuzu kıyma', 'Kabak', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'breakfast', name: 'Muffin, lor peyniri, biraz salatalık, armut', ingredients: ['Yumurta sarısı', 'Lor peyniri', 'Salatalık', 'Armut', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Yayla çorbası, pirinçli ve tadımlık semizotlu', description: 'Tadım: Semizotu', ingredients: ['Yoğurt', 'Pirinç', 'Semizotu', 'Zeytinyağı'], emoji: '🍲' },
       ],
     },
-    // Gün 10-12: Domates (pişmiş) tanıtımı
     {
       day: 10,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + armut', ingredients: ['Lor peyniri', 'Armut'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Domatesli sebze çorbası', description: 'Yeni besin: domates (sadece pişmiş)', ingredients: ['Domates', 'Kabak', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🍅' },
+        { slot: 'breakfast', name: 'Yumurta sarısı (çırpma), labne peyniri, salatalık, muz', ingredients: ['Yumurta sarısı', 'Labne peyniri', 'Salatalık', 'Muz', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Tatlı patatesli, tadımlık semizotu ve kuzu kıymalı yemek + yoğurt', description: 'Tadım: Semizotu', ingredients: ['Tatlı patates', 'Semizotu', 'Kuzu kıyma', 'Yoğurt', 'Zeytinyağı'], emoji: '🍠' },
       ],
     },
     {
       day: 11,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + muz', ingredients: ['Yulaf unu', 'Muz', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Domatesli kıymalı sebze', ingredients: ['Domates', 'Kuzu kıyma', 'Kabak', 'Zeytinyağı'], emoji: '🍅' },
+        { slot: 'breakfast', name: 'Yumurta sarısı + labne, haşlanmış yulaf ezmesi + armut + toz ceviz', ingredients: ['Yumurta sarısı', 'Labne peyniri', 'Yulaf unu', 'Armut', 'Ceviz', 'Zeytinyağı'], emoji: '🥣' },
+        { slot: 'lunch', name: 'Kuzu kıymalı, semizotlu, kabaklı, havuçlu mücver + yoğurt', description: 'Tadım: Semizotu', ingredients: ['Kuzu kıyma', 'Semizotu', 'Kabak', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
       ],
     },
+    // Gün 12-14: Bezelye tanıtımı
     {
       day: 12,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + elma', ingredients: ['Yoğurt', 'Elma'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Tarhana çorbası', description: 'Domates içerikli geleneksel çorba', ingredients: ['Tarhana', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile omlet, lor peyniri, salatalık', ingredients: ['Yumurta sarısı', 'Lor peyniri', 'Salatalık', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Havuç, patates ve tadımlık bezelye ile yemek + yoğurt', description: 'Tadım: Bezelye', ingredients: ['Havuç', 'Patates', 'Bezelye', 'Yoğurt', 'Zeytinyağı'], emoji: '🟢' },
       ],
     },
-    // Gün 13-15: Tavuk tanıtımı
     {
       day: 13,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + lor + yumurta sarısı', ingredients: ['Avokado', 'Lor peyniri', 'Yumurta sarısı', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Tavuk suyu çorbası', description: 'Yeni besin: tavuk', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile pankek, üzerine pekmez ve muz; yanına labne ve avokado', ingredients: ['Yumurta sarısı', 'Pekmez', 'Muz', 'Labne peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Havuç, patates ve tadımlık bezelye ile yemek + yoğurt', description: 'Tadım: Bezelye', ingredients: ['Havuç', 'Patates', 'Bezelye', 'Yoğurt', 'Zeytinyağı'], emoji: '🟢' },
       ],
     },
     {
       day: 14,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + kayısı', ingredients: ['Yoğurt', 'Kayısı'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Tavuklu sebze püresi', ingredients: ['Tavuk', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile krep, lor peyniri ve avokadodan sos sürülerek', ingredients: ['Yumurta sarısı', 'Lor peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Kabaklı kuzu kıymalı ve pirinçli yemek + yoğurt', description: 'Tadım: Bezelye', ingredients: ['Kabak', 'Kuzu kıyma', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
       ],
     },
+    // Gün 15-17: Pekmez tanıtımı
     {
       day: 15,
       meals: [
-        { slot: 'breakfast', name: 'Elma + armut püresi', ingredients: ['Elma', 'Armut'], emoji: '🍎' },
-        { slot: 'lunch', name: 'Tavuklu pirinç lapası', ingredients: ['Tavuk', 'Pirinç', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Yumurta sarısı, labne peyniri, salatalık, elma + toz ceviz', ingredients: ['Yumurta sarısı', 'Labne peyniri', 'Salatalık', 'Elma', 'Ceviz', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Semizotlu kuzu kıymalı pirinçli yemek + yoğurt', description: 'Tadım: Pekmez', ingredients: ['Semizotu', 'Kuzu kıyma', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🌿' },
       ],
     },
-    // Gün 16-18: Pekmez ve sarımsak tanıtımı
     {
       day: 16,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + pekmez', description: 'Yeni besin: pekmez (son anda ekleyin, ısıtmayın)', ingredients: ['Yoğurt', 'Pekmez'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Mercimek çorbası', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile pankek, toz ceviz + labne + muz + pekmez', ingredients: ['Yumurta sarısı', 'Ceviz', 'Labne peyniri', 'Muz', 'Pekmez', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Kıymalı, havuçlu bezelye yemeği + yoğurt', description: 'Tadım: Pekmez', ingredients: ['Kuzu kıyma', 'Havuç', 'Bezelye', 'Yoğurt', 'Zeytinyağı'], emoji: '🟢' },
       ],
     },
     {
       day: 17,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + pekmez', ingredients: ['Yulaf unu', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Sarımsaklı sebze çorbası', description: 'Yeni besin: sarımsak', ingredients: ['Kabak', 'Havuç', 'Patates', 'Sarımsak', 'Zeytinyağı'], emoji: '🧄' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile pankek, toz ceviz + lor + muz + pekmez', ingredients: ['Yumurta sarısı', 'Ceviz', 'Lor peyniri', 'Muz', 'Pekmez', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Kıymalı semizotu yemeği + yoğurt', description: 'Tadım: Pekmez', ingredients: ['Kuzu kıyma', 'Semizotu', 'Yoğurt', 'Zeytinyağı'], emoji: '🌿' },
       ],
     },
+    // Gün 18-20: Kuru kayısı tanıtımı
     {
       day: 18,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + muz', ingredients: ['Lor peyniri', 'Muz'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Kıymalı ıspanak', ingredients: ['Kuzu kıyma', 'Ispanak', 'Pirinç', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile tarhanalı omlet, kuru kayısı + toz ceviz, labne, avokado', ingredients: ['Yumurta sarısı', 'Tarhana', 'Kuru kayısı', 'Ceviz', 'Labne peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Tatlı patatesli, kabaklı ve kıymalı sebze yemeği + yoğurt', description: 'Tadım: Kayısı', ingredients: ['Tatlı patates', 'Kabak', 'Kuzu kıyma', 'Yoğurt', 'Zeytinyağı'], emoji: '🍠' },
       ],
     },
-    // Gün 19-21: Taze soğan tanıtımı
     {
       day: 19,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + armut', ingredients: ['Yoğurt', 'Armut'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Sebze çorbası (taze soğanlı)', description: 'Yeni besin: taze soğan', ingredients: ['Kabak', 'Havuç', 'Patates', 'Taze soğan', 'Zeytinyağı'], emoji: '🧅' },
+        { slot: 'breakfast', name: 'Yumurta sarısı, lor peyniri, gün kurusu + toz ceviz, avokado', ingredients: ['Yumurta sarısı', 'Lor peyniri', 'Kuru kayısı', 'Ceviz', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kabaklı ve şehriyeli kıymalı çorba + yoğurt', description: 'Tadım: Kayısı', ingredients: ['Kabak', 'Tel şehriye', 'Kuzu kıyma', 'Yoğurt', 'Zeytinyağı'], emoji: '🍲' },
       ],
     },
     {
       day: 20,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta sarısı', ingredients: ['Avokado', 'Yumurta sarısı', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Tavuklu sebze çorbası', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Taze soğan', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Yumurta sarısı, ev yapımı kek veya bebe bisküvisi, labne + kuru kayısı', ingredients: ['Yumurta sarısı', 'Labne peyniri', 'Kuru kayısı', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Pirinçli yayla çorbası, kıyma ile köfte', description: 'Tadım: Kayısı', ingredients: ['Pirinç', 'Yoğurt', 'Kuzu kıyma', 'Zeytinyağı'], emoji: '🍲' },
       ],
     },
+    // Gün 21-22: Tam buğday unu tanıtımı
     {
       day: 21,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + elma + pekmez', ingredients: ['Yulaf unu', 'Elma', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Kıymalı patates', ingredients: ['Kuzu kıyma', 'Patates', 'Taze soğan', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile krep (tam buğday unu), avokado ve labne sürülerek + elma', ingredients: ['Yumurta sarısı', 'Tam buğday unu', 'Avokado', 'Labne peyniri', 'Elma', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Tam buğday unlu sebze köfte + patates püresi + yoğurt', description: 'Tadım: Tam buğday unu', ingredients: ['Tam buğday unu', 'Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥔' },
       ],
     },
-    // Gün 22-24: Hindi tanıtımı
     {
       day: 22,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + muz + ceviz', ingredients: ['Yoğurt', 'Muz', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Hindi püresi', description: 'Yeni besin: hindi', ingredients: ['Hindi', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🦃' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile krep (tam buğday unu), avokado ve labne sürülerek + muz + toz ceviz', ingredients: ['Yumurta sarısı', 'Tam buğday unu', 'Avokado', 'Labne peyniri', 'Muz', 'Ceviz', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Kabak ve semizotlu, kıymalı sebze yemeği + yoğurt', description: 'Tadım: Tam buğday unu', ingredients: ['Kabak', 'Semizotu', 'Kuzu kıyma', 'Yoğurt', 'Zeytinyağı'], emoji: '🌿' },
       ],
     },
+    // Gün 23-24: Bebek irmiği tanıtımı
     {
       day: 23,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + elma', ingredients: ['Lor peyniri', 'Elma'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Hindili sebze çorbası', ingredients: ['Hindi', 'Patates', 'Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🦃' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ve lor peyniri, bebek irmiği ile meyve püresi; toz ceviz ve pekmez', ingredients: ['Yumurta sarısı', 'Lor peyniri', 'Bebek irmiği', 'Ceviz', 'Pekmez', 'Zeytinyağı'], emoji: '🥣' },
+        { slot: 'lunch', name: 'Kabaklı mücver, sebzeli kıymalı erişte, yoğurt', description: 'Tadım: Bebek irmiği', ingredients: ['Kabak', 'Kuzu kıyma', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
       ],
     },
     {
       day: 24,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + kayısı', ingredients: ['Yulaf unu', 'Kayısı', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Hindili pirinç', ingredients: ['Hindi', 'Pirinç', 'Havuç', 'Zeytinyağı'], emoji: '🦃' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ve labne peyniri, bebek irmiği ile meyve püresi; toz ceviz ve pekmez', ingredients: ['Yumurta sarısı', 'Labne peyniri', 'Bebek irmiği', 'Ceviz', 'Pekmez', 'Zeytinyağı'], emoji: '🥣' },
+        { slot: 'lunch', name: 'Kuzu kıyma ile sebzeli köfte, sebzeli erişte, yoğurt', description: 'Tadım: Bebek irmiği', ingredients: ['Kuzu kıyma', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
       ],
     },
-    // Gün 25-27: Nane tanıtımı + tekrar
+    // Gün 25-27: Domates (pişmiş) tanıtımı
     {
       day: 25,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + lor + pekmez', ingredients: ['Avokado', 'Lor peyniri', 'Pekmez'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Yoğurtlu kabak çorbası', description: 'Naneli', ingredients: ['Kabak', 'Yoğurt', 'Nane', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yumurta sarısı ile pankek, avokado + muz + labne karışımı üzerine sürülerek', ingredients: ['Yumurta sarısı', 'Avokado', 'Muz', 'Labne peyniri', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Bezelye yemeği (havuçlu, patatesli, kıymalı), domatesli + yoğurt', description: 'Tadım: Domates', ingredients: ['Bezelye', 'Havuç', 'Patates', 'Kuzu kıyma', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🍅' },
       ],
     },
     {
       day: 26,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + elma + ceviz', ingredients: ['Yoğurt', 'Elma', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Tavuklu tarhana çorbası', ingredients: ['Tarhana', 'Tavuk', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Domates ve yumurta sarısı ile menemen, labne peyniri, tam buğday ekmeği, meyve + avokado', ingredients: ['Domates', 'Yumurta sarısı', 'Labne peyniri', 'Tam buğday ekmeği', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kuzu kıyma ile sebzeli köfte, sebzeli erişte, yoğurt', description: 'Tadım: Domates', ingredients: ['Kuzu kıyma', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
       ],
     },
     {
       day: 27,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + armut + pekmez', ingredients: ['Yulaf unu', 'Armut', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Kıymalı sebze', ingredients: ['Kuzu kıyma', 'Kabak', 'Havuç', 'Patates', 'Domates', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'breakfast', name: 'Domates ve yumurta sarısı ile menemen, lor peyniri, tam buğday ekmeği, meyve', ingredients: ['Domates', 'Yumurta sarısı', 'Lor peyniri', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kabaklı mücver, sebzeli kıymalı erişte, yoğurt', description: 'Tadım: Domates', ingredients: ['Kabak', 'Kuzu kıyma', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
       ],
     },
-    // Gün 28-30: Tekrar ve çeşitlendirme
+    // Gün 28-30: Yeşil fasulye tanıtımı
     {
       day: 28,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + avokado + yumurta sarısı', ingredients: ['Lor peyniri', 'Avokado', 'Yumurta sarısı', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Mercimek çorbası', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Taze soğan', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yumurta sarısı + labne, haşlanmış yulaf ezmesi + armut + toz ceviz', ingredients: ['Yumurta sarısı', 'Labne peyniri', 'Yulaf unu', 'Armut', 'Ceviz', 'Zeytinyağı'], emoji: '🥣' },
+        { slot: 'lunch', name: 'Yeşil fasulye yemeği (domatesli), pirinç pilavı + yoğurt', description: 'Tadım: Yeşil fasulye', ingredients: ['Yeşil fasulye', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🫘' },
       ],
     },
     {
       day: 29,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + kayısı + pekmez', ingredients: ['Yoğurt', 'Kayısı', 'Pekmez'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Ispanaklı pirinç lapası', ingredients: ['Ispanak', 'Pirinç', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Sebzeli muffin/kek, yumurta sarısı, lor peyniri, salatalık, elma', ingredients: ['Yumurta sarısı', 'Lor peyniri', 'Salatalık', 'Elma', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Yeşil fasulye yemeği (domatesli), pirinç pilavı + yoğurt', description: 'Tadım: Yeşil fasulye', ingredients: ['Yeşil fasulye', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🫘' },
       ],
     },
     {
       day: 30,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + muz + yulaf', ingredients: ['Avokado', 'Muz', 'Yulaf unu'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Tavuk suyu çorbası + sebze', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Patates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Yumurta sarısı, pişirilmiş yulaf içine labne ve gün kurusu ezmesi', ingredients: ['Yumurta sarısı', 'Yulaf unu', 'Labne peyniri', 'Kuru kayısı', 'Zeytinyağı'], emoji: '🥣' },
+        { slot: 'lunch', name: 'Yeşil fasulye çorbası, kıymalı (domatesli) + yoğurt', description: 'Tadım: Yeşil fasulye', ingredients: ['Yeşil fasulye', 'Kuzu kıyma', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🫘' },
       ],
     },
   ],
 };
 
 // ============================================================
-// 8. AY — 3 ÖĞÜN: Kahvaltı + Öğle + Akşam
-// Dr. Erdal Pazar rehberi: 8-10 ay arası günde 3 öğün
+// 8. AY — EK GIDAYA DEVAM MENÜSÜ
+// Kahvaltı + İkindi + Ara Öğün (PDF verisi)
 // ============================================================
 const month8: MealPlanTemplate = {
   month: 8,
-  title: '8. Ay - 3 Öğün Beslenme Planı',
+  title: '8. Ay - Ek Gıdaya Devam Menüsü',
   description:
-    'Günde 3 öğün: kahvaltı, öğle ve akşam. Balık, yumurta beyazı, baklagiller, bulgur ve yeni baharatlar tanıtılır.',
-  mealSlots: ['breakfast', 'lunch', 'dinner'],
+    'Günde 3 öğün: kahvaltı, ikindi ve ara öğün. Yumurta beyazı, bulgur, balık, soğan, mercimek, balkabağı ve nohut tanıtılır.',
+  mealSlots: ['breakfast', 'lunch', 'snack'],
   notes: [
     'Tüm yemeklere zeytinyağı eklemeyi unutmayın.',
     'Balık haftada 2-3 kez verilebilir.',
     'Nohut 1 gece suda bekletilip zarı çıkarılacaktır.',
-    'Yumurta beyazı bu ay tanıtılabilir.',
+    'Yumurta beyazı bu ay tanıtılabilir — ilk günlerde yumurta sarısı + beyaz tadımı yapılır.',
     'Bulgur ve tam buğday unu bu ay başlar.',
-    'Karabiber, kekik, tarçın az miktarda eklenebilir.',
     'Tahin alerjik reaksiyona dikkat ederek tanıtılmalı.',
+    'Ispanak haftada en fazla 2 kez verilmelidir.',
   ],
   newFoodsIntroduced: [
-    'Balık',
-    'Yumurta beyazı (tam yumurta)',
-    'Nohut',
-    'Mercimek',
-    'Kuru fasulye',
-    'Barbunya',
+    'Yumurta beyazı',
     'Bulgur',
-    'Tam buğday unu',
-    'Soğan',
+    'Balık',
+    'Soğan (pişmiş)',
+    'Kırmızı mercimek',
+    'Balkabağı',
+    'Buğday ruşeymi',
+    'Organik tavuk',
+    'Nohut',
+    'Ispanak',
     'Tahin',
-    'Karabiber',
-    'Kekik',
-    'Tarçın',
-    'Susam',
-    'Kuru üzüm',
-    'İncir',
-    'Kiraz',
-    'Nar',
+    'Trabzon hurması',
   ],
   days: [
-    // Gün 1-3: Yumurta beyazı (tam yumurta) tanıtımı
+    // Gün 1: Yumurta beyazı tadımı başlangıcı
     {
       day: 1,
       meals: [
-        { slot: 'breakfast', name: 'Haşlanmış yumurta + avokado', description: 'Yeni besin: tam yumurta (beyazı dahil)', ingredients: ['Yumurta', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Tavuklu sebze çorbası', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Patates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
-        { slot: 'dinner', name: 'Yoğurt + elma püresi', ingredients: ['Yoğurt', 'Elma'], emoji: '🥛' },
+        { slot: 'breakfast', name: 'Avokado + lor + yumurta + muz', description: 'Yumurta beyazı tadımı ile birlikte', ingredients: ['Avokado', 'Lor peyniri', 'Yumurta sarısı', 'Yumurta beyazı', 'Muz'], emoji: '🥑' },
+        { slot: 'lunch', name: 'Kıymalı bezelye yemeği', description: 'Havuç, patates, kıyma, bezelye ve domates ile', ingredients: ['Kuzu kıyma', 'Bezelye', 'Havuç', 'Patates', 'Domates', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 2,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + lor peyniri + domates', ingredients: ['Yumurta', 'Lor peyniri', 'Domates', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kıymalı sebze', ingredients: ['Kuzu kıyma', 'Kabak', 'Havuç', 'Patates', 'Domates', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'dinner', name: 'Pirinç lapası + yoğurt', ingredients: ['Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍚' },
+        { slot: 'breakfast', name: 'Yumurta + labne + elma püresi', description: 'Yumurta beyazı tadımı ile birlikte', ingredients: ['Yumurta sarısı', 'Yumurta beyazı', 'Labne peyniri', 'Elma'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kıymalı bezelye yemeği', ingredients: ['Kuzu kıyma', 'Bezelye', 'Havuç', 'Patates', 'Domates', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 3,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + pekmez', ingredients: ['Yumurta', 'Avokado', 'Pekmez'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Ispanak yemeği', ingredients: ['Ispanak', 'Pirinç', 'Taze soğan', 'Zeytinyağı'], emoji: '🥬' },
-        { slot: 'dinner', name: 'Tarhana çorbası', ingredients: ['Tarhana', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yumurta + lor peyniri + salatalık', description: 'Yumurta beyazı tadımı ile birlikte', ingredients: ['Yumurta sarısı', 'Yumurta beyazı', 'Lor peyniri', 'Salatalık'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Yayla çorbası + kuzu köfte', ingredients: ['Yoğurt', 'Pirinç', 'Kuzu kıyma', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 4-6: Balık tanıtımı
+    // Gün 4: Tam yumurta + bulgur tanıtımı
     {
       day: 4,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + muz + ceviz', ingredients: ['Yoğurt', 'Muz', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Balık çorbası', description: 'Yeni besin: balık', ingredients: ['Balık', 'Havuç', 'Patates', 'Taze soğan', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'dinner', name: 'Sebze püresi', ingredients: ['Kabak', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🥕' },
+        { slot: 'breakfast', name: 'Tarhanalı omlet + salatalık + avokado', description: 'Tam yumurta ile, lor peyniri + toz ceviz', ingredients: ['Yumurta', 'Tarhana', 'Salatalık', 'Avokado', 'Lor peyniri', 'Ceviz', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Bulgurlu kabak yemeği', description: 'Kıyma, havuç, 1 tatlı kaşığı bulgur, kabak ve domates ile', ingredients: ['Kuzu kıyma', 'Havuç', 'Bulgur', 'Kabak', 'Domates', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 5,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + elma + tarçın', description: 'Yeni besin: tarçın (az miktar)', ingredients: ['Yulaf unu', 'Elma', 'Tarçın', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Balıklı sebze', ingredients: ['Balık', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'dinner', name: 'Yoğurt + armut', ingredients: ['Yoğurt', 'Armut'], emoji: '🥛' },
+        { slot: 'breakfast', name: 'Pankek + muzlu labneli karışım', description: 'Tam yumurta ile pankek', ingredients: ['Yumurta', 'Yulaf unu', 'Muz', 'Labne peyniri'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Bulgurlu kabak yemeği', ingredients: ['Kuzu kıyma', 'Havuç', 'Bulgur', 'Kabak', 'Domates', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
+    // Gün 6-8: Balık tanıtımı
     {
       day: 6,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + avokado + yumurta', ingredients: ['Lor peyniri', 'Avokado', 'Yumurta', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Balıklı patates püresi', ingredients: ['Balık', 'Patates', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'dinner', name: 'Mercimek çorbası', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Sebzeli mücver + labne + ceviz', description: '1 tam yumurta ile', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Labne peyniri', 'Ceviz', 'Zeytinyağı'], emoji: '🥙' },
+        { slot: 'lunch', name: 'Sebzeli bulgur pilavı + balık tadımı', description: 'Domates, bulgur, kabak ile birlikte balık tadımı', ingredients: ['Bulgur', 'Domates', 'Kabak', 'Balık', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 7-9: Bulgur tanıtımı
     {
       day: 7,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + peynir tabağı', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Bulgur pilavı + yoğurt', description: 'Yeni besin: bulgur', ingredients: ['Bulgur', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌾' },
-        { slot: 'dinner', name: 'Kabak çorbası', ingredients: ['Kabak', 'Patates', 'Havuç', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Haşlama yumurta + yulaf lapası', description: 'Yulaf lapası meyve, pekmez ve toz ceviz ile', ingredients: ['Yumurta', 'Yulaf unu', 'Mevsim meyvesi', 'Pekmez', 'Ceviz'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Sebzeli bulgur pilavı + balık tadımı', ingredients: ['Bulgur', 'Domates', 'Kabak', 'Balık', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 8,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + kayısı + pekmez', ingredients: ['Yoğurt', 'Kayısı', 'Pekmez'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Kıymalı bulgur', ingredients: ['Bulgur', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🌾' },
-        { slot: 'dinner', name: 'Tavuklu sebze püresi', ingredients: ['Tavuk', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Omlet + avokado + bebek bisküvisi', description: '1 tam yumurta ile omlet, lor peyniri, ev yapımı cevizli bebek bisküvisi', ingredients: ['Yumurta', 'Avokado', 'Lor peyniri', 'Yulaf unu', 'Ceviz', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Pilav + buharda sebzeler + balık', description: 'Balık tadımı devam', ingredients: ['Pirinç', 'Havuç', 'Brokoli', 'Kabak', 'Balık', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
+    // Gün 9-10: Soğan tanıtımı (pişmiş)
     {
       day: 9,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + lor', ingredients: ['Avokado', 'Yumurta', 'Lor peyniri', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Sebzeli bulgur pilavı', ingredients: ['Bulgur', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🌾' },
-        { slot: 'dinner', name: 'Yoğurt + elma + ceviz', ingredients: ['Yoğurt', 'Elma', 'Ceviz'], emoji: '🥛' },
+        { slot: 'breakfast', name: 'Sebzeli muffin + labne + salatalık', description: '1 tam yumurta ile', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Labne peyniri', 'Salatalık', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Kıymalı brokoli yemeği + erişte', description: 'Soğan eklenerek pişirilir', ingredients: ['Kuzu kıyma', 'Brokoli', 'Soğan', 'Erişte', 'Zeytinyağı'], emoji: '🥦' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 10-12: Nohut tanıtımı
     {
       day: 10,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + muz + tahin', description: 'Yeni besin: tahin', ingredients: ['Yulaf unu', 'Muz', 'Tahin', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Nohut yemeği', description: 'Yeni besin: nohut (1 gece bekletip zarı çıkarın)', ingredients: ['Nohut', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Ispanak-pirinç', ingredients: ['Ispanak', 'Pirinç', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Yumurta + labne + pekmez', description: '1 tam yumurta ile, labne + toz ceviz, pekmez ve meyve', ingredients: ['Yumurta', 'Labne peyniri', 'Ceviz', 'Pekmez', 'Mevsim meyvesi'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kıymalı brokoli yemeği + erişte', ingredients: ['Kuzu kıyma', 'Brokoli', 'Soğan', 'Erişte', 'Zeytinyağı'], emoji: '🥦' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
+    // Gün 11-12: Kırmızı mercimek tanıtımı
     {
       day: 11,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + pekmezli tahini', ingredients: ['Yumurta', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Nohutlu tavuk', ingredients: ['Nohut', 'Tavuk', 'Havuç', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Sebze çorbası', ingredients: ['Kabak', 'Havuç', 'Patates', 'Taze soğan', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Kaşarlı omlet + yulaflı gün kurusu', description: 'Ceviz ve pekmez ile', ingredients: ['Yumurta', 'Kaşar peyniri', 'Yulaf unu', 'Ceviz', 'Pekmez', 'Kuru üzüm'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kırmızı mercimekli çorba + bulgur pilavı', description: 'Kıymalı ve sebzeli', ingredients: ['Kırmızı mercimek', 'Kuzu kıyma', 'Havuç', 'Patates', 'Soğan', 'Bulgur', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 12,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + incir', description: 'Yeni besin: incir', ingredients: ['Lor peyniri', 'İncir'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Nohutlu bulgur pilavı', ingredients: ['Nohut', 'Bulgur', 'Domates', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Kıymalı kabak', ingredients: ['Kuzu kıyma', 'Kabak', 'Domates', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'breakfast', name: 'Balkabaklı pankek + labne + avokado + muz', ingredients: ['Yumurta', 'Balkabağı', 'Yulaf unu', 'Labne peyniri', 'Avokado', 'Muz'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Kırmızı mercimekli çorba + bulgur pilavı', ingredients: ['Kırmızı mercimek', 'Kuzu kıyma', 'Havuç', 'Patates', 'Soğan', 'Bulgur', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 13-15: Makarna (tam buğday) tanıtımı
+    // Gün 13-14: Balkabağı çorbası
     {
       day: 13,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + armut + ceviz', ingredients: ['Yoğurt', 'Armut', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Sebzeli makarna', description: 'Tam buğday makarna', ingredients: ['Tam buğday makarna', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
-        { slot: 'dinner', name: 'Balık çorbası', ingredients: ['Balık', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Haşlama yumurta + dil peyniri + poğaça', description: 'Salatalık, yoğurtlu tam buğdaylı poğaça', ingredients: ['Yumurta', 'Dil peyniri', 'Salatalık', 'Tam buğday unu', 'Yoğurt', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Balkabaklı çorba + sebzeli makarna', description: 'Kıymalı ve sebzeli balkabağı çorbası', ingredients: ['Balkabağı', 'Kuzu kıyma', 'Havuç', 'Patates', 'Makarna', 'Zeytinyağı'], emoji: '🎃' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 14,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + domates', ingredients: ['Yumurta', 'Avokado', 'Domates', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kıymalı makarna', ingredients: ['Tam buğday makarna', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
-        { slot: 'dinner', name: 'Yoğurt + muz + tahin', ingredients: ['Yoğurt', 'Muz', 'Tahin'], emoji: '🥛' },
+        { slot: 'breakfast', name: 'Patatesli peynirli omlet + avokado', description: 'Salatalık ile', ingredients: ['Yumurta', 'Patates', 'Lor peyniri', 'Avokado', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Balkabaklı çorba + sebzeli makarna', ingredients: ['Balkabağı', 'Kuzu kıyma', 'Havuç', 'Patates', 'Makarna', 'Zeytinyağı'], emoji: '🎃' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
+    // Gün 15: Buğday ruşeymi tanıtımı
     {
       day: 15,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + incir + pekmez', ingredients: ['Yulaf unu', 'İncir', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Tavuklu makarna', ingredients: ['Tam buğday makarna', 'Tavuk', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
-        { slot: 'dinner', name: 'Mercimek çorbası', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Tarhanalı omlet + lor + poğaça', description: 'Salatalık, yoğurtlu tam buğdaylı poğaça ile', ingredients: ['Yumurta', 'Tarhana', 'Lor peyniri', 'Salatalık', 'Tam buğday unu', 'Yoğurt', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kuzu köfte + erişte', description: 'Buğday ruşeymi eklenerek', ingredients: ['Kuzu kıyma', 'Buğday ruşeymi', 'Erişte', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 16-18: Kuru fasulye tanıtımı
     {
       day: 16,
       meals: [
-        { slot: 'breakfast', name: 'Peynir tabağı (lor + avokado)', ingredients: ['Lor peyniri', 'Avokado', 'Domates', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Kuru fasulye', description: 'Yeni besin: kuru fasulye', ingredients: ['Kuru fasulye', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Pirinç pilavı + yoğurt', ingredients: ['Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍚' },
+        { slot: 'breakfast', name: 'Balkabaklı krep', ingredients: ['Yumurta', 'Balkabağı', 'Yulaf unu', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Kırmızı mercimekli çorba + bulgur pilavı', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Bulgur', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
+    // Gün 17-18: Organik tavuk tanıtımı
     {
       day: 17,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + elma + tarçın', ingredients: ['Yoğurt', 'Elma', 'Tarçın'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Kuru fasulyeli bulgur', ingredients: ['Kuru fasulye', 'Bulgur', 'Domates', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Tavuk suyu çorbası', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + dil peyniri + bebek bisküvisi', description: 'Salatalık veya avokado ile', ingredients: ['Yumurta', 'Dil peyniri', 'Salatalık', 'Avokado', 'Yulaf unu', 'Ceviz'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Tavuk suyuna tel şehriye çorbası + sebzeler', description: 'Haşlanmış sebzeler ile', ingredients: ['Tavuk', 'Şehriye', 'Havuç', 'Patates', 'Kabak', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 18,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + tahinli pekmez', ingredients: ['Yumurta', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kıymalı mercimek', description: 'Yeni besin: yeşil mercimek', ingredients: ['Yeşil mercimek', 'Kuzu kıyma', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'dinner', name: 'Kabak-patates püresi', ingredients: ['Kabak', 'Patates', 'Zeytinyağı'], emoji: '🎃' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + elmalı yulaf', description: 'Toz ceviz ve pekmez ile', ingredients: ['Yumurta', 'Lor peyniri', 'Elma', 'Yulaf unu', 'Ceviz', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Tavuk suyuna tel şehriye çorbası + sebzeler', ingredients: ['Tavuk', 'Şehriye', 'Havuç', 'Patates', 'Kabak', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 19-21: Erişte ve kekik tanıtımı
     {
       day: 19,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + lor', ingredients: ['Avokado', 'Yumurta', 'Lor peyniri', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Erişte + yoğurt', description: 'Ev yapımı erişte', ingredients: ['Tam buğday unu', 'Yumurta', 'Yoğurt', 'Zeytinyağı'], emoji: '🍜' },
-        { slot: 'dinner', name: 'Sebze çorbası (kekikli)', description: 'Yeni besin: kekik', ingredients: ['Kabak', 'Havuç', 'Patates', 'Kekik', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Sebzeli muffin + dil peyniri + avokado', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Dil peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Tarhana çorbası + tavuklu erişte', description: 'Haşlanmış tavuk ile', ingredients: ['Tarhana', 'Tavuk', 'Erişte', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
+    // Gün 20-21: Nohut tanıtımı
     {
       day: 20,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + kuru üzüm + ceviz', description: 'Yeni besin: kuru üzüm', ingredients: ['Yoğurt', 'Kuru üzüm', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Kıymalı erişte', ingredients: ['Tam buğday unu', 'Yumurta', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍜' },
-        { slot: 'dinner', name: 'Balıklı sebze', ingredients: ['Balık', 'Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Kaşarlı patatesli omlet + labne + yulaf', description: 'Armutlu yulaf, ceviz ve pekmez ile', ingredients: ['Yumurta', 'Kaşar peyniri', 'Patates', 'Labne peyniri', 'Yulaf unu', 'Armut', 'Ceviz', 'Pekmez', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kıymalı nohut yemeği + bulgur pilavı', ingredients: ['Kuzu kıyma', 'Nohut', 'Havuç', 'Domates', 'Bulgur', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 21,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + muz + tahin', ingredients: ['Yulaf unu', 'Muz', 'Tahin', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Mantı', description: 'Ev yapımı mini mantı', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
-        { slot: 'dinner', name: 'Ispanak yemeği', ingredients: ['Ispanak', 'Pirinç', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Haşlama yumurta + labne + yulaflı muz', description: 'Salatalık, toz ceviz ile', ingredients: ['Yumurta', 'Labne peyniri', 'Salatalık', 'Yulaf unu', 'Muz', 'Ceviz'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Nohutlu buğdaylı yoğurt çorbası', ingredients: ['Nohut', 'Buğday', 'Yoğurt', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 22-24: Susam ve karabiber tanıtımı
+    // Gün 22-24: Ispanak tanıtımı
     {
       day: 22,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + susamlı ekmek', description: 'Yeni besin: susam', ingredients: ['Yumurta', 'Tam buğday ekmeği', 'Susam', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Pirinç pilavı + kıyma', description: 'Yeni besin: karabiber (çok az)', ingredients: ['Pirinç', 'Kuzu kıyma', 'Domates', 'Karabiber', 'Zeytinyağı'], emoji: '🍚' },
-        { slot: 'dinner', name: 'Tarhana çorbası', ingredients: ['Tarhana', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Tarhanalı omlet + dil peyniri + avokado + elma', ingredients: ['Yumurta', 'Tarhana', 'Dil peyniri', 'Avokado', 'Elma', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Ispanak yemeği + makarna + yoğurt', ingredients: ['Ispanak', 'Makarna', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 23,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + incir + ceviz', ingredients: ['Lor peyniri', 'İncir', 'Ceviz'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Tavuklu bulgur pilavı', ingredients: ['Bulgur', 'Tavuk', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🌾' },
-        { slot: 'dinner', name: 'Yoğurt + elma + tarçın', ingredients: ['Yoğurt', 'Elma', 'Tarçın'], emoji: '🥛' },
+        { slot: 'breakfast', name: 'Tatlı patatesli kaşarlı omlet + lor + salatalık', ingredients: ['Yumurta', 'Tatlı patates', 'Kaşar peyniri', 'Lor peyniri', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Ispanak yemeği + makarna + yoğurt', ingredients: ['Ispanak', 'Makarna', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 24,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + domates', ingredients: ['Avokado', 'Yumurta', 'Domates', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Nohutlu sebze', ingredients: ['Nohut', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Balık çorbası', ingredients: ['Balık', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Omlet + avokado + lor + bebek bisküvisi', description: '1 tam yumurta ile', ingredients: ['Yumurta', 'Avokado', 'Lor peyniri', 'Yulaf unu', 'Ceviz', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Ispanaklı pankek veya muffin', ingredients: ['Ispanak', 'Yumurta', 'Yulaf unu', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 25-27: Barbunya ve nar tanıtımı
+    // Gün 25: Tahin tanıtımı
     {
       day: 25,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + nar', description: 'Yeni besin: nar', ingredients: ['Yoğurt', 'Nar'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Barbunya yemeği', description: 'Yeni besin: barbunya', ingredients: ['Barbunya', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Kıymalı makarna', ingredients: ['Tam buğday makarna', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + dil peyniri + tahin-pekmez', description: 'Toz ceviz ile', ingredients: ['Yumurta', 'Dil peyniri', 'Ceviz', 'Tahin', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Az çorba + balık + erişte', ingredients: ['Balık', 'Erişte', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 26,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + lor + avokado', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Sebzeli makarna + yoğurt', ingredients: ['Tam buğday makarna', 'Kabak', 'Havuç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🍝' },
-        { slot: 'dinner', name: 'Mercimek çorbası', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Sebzeli omlet + labne + bebek ekmeği', description: 'Tahin-pekmez ile', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Labne peyniri', 'Salatalık', 'Tam buğday unu', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kıymalı taze fasulye + erişte', ingredients: ['Kuzu kıyma', 'Taze fasulye', 'Domates', 'Soğan', 'Erişte', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 27,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + kayısı + pekmez', ingredients: ['Yulaf unu', 'Kayısı', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Hindili sebze', ingredients: ['Hindi', 'Kabak', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🦃' },
-        { slot: 'dinner', name: 'Bulgur pilavı + yoğurt', ingredients: ['Bulgur', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌾' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + dil peyniri + yulaflı lapa', description: 'Muzlu labne üzerine tahin pekmez', ingredients: ['Yumurta', 'Dil peyniri', 'Yulaf unu', 'Muz', 'Labne peyniri', 'Tahin', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kıymalı taze fasulye + erişte', ingredients: ['Kuzu kıyma', 'Taze fasulye', 'Domates', 'Soğan', 'Erişte', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
-    // Gün 28-30: Tekrar ve çeşitlendirme
     {
       day: 28,
       meals: [
-        { slot: 'breakfast', name: 'Peynir tabağı + yumurta', ingredients: ['Lor peyniri', 'Avokado', 'Yumurta', 'Domates', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
-        { slot: 'dinner', name: 'Sebze çorbası', ingredients: ['Kabak', 'Havuç', 'Patates', 'Soğan', 'Kekik', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yumurtalı tam buğday ekmeği + lor + salatalık', description: '1 adet pankeke tahin pekmez', ingredients: ['Yumurta', 'Tam buğday ekmeği', 'Lor peyniri', 'Salatalık', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🍞' },
+        { slot: 'lunch', name: 'Sebzeli köfte + bulgur pilavı', description: 'Tavuk, balık veya kuzu kıymadan köfte', ingredients: ['Kuzu kıyma', 'Kabak', 'Havuç', 'Bulgur', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 29,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + muz + tahin + pekmez', ingredients: ['Yoğurt', 'Muz', 'Tahin', 'Pekmez'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Balıklı pirinç pilavı', ingredients: ['Balık', 'Pirinç', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'dinner', name: 'Kıymalı ıspanak', ingredients: ['Kuzu kıyma', 'Ispanak', 'Pirinç', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Balkabaklı krep', ingredients: ['Yumurta', 'Balkabağı', 'Yulaf unu', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Sebzeli köfte + bulgur pilavı', ingredients: ['Kuzu kıyma', 'Kabak', 'Havuç', 'Bulgur', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 30,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + susamlı ekmek', ingredients: ['Avokado', 'Yumurta', 'Tam buğday ekmeği', 'Susam', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Kuru fasulye + bulgur pilavı', ingredients: ['Kuru fasulye', 'Bulgur', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'dinner', name: 'Tavuk suyu çorbası', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + avokado + yulaflı lapa', description: 'Gün kurusu ile cevizli lapa, biraz tahin ile', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Yulaf unu', 'Ceviz', 'Kuru üzüm', 'Tahin'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Bulgurlu ıspanak yemeği + yoğurt', ingredients: ['Bulgur', 'Ispanak', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
   ],
 };
 
 // ============================================================
-// 9. AY — 3 ÖĞÜN + ARA ÖĞÜN
-// Dr. Erdal Pazar rehberi: 8-10 ay arası günde 3 öğün
+// 9. AY+ — EK GIDAYA DEVAM MENÜSÜ
+// Kahvaltı + Öğle + Akşam + Ara Öğün (PDF verisi)
 // ============================================================
 const month9: MealPlanTemplate = {
   month: 9,
-  title: '9. Ay - 3 Öğün + Ara Öğün Beslenme Planı',
+  title: '9. Ay+ - Ek Gıdaya Devam Menüsü',
   description:
-    'Günde 3 ana öğün + 1 ara öğün. Daha fazla doku çeşitliliği, parmak yiyecekler başlar. Zerdeçal ve zencefil tanıtılır.',
-  mealSlots: ['breakfast', 'lunch', 'snack', 'dinner'],
+    'Günde 4 öğün: kahvaltı, öğle, akşam ve ara öğün. Kefir, fındık ezmesi, mantı, biber dolması, semizotu ve enginar tanıtılır.',
+  mealSlots: ['breakfast', 'lunch', 'dinner', 'snack'],
   notes: [
+    'Tüm yemeklere zeytinyağı eklemeyi unutmayın.',
     'Parmak yiyeceklere geçiş başlayabilir.',
     'Yemeklerin dokusu kademeli olarak kabalaştırılmalı.',
     'Ispanak haftada en fazla 2 kez verilmelidir.',
     'Nohut zarları çıkarılmalı.',
-    'Zerdeçal ve zencefil çok az miktarda kullanılmalı.',
+    'Kefir bu ay tanıtılabilir.',
     'Et kavurma iyice pişirilip ufak parçalara ayrılmalı.',
   ],
   newFoodsIntroduced: [
-    'Yaban mersini',
-    'Zerdeçal',
-    'Zencefil',
+    'Kefir',
+    'Kuru üzüm',
+    'Fındık ezmesi',
+    'Mantı',
+    'Biber dolması',
+    'Semizotu',
+    'Brüksel lahanası',
     'Enginar',
-    'Kereviz',
-    'Bezelye',
   ],
   days: [
-    // Gün 1-3: Kereviz tanıtımı
     {
       day: 1,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + lor', ingredients: ['Yumurta', 'Avokado', 'Lor peyniri', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kereviz yemeği', description: 'Yeni besin: kereviz', ingredients: ['Kereviz', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🥬' },
-        { slot: 'snack', name: 'Yoğurt + muz', ingredients: ['Yoğurt', 'Muz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Tarhana çorbası', ingredients: ['Tarhana', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + peynir + zeytin', description: 'Lor/labne/çeçil, tuzsuz zeytin, salatalık, tahin/pekmez, ceviz', ingredients: ['Yumurta', 'Lor peyniri', 'Zeytin', 'Salatalık', 'Tahin', 'Pekmez', 'Ceviz'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Pirinçli yoğurt çorbası', ingredients: ['Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Balık + yeşil mercimekli bulgur pilavı', ingredients: ['Balık', 'Yeşil mercimek', 'Bulgur', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Kefir + kuru meyveler + kuruyemiş', description: 'Kuru üzüm, kuru dut ile', ingredients: ['Kefir', 'Kuru üzüm', 'Kuru dut', 'Ceviz'], emoji: '🥛' },
       ],
     },
     {
       day: 2,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + elma + tarçın', ingredients: ['Yulaf unu', 'Elma', 'Tarçın', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Kıymalı kereviz', ingredients: ['Kereviz', 'Kuzu kıyma', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🥬' },
-        { slot: 'snack', name: 'Armut + ceviz', ingredients: ['Armut', 'Ceviz'], emoji: '🍐' },
-        { slot: 'dinner', name: 'Mercimek çorbası', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Pankek + muz + ceviz + avokado', description: '1 yumurta ile, peynir, karadut suyu', ingredients: ['Yumurta', 'Yulaf unu', 'Muz', 'Ceviz', 'Avokado', 'Lor peyniri', 'Karadut suyu'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Mücver + erişte', ingredients: ['Kabak', 'Havuç', 'Yumurta', 'Erişte', 'Zeytinyağı'], emoji: '🥙' },
+        { slot: 'dinner', name: 'Kıymalı kabak yemeği + pirinç pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Kabak', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
     {
       day: 3,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + pekmez + ceviz', ingredients: ['Lor peyniri', 'Pekmez', 'Ceviz'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Kerevizli tavuk', ingredients: ['Kereviz', 'Tavuk', 'Havuç', 'Zeytinyağı'], emoji: '🥬' },
-        { slot: 'snack', name: 'Yoğurt + kayısı', ingredients: ['Yoğurt', 'Kayısı'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Sebzeli bulgur pilavı', ingredients: ['Bulgur', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🌾' },
+        { slot: 'breakfast', name: 'Omlet + salatalık + zeytin + fındık ezmesi', description: 'Peynirli veya tarhanalı, fındık ezmesi tam buğday ekmeğe', ingredients: ['Yumurta', 'Lor peyniri', 'Salatalık', 'Zeytin', 'Fındık ezmesi', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Köfte + sebzeli makarna', ingredients: ['Kuzu kıyma', 'Makarna', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'dinner', name: 'Biber dolması + yoğurt', description: 'Pirinçli/kıymalı', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌶️' },
+        { slot: 'snack', name: 'Yulaf + elma + ceviz + tarçın', ingredients: ['Yulaf unu', 'Elma', 'Ceviz', 'Tarçın'], emoji: '🥣' },
       ],
     },
-    // Gün 4-6: Bezelye tanıtımı
     {
       day: 4,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + domates + avokado', ingredients: ['Yumurta', 'Domates', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Bezelye yemeği', description: 'Yeni besin: bezelye', ingredients: ['Bezelye', 'Havuç', 'Patates', 'Domates', 'Zeytinyağı'], emoji: '🟢' },
-        { slot: 'snack', name: 'Elma + lor peyniri', ingredients: ['Elma', 'Lor peyniri'], emoji: '🍎' },
-        { slot: 'dinner', name: 'Tavuk suyu çorbası', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Krep + avokado-labne + zeytin + pekmez', description: '1 yumurta ile, pekmez ekmeğe', ingredients: ['Yumurta', 'Yulaf unu', 'Avokado', 'Labne peyniri', 'Zeytin', 'Pekmez', 'Tam buğday ekmeği'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Tarhana çorbası + tam buğday ekmeği + yoğurt', ingredients: ['Tarhana', 'Tam buğday ekmeği', 'Yoğurt', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Etli nohut yemeği + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Nohut', 'Havuç', 'Domates', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi + kuruyemiş', ingredients: ['Kefir', 'Mevsim meyvesi', 'Ceviz'], emoji: '🥛' },
       ],
     },
     {
       day: 5,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + incir + tahin', ingredients: ['Yoğurt', 'İncir', 'Tahin'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Kıymalı bezelye', ingredients: ['Bezelye', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🟢' },
-        { slot: 'snack', name: 'Muz + ceviz', ingredients: ['Muz', 'Ceviz'], emoji: '🍌' },
-        { slot: 'dinner', name: 'Balıklı sebze', ingredients: ['Balık', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + kaşar peynirli tost', description: 'Çeyrek avokado, zeytin, domates/salatalık', ingredients: ['Yumurta', 'Kaşar peyniri', 'Tam buğday ekmeği', 'Avokado', 'Zeytin', 'Domates', 'Salatalık'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Tarhana çorbası + tam buğday ekmeği + yoğurt', ingredients: ['Tarhana', 'Tam buğday ekmeği', 'Yoğurt', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Tavuk köftesi + sebzeli makarna + yoğurt', ingredients: ['Tavuk', 'Makarna', 'Kabak', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Pankek + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
     {
       day: 6,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + susamlı ekmek', ingredients: ['Avokado', 'Yumurta', 'Tam buğday ekmeği', 'Susam', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Bezelyeli pirinç pilavı', ingredients: ['Bezelye', 'Pirinç', 'Havuç', 'Zeytinyağı'], emoji: '🟢' },
-        { slot: 'snack', name: 'Yoğurt + armut', ingredients: ['Yoğurt', 'Armut'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Kıymalı makarna', ingredients: ['Tam buğday makarna', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + yulaflı lapa', description: 'Elmalı, cevizli lapa + hurma özü', ingredients: ['Yumurta', 'Lor peyniri', 'Yulaf unu', 'Elma', 'Ceviz', 'Hurma'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Sebzeli muffin + ayran', description: 'Pırasa, havuç ile', ingredients: ['Yumurta', 'Pırasa', 'Havuç', 'Yulaf unu', 'Ayran', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'dinner', name: 'Kıymalı semizotu yemeği + bulgur pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Semizotu', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + kefir', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Kefir'], emoji: '🍪' },
       ],
     },
-    // Gün 7-9: Zerdeçal tanıtımı + et kavurma
     {
       day: 7,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + muz + pekmez', ingredients: ['Yulaf unu', 'Muz', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Et kavurma', description: 'Yeni besin: zerdeçal (çok az)', ingredients: ['Kuzu eti', 'Havuç', 'Patates', 'Zerdeçal', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Lor peyniri + elma', ingredients: ['Lor peyniri', 'Elma'], emoji: '🧀' },
-        { slot: 'dinner', name: 'Sebze çorbası', ingredients: ['Kabak', 'Havuç', 'Patates', 'Soğan', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Kaşar peynirli tost + domates + salatalık', description: 'Zeytin, karadut suyu ile', ingredients: ['Kaşar peyniri', 'Tam buğday ekmeği', 'Domates', 'Salatalık', 'Zeytin', 'Karadut suyu'], emoji: '🧀' },
+        { slot: 'lunch', name: 'Sulu köfte çorbası + tam buğday ekmeği', ingredients: ['Kuzu kıyma', 'Havuç', 'Patates', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Tavuklu bezelye yemeği + erişte', ingredients: ['Tavuk', 'Bezelye', 'Havuç', 'Erişte', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Armut + yoğurt', ingredients: ['Armut', 'Yoğurt'], emoji: '🍐' },
       ],
     },
     {
       day: 8,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + lor + domates', ingredients: ['Yumurta', 'Lor peyniri', 'Domates', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kıymalı kabak', ingredients: ['Kuzu kıyma', 'Kabak', 'Domates', 'Zerdeçal', 'Zeytinyağı'], emoji: '🎃' },
-        { slot: 'snack', name: 'Yoğurt + kuru üzüm + ceviz', ingredients: ['Yoğurt', 'Kuru üzüm', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Nohut yemeği', ingredients: ['Nohut', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Menemen veya omlet + peynir', description: 'Cherry domates/salatalık, tam buğdaya tahin/pekmez', ingredients: ['Yumurta', 'Domates', 'Biber', 'Lor peyniri', 'Salatalık', 'Tam buğday ekmeği', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Yeşil mercimek yemeği + yoğurt', ingredients: ['Yeşil mercimek', 'Havuç', 'Patates', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Kıymalı taze fasulye + pirinç pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Taze fasulye', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Labne + muz + yulaf + ceviz', ingredients: ['Labne peyniri', 'Muz', 'Yulaf unu', 'Ceviz'], emoji: '🍌' },
       ],
     },
     {
       day: 9,
       meals: [
-        { slot: 'breakfast', name: 'Peynir tabağı + avokado', ingredients: ['Lor peyniri', 'Avokado', 'Domates', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Fırın sebze', description: 'Parmak yiyecek olarak sunulabilir', ingredients: ['Kabak', 'Havuç', 'Patates', 'Zeytinyağı', 'Kekik'], emoji: '🥕' },
-        { slot: 'snack', name: 'Kayısı + yoğurt', ingredients: ['Kayısı', 'Yoğurt'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Bulgur pilavı + yoğurt', ingredients: ['Bulgur', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌾' },
+        { slot: 'breakfast', name: 'Sebzeli muffin + haşlanmış yumurta + peynir', description: 'Tuzsuz zeytin, salatalık', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Lor peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Haşlama et + sebzeler + yoğurt', ingredients: ['Kuzu eti', 'Havuç', 'Patates', 'Kabak', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'dinner', name: 'Çorba + mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
+        { slot: 'snack', name: 'Mevsim meyvesi + badem', ingredients: ['Mevsim meyvesi', 'Badem'], emoji: '🍎' },
       ],
     },
-    // Gün 10-12: Tavuk sote ve zencefil tanıtımı
     {
       day: 10,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + elma + tarçın + ceviz', ingredients: ['Yoğurt', 'Elma', 'Tarçın', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Tavuk sote', description: 'Yeni besin: zencefil (çok az)', ingredients: ['Tavuk', 'Kabak', 'Havuç', 'Domates', 'Zencefil', 'Zeytinyağı'], emoji: '🍗' },
-        { slot: 'snack', name: 'Armut + lor peyniri', ingredients: ['Armut', 'Lor peyniri'], emoji: '🍐' },
-        { slot: 'dinner', name: 'Ispanak yemeği + pirinç', ingredients: ['Ispanak', 'Pirinç', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Patatesli biberli omlet + peynir + zeytin', description: 'Kırmızı tatlı biber ile, fındık ezmesi tam buğday ekmeği', ingredients: ['Yumurta', 'Patates', 'Kırmızı biber', 'Lor peyniri', 'Zeytin', 'Salatalık', 'Fındık ezmesi', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Mercimek çorbası + tam buğday ekmeği + yoğurt', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Tam buğday ekmeği', 'Yoğurt', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Balık + tatlı patates püresi + tam buğday ekmeği', ingredients: ['Balık', 'Tatlı patates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Ev yapımı kek + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Mevsim meyvesi'], emoji: '🍰' },
       ],
     },
+    // Gün 11-15
     {
       day: 11,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + susamlı ekmek', ingredients: ['Yumurta', 'Avokado', 'Tam buğday ekmeği', 'Susam', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Tavuklu bulgur pilavı', ingredients: ['Tavuk', 'Bulgur', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
-        { slot: 'snack', name: 'Yoğurt + incir', ingredients: ['Yoğurt', 'İncir'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Kuru fasulye', ingredients: ['Kuru fasulye', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Maydanozlu omlet + labne + salatalık', ingredients: ['Yumurta', 'Maydanoz', 'Labne peyniri', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Bulgurlu kabak yemeği + yoğurt', ingredients: ['Bulgur', 'Kabak', 'Havuç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Biber dolması + yoğurt', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌶️' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi', ingredients: ['Kefir', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 12,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + armut + pekmez', ingredients: ['Yulaf unu', 'Armut', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Tavuk sote + pirinç', ingredients: ['Tavuk', 'Kabak', 'Havuç', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
-        { slot: 'snack', name: 'Muz + tahin', ingredients: ['Muz', 'Tahin'], emoji: '🍌' },
-        { slot: 'dinner', name: 'Tarhana çorbası', ingredients: ['Tarhana', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + dil peyniri + zeytin', description: 'Avokado ile', ingredients: ['Yumurta', 'Dil peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Brokoli çorbası + tam buğday ekmeği', ingredients: ['Brokoli', 'Patates', 'Havuç', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥦' },
+        { slot: 'dinner', name: 'Ispanak yemeği + erişte + yoğurt', ingredients: ['Ispanak', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
-    // Gün 13-15: Enginar tanıtımı
     {
       day: 13,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + pekmez + ceviz', ingredients: ['Lor peyniri', 'Pekmez', 'Ceviz'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Enginar yemeği', description: 'Yeni besin: enginar', ingredients: ['Enginar', 'Havuç', 'Bezelye', 'Zeytinyağı'], emoji: '🌿' },
-        { slot: 'snack', name: 'Yoğurt + elma', ingredients: ['Yoğurt', 'Elma'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Kıymalı makarna', ingredients: ['Tam buğday makarna', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
+        { slot: 'breakfast', name: 'Ispanaklı omlet + lor peyniri + salatalık', ingredients: ['Yumurta', 'Ispanak', 'Lor peyniri', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Balkabağı çorbası + sebzeli makarna', description: 'Kıymalı ve sebzeli', ingredients: ['Balkabağı', 'Kuzu kıyma', 'Havuç', 'Makarna', 'Zeytinyağı'], emoji: '🎃' },
+        { slot: 'dinner', name: 'Etli nohut yemeği + bulgur pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Nohut', 'Domates', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Armut + ceviz', ingredients: ['Armut', 'Ceviz'], emoji: '🍐' },
       ],
     },
     {
       day: 14,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + domates + avokado', ingredients: ['Yumurta', 'Domates', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kıymalı enginar', ingredients: ['Enginar', 'Kuzu kıyma', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🌿' },
-        { slot: 'snack', name: 'Armut + ceviz', ingredients: ['Armut', 'Ceviz'], emoji: '🍐' },
-        { slot: 'dinner', name: 'Balık çorbası', ingredients: ['Balık', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Kapya biberli omlet + labne + zeytin', ingredients: ['Yumurta', 'Kapya biber', 'Labne peyniri', 'Zeytin', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Sebzeli köfte + bulgur pilavı', ingredients: ['Kuzu kıyma', 'Kabak', 'Havuç', 'Bulgur', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'dinner', name: 'Balık + tatlı patates püresi', ingredients: ['Balık', 'Tatlı patates', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi', ingredients: ['Yoğurt', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 15,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + muz + tahin', ingredients: ['Yoğurt', 'Muz', 'Tahin'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Enginar + bezelye', ingredients: ['Enginar', 'Bezelye', 'Havuç', 'Zeytinyağı'], emoji: '🌿' },
-        { slot: 'snack', name: 'Lor peyniri + kayısı', ingredients: ['Lor peyniri', 'Kayısı'], emoji: '🧀' },
-        { slot: 'dinner', name: 'Sebzeli pirinç pilavı', ingredients: ['Pirinç', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🍚' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + kaşar peyniri + avokado', description: 'Tahin-pekmez ile', ingredients: ['Yumurta', 'Kaşar peyniri', 'Avokado', 'Tahin', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Bulgurlu kabak yemeği + yoğurt', ingredients: ['Bulgur', 'Kabak', 'Havuç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Tavuk buğlama + erişte', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Kabak', 'Erişte', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Pankek + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
-    // Gün 16-18: Yaban mersini tanıtımı
+    // Gün 16-20
     {
       day: 16,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + yaban mersini', description: 'Yeni besin: yaban mersini', ingredients: ['Yulaf unu', 'Yaban mersini', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Et kavurma + bulgur', ingredients: ['Kuzu eti', 'Bulgur', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Yoğurt + yaban mersini', ingredients: ['Yoğurt', 'Yaban mersini'], emoji: '🫐' },
-        { slot: 'dinner', name: 'Sebze çorbası', ingredients: ['Kabak', 'Havuç', 'Patates', 'Kereviz', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Menemen + dil peyniri + zeytin', ingredients: ['Yumurta', 'Domates', 'Biber', 'Dil peyniri', 'Zeytin', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Bulgurlu kabak yemeği + yoğurt', ingredients: ['Bulgur', 'Kabak', 'Kuzu kıyma', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Kıymalı bezelye + pirinç pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Bezelye', 'Havuç', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Kefir + kuruyemiş', ingredients: ['Kefir', 'Ceviz', 'Badem'], emoji: '🥛' },
       ],
     },
     {
       day: 17,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + lor + avokado', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Nohutlu tavuk', ingredients: ['Nohut', 'Tavuk', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'snack', name: 'Elma + ceviz', ingredients: ['Elma', 'Ceviz'], emoji: '🍎' },
-        { slot: 'dinner', name: 'Mercimek çorbası', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yulaflı kaşar peynirli tost + salatalık', description: 'Zeytin ile', ingredients: ['Yulaf unu', 'Kaşar peyniri', 'Tam buğday ekmeği', 'Salatalık', 'Zeytin'], emoji: '🧀' },
+        { slot: 'lunch', name: 'Etli nohut yemeği + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Nohut', 'Havuç', 'Domates', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Kurufasulye + pirinç pilavı + yoğurt', ingredients: ['Kuru fasulye', 'Domates', 'Soğan', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
     {
       day: 18,
       meals: [
-        { slot: 'breakfast', name: 'Peynir tabağı + yumurta', ingredients: ['Lor peyniri', 'Avokado', 'Yumurta', 'Domates', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Kıymalı ıspanak + pirinç', ingredients: ['Kuzu kıyma', 'Ispanak', 'Pirinç', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
-        { slot: 'snack', name: 'Yoğurt + armut + pekmez', ingredients: ['Yoğurt', 'Armut', 'Pekmez'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Kuru fasulye + bulgur', ingredients: ['Kuru fasulye', 'Bulgur', 'Domates', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Pankek + labne + avokado + muz', description: '1 yumurta ile', ingredients: ['Yumurta', 'Yulaf unu', 'Labne peyniri', 'Avokado', 'Muz'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Tarhana çorbası + tam buğday ekmeği', ingredients: ['Tarhana', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Balık + sebzeli makarna', ingredients: ['Balık', 'Makarna', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi + ceviz', ingredients: ['Yoğurt', 'Mevsim meyvesi', 'Ceviz'], emoji: '🥛' },
       ],
     },
-    // Gün 19-21: Parmak yiyecekler
     {
       day: 19,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + ekmek', description: 'Parmak yiyecek: ekmek dilimleri', ingredients: ['Avokado', 'Yumurta', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Sebzeli mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
-        { slot: 'snack', name: 'Muz (parmak yiyecek)', description: 'Dilimlenmiş muz', ingredients: ['Muz'], emoji: '🍌' },
-        { slot: 'dinner', name: 'Balıklı patates', ingredients: ['Balık', 'Patates', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Tarhanalı omlet + dil peyniri + zeytin', description: 'Salatalık ile', ingredients: ['Yumurta', 'Tarhana', 'Dil peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Tavuk sote + bulgur pilavı + yoğurt', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Kıymalı ıspanak + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Ispanak', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi', ingredients: ['Kefir', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 20,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + incir + ceviz', ingredients: ['Yoğurt', 'İncir', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Kıymalı kabak (parçalı)', description: 'Daha iri parçalı doku', ingredients: ['Kuzu kıyma', 'Kabak', 'Domates', 'Zeytinyağı'], emoji: '🎃' },
-        { slot: 'snack', name: 'Havuç çubukları (buğulanmış)', description: 'Parmak yiyecek', ingredients: ['Havuç'], emoji: '🥕' },
-        { slot: 'dinner', name: 'Tavuklu tarhana çorbası', ingredients: ['Tarhana', 'Tavuk', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Menemen + lor peyniri + zeytin', description: 'Avokado ile', ingredients: ['Yumurta', 'Domates', 'Biber', 'Lor peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Tavuk sote + sebzeli makarna', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Makarna', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Kıymalı bezelye + pirinç pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Bezelye', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Pankek + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
+    // Gün 21-25
     {
       day: 21,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + kayısı + tahin', ingredients: ['Yulaf unu', 'Kayısı', 'Tahin', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Bulgur pilavı + nohut', ingredients: ['Bulgur', 'Nohut', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🌾' },
-        { slot: 'snack', name: 'Yoğurt + nar', ingredients: ['Yoğurt', 'Nar'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Kereviz yemeği', ingredients: ['Kereviz', 'Havuç', 'Patates', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Patatesli omlet + labne + salatalık', ingredients: ['Yumurta', 'Patates', 'Labne peyniri', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Mücver + ayran', ingredients: ['Kabak', 'Havuç', 'Yumurta', 'Yulaf unu', 'Ayran', 'Zeytinyağı'], emoji: '🥙' },
+        { slot: 'dinner', name: 'Tavuk sote + bulgur pilavı + yoğurt', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Ev yapımı kek + kefir', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Kefir'], emoji: '🍰' },
       ],
     },
-    // Gün 22-24: Et çeşitleri
     {
       day: 22,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + peynir + domates', ingredients: ['Yumurta', 'Lor peyniri', 'Domates', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Et kavurma + sebze', ingredients: ['Kuzu eti', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Elma dilimleri + lor', description: 'Parmak yiyecek', ingredients: ['Elma', 'Lor peyniri'], emoji: '🍎' },
-        { slot: 'dinner', name: 'Mercimekli bulgur pilavı', ingredients: ['Yeşil mercimek', 'Bulgur', 'Soğan', 'Domates', 'Zeytinyağı'], emoji: '🌾' },
+        { slot: 'breakfast', name: 'Krep + avokado + labne + zeytin', description: '1 yumurta ile', ingredients: ['Yumurta', 'Yulaf unu', 'Avokado', 'Labne peyniri', 'Zeytin', 'Zeytinyağı'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Biber dolması + yoğurt', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌶️' },
+        { slot: 'dinner', name: 'Kıymalı taze fasulye + pirinç pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Taze fasulye', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Mevsim meyvesi + badem', ingredients: ['Mevsim meyvesi', 'Badem'], emoji: '🍎' },
       ],
     },
     {
       day: 23,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + ekmek', ingredients: ['Avokado', 'Yumurta', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Hindili sebze', ingredients: ['Hindi', 'Kabak', 'Havuç', 'Bezelye', 'Zeytinyağı'], emoji: '🦃' },
-        { slot: 'snack', name: 'Yoğurt + muz + pekmez', ingredients: ['Yoğurt', 'Muz', 'Pekmez'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Barbunya yemeği', ingredients: ['Barbunya', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Menemen + kaşar peyniri + zeytin', description: 'Salatalık ile', ingredients: ['Yumurta', 'Domates', 'Biber', 'Kaşar peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Köfte + sebzeli erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Erişte', 'Kabak', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'dinner', name: 'Fırında patatesli tavuk + yoğurt', ingredients: ['Tavuk', 'Patates', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Kefir + kuruyemiş', ingredients: ['Kefir', 'Ceviz'], emoji: '🥛' },
       ],
     },
     {
       day: 24,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + tahin + pekmez', ingredients: ['Lor peyniri', 'Tahin', 'Pekmez'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Balık + fırın sebze', ingredients: ['Balık', 'Kabak', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'snack', name: 'Armut + ceviz', ingredients: ['Armut', 'Ceviz'], emoji: '🍐' },
-        { slot: 'dinner', name: 'Nohut yemeği + pirinç', ingredients: ['Nohut', 'Domates', 'Havuç', 'Pirinç', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Kaşar peynirli tost + domates + salatalık', description: 'Zeytin ve avokado ile', ingredients: ['Kaşar peyniri', 'Tam buğday ekmeği', 'Domates', 'Salatalık', 'Zeytin', 'Avokado'], emoji: '🧀' },
+        { slot: 'lunch', name: 'Balık + mercimekli bulgur pilavı', ingredients: ['Balık', 'Yeşil mercimek', 'Bulgur', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'dinner', name: 'Kıymalı enginar + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Enginar', 'Havuç', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
-    // Gün 25-27: Çorba çeşitleri
     {
       day: 25,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + elma + tarçın + ceviz', ingredients: ['Yoğurt', 'Elma', 'Tarçın', 'Ceviz'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Sebzeli çorba (kerevizli)', ingredients: ['Kereviz', 'Kabak', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🍲' },
-        { slot: 'snack', name: 'Muz + tahin', ingredients: ['Muz', 'Tahin'], emoji: '🍌' },
-        { slot: 'dinner', name: 'Kıymalı makarna', ingredients: ['Tam buğday makarna', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
+        { slot: 'breakfast', name: 'Patatesli omlet + dil peyniri + zeytin', description: 'Tahin-pekmez ile', ingredients: ['Yumurta', 'Patates', 'Dil peyniri', 'Zeytin', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Mercimekli bulgur pilavı + yoğurt', ingredients: ['Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Tavuk sote + sebzeli erişte', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Erişte', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Yoğurt + mevsim meyvesi + ceviz', ingredients: ['Yoğurt', 'Mevsim meyvesi', 'Ceviz'], emoji: '🥛' },
       ],
     },
+    // Gün 26-30
     {
       day: 26,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + susamlı ekmek', ingredients: ['Yumurta', 'Avokado', 'Tam buğday ekmeği', 'Susam', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Tavuk sote + bulgur', ingredients: ['Tavuk', 'Bulgur', 'Kabak', 'Domates', 'Zeytinyağı'], emoji: '🍗' },
-        { slot: 'snack', name: 'Yoğurt + yaban mersini', ingredients: ['Yoğurt', 'Yaban mersini'], emoji: '🫐' },
-        { slot: 'dinner', name: 'Kuru fasulye + pirinç pilavı', ingredients: ['Kuru fasulye', 'Pirinç', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Menemen + lor peyniri + zeytin', description: 'Avokado ile', ingredients: ['Yumurta', 'Domates', 'Biber', 'Lor peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kıymalı bamya + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Bamya', 'Domates', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Tavuklu bezelye + pirinç pilavı', ingredients: ['Tavuk', 'Bezelye', 'Havuç', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi', ingredients: ['Kefir', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 27,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + incir + pekmez', ingredients: ['Yulaf unu', 'İncir', 'Pekmez', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Ispanak yemeği + yumurta', ingredients: ['Ispanak', 'Pirinç', 'Yumurta', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
-        { slot: 'snack', name: 'Lor peyniri + armut', ingredients: ['Lor peyniri', 'Armut'], emoji: '🧀' },
-        { slot: 'dinner', name: 'Balıklı sebze çorbası', ingredients: ['Balık', 'Havuç', 'Patates', 'Kabak', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Pankek + labne + avokado + muz', ingredients: ['Yumurta', 'Yulaf unu', 'Labne peyniri', 'Avokado', 'Muz'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Balık + sebzeli bulgur pilavı', ingredients: ['Balık', 'Bulgur', 'Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'dinner', name: 'Mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
+        { slot: 'snack', name: 'Ev yapımı kek + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍰' },
       ],
     },
-    // Gün 28-30: Tekrar ve çeşitlendirme
     {
       day: 28,
       meals: [
-        { slot: 'breakfast', name: 'Peynir tabağı + yumurta + avokado', ingredients: ['Lor peyniri', 'Yumurta', 'Avokado', 'Domates', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Et kavurma + pirinç pilavı', ingredients: ['Kuzu eti', 'Pirinç', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Yoğurt + kayısı + ceviz', ingredients: ['Yoğurt', 'Kayısı', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Nohutlu sebze çorbası', ingredients: ['Nohut', 'Havuç', 'Kabak', 'Patates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Sebzeli muffin + dil peyniri + zeytin', description: 'Salatalık ile', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Dil peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Et-patates haşlama + yoğurt', ingredients: ['Kuzu eti', 'Patates', 'Havuç', 'Kabak', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'dinner', name: 'Kıymalı yeşil mercimek + bulgur pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Pankek + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
     {
       day: 29,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + muz + tahin + pekmez', ingredients: ['Yoğurt', 'Muz', 'Tahin', 'Pekmez'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
-        { slot: 'snack', name: 'Elma dilimleri (parmak yiyecek)', ingredients: ['Elma'], emoji: '🍎' },
-        { slot: 'dinner', name: 'Bezelye yemeği + bulgur', ingredients: ['Bezelye', 'Bulgur', 'Domates', 'Zeytinyağı'], emoji: '🟢' },
+        { slot: 'breakfast', name: 'Kapya biberli omlet + labne + zeytin', ingredients: ['Yumurta', 'Kapya biber', 'Labne peyniri', 'Zeytin', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Sulu köfte çorbası + tam buğday ekmeği', ingredients: ['Kuzu kıyma', 'Havuç', 'Patates', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Tavuk haşlama + sebzeler + yoğurt', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Kabak', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Kefir + kuruyemiş', ingredients: ['Kefir', 'Ceviz', 'Badem'], emoji: '🥛' },
       ],
     },
     {
       day: 30,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + lor + domates + avokado', ingredients: ['Yumurta', 'Lor peyniri', 'Domates', 'Avokado', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kıymalı sebze + bulgur pilavı', ingredients: ['Kuzu kıyma', 'Kabak', 'Havuç', 'Domates', 'Bulgur', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Yoğurt + nar + ceviz', ingredients: ['Yoğurt', 'Nar', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Mercimek çorbası + ekmek', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + avokado + zeytin', description: 'Tahin-pekmez ile', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Zeytin', 'Tahin', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kıymalı semizotu yemeği + bulgur pilavı', ingredients: ['Kuzu kıyma', 'Semizotu', 'Bulgur', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'dinner', name: 'Tavuklu bezelye + erişte + yoğurt', ingredients: ['Tavuk', 'Bezelye', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
   ],
 };
 
 // ============================================================
-// 10. AY — 4 ÖĞÜN: Kahvaltı + Öğle + Ara Öğün + Akşam
-// Dr. Erdal Pazar rehberi: 10-12 ay arası günde 4 öğün
+// 10. AY — EK GIDAYA DEVAM MENÜSÜ
+// Kahvaltı + Öğle + Akşam + Ara Öğün (PDF verisi)
 // ============================================================
 const month10: MealPlanTemplate = {
   month: 10,
-  title: '10. Ay - 4 Öğün Beslenme Planı',
+  title: '10. Ay - Ek Gıdaya Devam Menüsü',
   description:
-    'Günde 4 öğün: kahvaltı, öğle, ara öğün ve akşam. Daha fazla doku çeşitliliği, parmak yiyecekler ve aile sofrası geçişi. Kivi tanıtılır.',
-  mealSlots: ['breakfast', 'lunch', 'snack', 'dinner'],
+    'Günde 4 öğün: kahvaltı, öğle, akşam ve ara öğün. Karnabahar, cacık, şehriye, kaşar peyniri, bamya ve kavurma et tanıtılır.',
+  mealSlots: ['breakfast', 'lunch', 'dinner', 'snack'],
   notes: [
     'Parmak yiyecekler artık düzenli olarak sunulmalı.',
     'Yemeklerin dokusu aile yemeklerine yaklaştırılmalı.',
     'Hâlâ tuz eklenmemeli (1 yaşına kadar).',
     'Hâlâ bal verilmemeli (1 yaşına kadar).',
     'Hâlâ inek sütü verilmemeli (1 yaşına kadar).',
-    'Kivi bu ay tanıtılabilir.',
-    'Pankek, krep, tava böreği gibi yeni formlar denenebilir.',
+    'Ispanak haftada en fazla 2 kez verilmelidir.',
+    'Kavurma et iyice pişirilip ufak parçalara ayrılmalı.',
   ],
   newFoodsIntroduced: [
-    'Kivi',
-    'Pankek',
-    'Krep',
-    'Tava böreği',
-    'Biber dolması',
+    'Karnabahar',
+    'Cacık',
+    'Şehriye',
+    'Kaşar peyniri',
     'Bamya',
+    'Kavurma et',
   ],
   days: [
-    // Gün 1-3: Kivi tanıtımı
     {
       day: 1,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + lor + ekmek', ingredients: ['Yumurta', 'Avokado', 'Lor peyniri', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Ispanak yemeği + pirinç', ingredients: ['Ispanak', 'Pirinç', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
-        { slot: 'snack', name: 'Yoğurt + kivi', description: 'Yeni besin: kivi', ingredients: ['Yoğurt', 'Kivi'], emoji: '🥝' },
-        { slot: 'dinner', name: 'Tarhana çorbası + ekmek', ingredients: ['Tarhana', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Omlet + kaşar + zeytin + avokado', description: 'Tahin/pekmez ile', ingredients: ['Yumurta', 'Kaşar peyniri', 'Zeytin', 'Avokado', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Mücver + yoğurt', ingredients: ['Kabak', 'Havuç', 'Yumurta', 'Yoğurt', 'Zeytinyağı'], emoji: '🥙' },
+        { slot: 'dinner', name: 'Etli nohut yemeği + şehriye pilavı + cacık', ingredients: ['Kuzu kıyma', 'Nohut', 'Domates', 'Şehriye', 'Yoğurt', 'Salatalık', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Kuru meyveler + karadut suyu + kuruyemiş', ingredients: ['Kuru üzüm', 'Kuru dut', 'Karadut suyu', 'Ceviz'], emoji: '🍇' },
       ],
     },
     {
       day: 2,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + muz + tahin', ingredients: ['Yulaf unu', 'Muz', 'Tahin', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Balık + sebze', ingredients: ['Balık', 'Kabak', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'snack', name: 'Kivi + lor peyniri', ingredients: ['Kivi', 'Lor peyniri'], emoji: '🥝' },
-        { slot: 'dinner', name: 'Kıymalı makarna', ingredients: ['Tam buğday makarna', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + avokado', description: 'Domates/salatalık, pekmez/tam buğday', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Domates', 'Salatalık', 'Pekmez', 'Tam buğday ekmeği'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Karnabahar yemeği + yoğurt', ingredients: ['Karnabahar', 'Havuç', 'Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥦' },
+        { slot: 'dinner', name: 'Mevsim balığı + mercimekli bulgur pilavı', ingredients: ['Balık', 'Yeşil mercimek', 'Bulgur', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
     {
       day: 3,
       meals: [
-        { slot: 'breakfast', name: 'Peynir tabağı + yumurta + domates', ingredients: ['Lor peyniri', 'Yumurta', 'Domates', 'Avokado', 'Zeytinyağı'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Mercimekli bulgur pilavı', ingredients: ['Yeşil mercimek', 'Bulgur', 'Soğan', 'Domates', 'Zeytinyağı'], emoji: '🌾' },
-        { slot: 'snack', name: 'Yoğurt + kivi + ceviz', ingredients: ['Yoğurt', 'Kivi', 'Ceviz'], emoji: '🥝' },
-        { slot: 'dinner', name: 'Tavuk suyu çorbası', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Peynirli çırpma yumurta + dil peyniri', description: 'Avokado, zeytin, salatalık/domates', ingredients: ['Yumurta', 'Dil peyniri', 'Avokado', 'Zeytin', 'Salatalık', 'Domates', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Karnabahar yemeği + yoğurt', ingredients: ['Karnabahar', 'Havuç', 'Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥦' },
+        { slot: 'dinner', name: 'Taze fasulye + pilav + cacık', ingredients: ['Taze fasulye', 'Domates', 'Pirinç', 'Yoğurt', 'Salatalık', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Taze meyve + kuruyemiş', ingredients: ['Mevsim meyvesi', 'Ceviz'], emoji: '🍎' },
       ],
     },
-    // Gün 4-6: Pankek tanıtımı
     {
       day: 4,
       meals: [
-        { slot: 'breakfast', name: 'Pankek + muz', description: 'Yeni form: pankek (yumurta, yulaf, muz)', ingredients: ['Yulaf unu', 'Yumurta', 'Muz', 'Zeytinyağı'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Etli nohut', ingredients: ['Kuzu eti', 'Nohut', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'snack', name: 'Yoğurt + elma + tarçın', ingredients: ['Yoğurt', 'Elma', 'Tarçın'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Sebze çorbası + ekmek', ingredients: ['Kabak', 'Havuç', 'Patates', 'Kereviz', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + zeytin + krep', description: 'Salatalık, tahin pekmez ile krep, sevdiği meyve', ingredients: ['Yumurta', 'Zeytin', 'Salatalık', 'Yulaf unu', 'Tahin', 'Pekmez', 'Mevsim meyvesi'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
+        { slot: 'dinner', name: 'Fırın tavuk + sebzeli erişte', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Erişte', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi', ingredients: ['Kefir', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 5,
       meals: [
-        { slot: 'breakfast', name: 'Pankek + yoğurt + pekmez', ingredients: ['Yulaf unu', 'Yumurta', 'Yoğurt', 'Pekmez'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Kavurma et + pirinç pilavı', ingredients: ['Kuzu eti', 'Pirinç', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Armut + ceviz', ingredients: ['Armut', 'Ceviz'], emoji: '🍐' },
-        { slot: 'dinner', name: 'Mercimek çorbası + ekmek', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yulaflı kaşar peynirli tost + salatalık', description: 'Domates, zeytin, avokado, labne', ingredients: ['Yumurta', 'Yulaf unu', 'Kaşar peyniri', 'Tam buğday ekmeği', 'Salatalık', 'Domates', 'Zeytin', 'Avokado', 'Labne peyniri'], emoji: '🧀' },
+        { slot: 'lunch', name: 'Kıymalı bezelye + bulgur pilavı', ingredients: ['Kuzu kıyma', 'Bezelye', 'Havuç', 'Domates', 'Bulgur', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Biber dolması + yoğurt', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌶️' },
+        { slot: 'snack', name: 'Pankek + tahin + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Tahin', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
     {
       day: 6,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + susamlı ekmek', ingredients: ['Yumurta', 'Avokado', 'Tam buğday ekmeği', 'Susam', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Kuru fasulye + bulgur pilavı', ingredients: ['Kuru fasulye', 'Bulgur', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'snack', name: 'Muz + tahin + pekmez', ingredients: ['Muz', 'Tahin', 'Pekmez'], emoji: '🍌' },
-        { slot: 'dinner', name: 'Balık çorbası', ingredients: ['Balık', 'Havuç', 'Patates', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Yumurtalı fincan kek + kaşar + zeytin', description: 'Avokado ile', ingredients: ['Yumurta', 'Yulaf unu', 'Kaşar peyniri', 'Zeytin', 'Salatalık', 'Avokado', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Kıymalı bezelye + bulgur pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Bezelye', 'Havuç', 'Domates', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Kurufasulye + pilav + yoğurt', ingredients: ['Kuru fasulye', 'Domates', 'Soğan', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + kefir', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Kefir'], emoji: '🍪' },
       ],
     },
-    // Gün 7-9: Bamya tanıtımı
     {
       day: 7,
       meals: [
-        { slot: 'breakfast', name: 'Lor peyniri + pekmez + ceviz + ekmek', ingredients: ['Lor peyniri', 'Pekmez', 'Ceviz', 'Tam buğday ekmeği'], emoji: '🧀' },
-        { slot: 'lunch', name: 'Bamya yemeği', description: 'Yeni besin: bamya', ingredients: ['Bamya', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🌿' },
-        { slot: 'snack', name: 'Yoğurt + incir', ingredients: ['Yoğurt', 'İncir'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Tavuklu bulgur pilavı', ingredients: ['Tavuk', 'Bulgur', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Çırpma yumurta biberli + lor + domates', description: 'Salatalık, zeytin, avokado', ingredients: ['Yumurta', 'Biber', 'Lor peyniri', 'Domates', 'Salatalık', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Tavuk köftesi + sebzeli erişte', ingredients: ['Tavuk', 'Erişte', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Etli sebzeli haşlama + bulgur pilavı + yoğurt', ingredients: ['Kuzu eti', 'Havuç', 'Patates', 'Kabak', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'snack', name: 'Meyve + kuruyemiş', ingredients: ['Mevsim meyvesi', 'Ceviz'], emoji: '🍎' },
       ],
     },
     {
       day: 8,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + elma + tarçın', ingredients: ['Yulaf unu', 'Elma', 'Tarçın', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Kıymalı bamya', ingredients: ['Bamya', 'Kuzu kıyma', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🌿' },
-        { slot: 'snack', name: 'Kivi + lor peyniri', ingredients: ['Kivi', 'Lor peyniri'], emoji: '🥝' },
-        { slot: 'dinner', name: 'Ispanak yemeği + yumurta', ingredients: ['Ispanak', 'Pirinç', 'Yumurta', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Menemen + dil peyniri + zeytin', description: 'Biber/salatalık, tahin/pekmez, tam buğday ekmeği', ingredients: ['Yumurta', 'Domates', 'Biber', 'Dil peyniri', 'Zeytin', 'Salatalık', 'Tam buğday ekmeği', 'Tahin', 'Pekmez', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Tavuk köftesi + sebzeli erişte', ingredients: ['Tavuk', 'Erişte', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Yeşil mercimek yemeği kıymalı + yoğurt', ingredients: ['Yeşil mercimek', 'Kuzu kıyma', 'Havuç', 'Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Kuru meyve + kefir', ingredients: ['Kuru üzüm', 'Kuru dut', 'Kefir'], emoji: '🍇' },
       ],
     },
     {
       day: 9,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + domates + avokado + ekmek', ingredients: ['Yumurta', 'Domates', 'Avokado', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Bamya + tavuk', ingredients: ['Bamya', 'Tavuk', 'Domates', 'Zeytinyağı'], emoji: '🌿' },
-        { slot: 'snack', name: 'Yoğurt + muz + ceviz', ingredients: ['Yoğurt', 'Muz', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Nohutlu sebze çorbası', ingredients: ['Nohut', 'Havuç', 'Kabak', 'Patates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Tarhanalı omlet + labne + zeytin + avokado', description: 'Tam buğday ekmeği, karadut suyu', ingredients: ['Yumurta', 'Tarhana', 'Labne peyniri', 'Zeytin', 'Avokado', 'Tam buğday ekmeği', 'Karadut suyu', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kabak yemeği kıymalı + yoğurt', ingredients: ['Kabak', 'Kuzu kıyma', 'Domates', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Tavuk sote + soslu makarna', ingredients: ['Tavuk', 'Makarna', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Ev yapımı sebzeli muffin + ayran + kuruyemiş', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Yulaf unu', 'Ayran', 'Ceviz', 'Zeytinyağı'], emoji: '🧁' },
       ],
     },
-    // Gün 10-12: Biber dolması tanıtımı
     {
       day: 10,
       meals: [
-        { slot: 'breakfast', name: 'Pankek + kayısı + yoğurt', ingredients: ['Yulaf unu', 'Yumurta', 'Kayısı', 'Yoğurt'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Biber dolması', description: 'Yeni form: biber dolması (kıymalı pirinçli)', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🫑' },
-        { slot: 'snack', name: 'Elma dilimleri + tahin', ingredients: ['Elma', 'Tahin'], emoji: '🍎' },
-        { slot: 'dinner', name: 'Tarhana çorbası', ingredients: ['Tarhana', 'Domates', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + zeytin + pankek', description: 'Labne + muz sürülerek + avokado', ingredients: ['Yumurta', 'Zeytin', 'Yulaf unu', 'Labne peyniri', 'Muz', 'Avokado'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kabak yemeği kıymalı + yoğurt', ingredients: ['Kabak', 'Kuzu kıyma', 'Domates', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Izgara balık + mercimekli bulgur pilavı', ingredients: ['Balık', 'Yeşil mercimek', 'Bulgur', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Ev yapımı kek + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Pekmez', 'Mevsim meyvesi'], emoji: '🍰' },
       ],
     },
+    // Gün 11-15
     {
       day: 11,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + lor + ekmek', ingredients: ['Avokado', 'Yumurta', 'Lor peyniri', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Kıymalı enginar', ingredients: ['Enginar', 'Kuzu kıyma', 'Havuç', 'Bezelye', 'Domates', 'Zeytinyağı'], emoji: '🌿' },
-        { slot: 'snack', name: 'Yoğurt + nar + ceviz', ingredients: ['Yoğurt', 'Nar', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Balıklı sebze', ingredients: ['Balık', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Patatesli omlet + lor + zeytin + salatalık', ingredients: ['Yumurta', 'Patates', 'Lor peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Sulu köfte çorbası + tam buğday ekmeği', ingredients: ['Kuzu kıyma', 'Havuç', 'Patates', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'dinner', name: 'Kıymalı semizotu + bulgur pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Semizotu', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi', ingredients: ['Kefir', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 12,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + incir + tahin + pekmez', ingredients: ['Yoğurt', 'İncir', 'Tahin', 'Pekmez'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Biber dolması + yoğurt', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🫑' },
-        { slot: 'snack', name: 'Muz + ceviz', ingredients: ['Muz', 'Ceviz'], emoji: '🍌' },
-        { slot: 'dinner', name: 'Kereviz yemeği', ingredients: ['Kereviz', 'Havuç', 'Patates', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + dil peyniri + avokado', description: 'Zeytin, domates ile', ingredients: ['Yumurta', 'Dil peyniri', 'Avokado', 'Zeytin', 'Domates', 'Zeytinyağı'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Ispanak yemeği + erişte + yoğurt', ingredients: ['Ispanak', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'dinner', name: 'Fırın tavuk + sebzeler + yoğurt', ingredients: ['Tavuk', 'Havuç', 'Patates', 'Kabak', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
-    // Gün 13-15: Krep ve tava böreği tanıtımı
     {
       day: 13,
       meals: [
-        { slot: 'breakfast', name: 'Krep + lor + ıspanak', description: 'Yeni form: krep', ingredients: ['Tam buğday unu', 'Yumurta', 'Lor peyniri', 'Ispanak', 'Zeytinyağı'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Et kavurma + bulgur pilavı', ingredients: ['Kuzu eti', 'Bulgur', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Yoğurt + kivi', ingredients: ['Yoğurt', 'Kivi'], emoji: '🥝' },
-        { slot: 'dinner', name: 'Sebze çorbası', ingredients: ['Kabak', 'Havuç', 'Patates', 'Kereviz', 'Kekik', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Sebzeli omlet + labne + zeytin + salatalık', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Labne peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Tavuklu mercimekli bulgur pilavı + yoğurt', ingredients: ['Tavuk', 'Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Bamya yemeği + pilav + yoğurt', ingredients: ['Bamya', 'Kuzu kıyma', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Pankek + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
     {
       day: 14,
       meals: [
-        { slot: 'breakfast', name: 'Tava böreği', description: 'Yeni form: tava böreği (peynirli)', ingredients: ['Tam buğday unu', 'Yumurta', 'Lor peyniri', 'Zeytinyağı'], emoji: '🥧' },
-        { slot: 'lunch', name: 'Tavuk sote + pirinç', ingredients: ['Tavuk', 'Kabak', 'Havuç', 'Domates', 'Pirinç', 'Zeytinyağı'], emoji: '🍗' },
-        { slot: 'snack', name: 'Armut + lor peyniri', ingredients: ['Armut', 'Lor peyniri'], emoji: '🍐' },
-        { slot: 'dinner', name: 'Nohut yemeği', ingredients: ['Nohut', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Menemen + kaşar peyniri + zeytin', description: 'Salatalık, domates ile', ingredients: ['Yumurta', 'Domates', 'Biber', 'Kaşar peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Tavuklu mercimekli bulgur pilavı + yoğurt', ingredients: ['Tavuk', 'Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Tavuk köftesi + sebzeli makarna + yoğurt', ingredients: ['Tavuk', 'Makarna', 'Kabak', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Kefir + kuruyemiş', ingredients: ['Kefir', 'Ceviz', 'Badem'], emoji: '🥛' },
       ],
     },
     {
       day: 15,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + domates + ekmek', ingredients: ['Yumurta', 'Avokado', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
-        { slot: 'snack', name: 'Yoğurt + elma + tarçın', ingredients: ['Yoğurt', 'Elma', 'Tarçın'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Balık + fırın sebze', ingredients: ['Balık', 'Kabak', 'Havuç', 'Patates', 'Kekik', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + avokado + zeytin', description: 'Tahin-pekmez ile', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Zeytin', 'Tahin', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Tavuklu mercimekli bulgur pilavı + yoğurt', ingredients: ['Tavuk', 'Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Balık + tatlı patates püresi + tam buğday ekmeği', ingredients: ['Balık', 'Tatlı patates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Ev yapımı kek + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍰' },
       ],
     },
-    // Gün 16-18: Et çeşitleri
+    // Gün 16-20
     {
       day: 16,
       meals: [
-        { slot: 'breakfast', name: 'Pankek + yoğurt + pekmez', ingredients: ['Yulaf unu', 'Yumurta', 'Yoğurt', 'Pekmez'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Kıymalı kabak', ingredients: ['Kuzu kıyma', 'Kabak', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🎃' },
-        { slot: 'snack', name: 'Kivi + muz', ingredients: ['Kivi', 'Muz'], emoji: '🥝' },
-        { slot: 'dinner', name: 'Kuru fasulye + pirinç pilavı', ingredients: ['Kuru fasulye', 'Pirinç', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Kaşarlı sebzeli yulaf tost + salatalık', description: 'Zeytin, avokado ile', ingredients: ['Yulaf unu', 'Kaşar peyniri', 'Kabak', 'Tam buğday ekmeği', 'Salatalık', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🧀' },
+        { slot: 'lunch', name: 'Tavuklu mercimekli bulgur pilavı + yoğurt', ingredients: ['Tavuk', 'Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Etli nohut + şehriye pilavı + cacık', ingredients: ['Kuzu kıyma', 'Nohut', 'Domates', 'Şehriye', 'Yoğurt', 'Salatalık', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi', ingredients: ['Kefir', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 17,
       meals: [
-        { slot: 'breakfast', name: 'Krep + avokado + lor', ingredients: ['Tam buğday unu', 'Yumurta', 'Avokado', 'Lor peyniri', 'Zeytinyağı'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Kavurma et + sebze', ingredients: ['Kuzu eti', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Yoğurt + incir + ceviz', ingredients: ['Yoğurt', 'İncir', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Tarhana çorbası + ekmek', ingredients: ['Tarhana', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Patatesli yeşillikli omlet + dil peyniri', description: 'Zeytin, salatalık ile', ingredients: ['Yumurta', 'Patates', 'Maydanoz', 'Dil peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Sebzeli pırasa yemeği + yoğurt', ingredients: ['Pırasa', 'Havuç', 'Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Taze fasulye + pilav + cacık', ingredients: ['Taze fasulye', 'Domates', 'Pirinç', 'Yoğurt', 'Salatalık', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
     {
       day: 18,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + peynir tabağı', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Domates', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Hindili sebze + bulgur', ingredients: ['Hindi', 'Kabak', 'Havuç', 'Bezelye', 'Bulgur', 'Zeytinyağı'], emoji: '🦃' },
-        { slot: 'snack', name: 'Elma + tahin', ingredients: ['Elma', 'Tahin'], emoji: '🍎' },
-        { slot: 'dinner', name: 'Ispanak yemeği', ingredients: ['Ispanak', 'Pirinç', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + avokado + zeytin', description: 'Pekmez ile', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Zeytin', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kıymalı patates oturtma + yoğurt', ingredients: ['Kuzu kıyma', 'Patates', 'Domates', 'Biber', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Tavuk but + sebzeli makarna + yoğurt', ingredients: ['Tavuk', 'Makarna', 'Kabak', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Pankek + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
-    // Gün 19-21: Baklagiller ve çorbalar
     {
       day: 19,
       meals: [
-        { slot: 'breakfast', name: 'Tava böreği (ıspanaklı)', ingredients: ['Tam buğday unu', 'Yumurta', 'Ispanak', 'Lor peyniri', 'Zeytinyağı'], emoji: '🥧' },
-        { slot: 'lunch', name: 'Etli nohut + pirinç', ingredients: ['Kuzu eti', 'Nohut', 'Domates', 'Havuç', 'Pirinç', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'snack', name: 'Yoğurt + muz + pekmez', ingredients: ['Yoğurt', 'Muz', 'Pekmez'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Mercimek çorbası + ekmek', ingredients: ['Kırmızı mercimek', 'Havuç', 'Patates', 'Soğan', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Menemen + dil peyniri + zeytin', description: 'Salatalık, avokado ile', ingredients: ['Yumurta', 'Domates', 'Biber', 'Dil peyniri', 'Zeytin', 'Salatalık', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kıymalı patates oturtma + yoğurt', ingredients: ['Kuzu kıyma', 'Patates', 'Domates', 'Biber', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Balık + mercimekli bulgur pilavı', ingredients: ['Balık', 'Yeşil mercimek', 'Bulgur', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Kefir + kuruyemiş', ingredients: ['Kefir', 'Ceviz', 'Badem'], emoji: '🥛' },
       ],
     },
     {
       day: 20,
       meals: [
-        { slot: 'breakfast', name: 'Yulaf lapası + kayısı + ceviz', ingredients: ['Yulaf unu', 'Kayısı', 'Ceviz', 'Su'], emoji: '🥣' },
-        { slot: 'lunch', name: 'Barbunya yemeği + bulgur', ingredients: ['Barbunya', 'Bulgur', 'Domates', 'Havuç', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'snack', name: 'Lor peyniri + armut', ingredients: ['Lor peyniri', 'Armut'], emoji: '🧀' },
-        { slot: 'dinner', name: 'Tavuklu sebze çorbası', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Patates', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'breakfast', name: 'Sebzeli bebek muffin + kaşar + zeytin', description: 'Avokado ile', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Yulaf unu', 'Kaşar peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Sebzeli pırasa yemeği + yoğurt', ingredients: ['Pırasa', 'Havuç', 'Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Etli brüksel lahanası + bulgur pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Brüksel lahanası', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Ev yapımı kek + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍰' },
       ],
     },
+    // Gün 21-25
     {
       day: 21,
       meals: [
-        { slot: 'breakfast', name: 'Avokado + yumurta + ekmek', ingredients: ['Avokado', 'Yumurta', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥑' },
-        { slot: 'lunch', name: 'Bezelye yemeği + pirinç', ingredients: ['Bezelye', 'Havuç', 'Domates', 'Pirinç', 'Zeytinyağı'], emoji: '🟢' },
-        { slot: 'snack', name: 'Yoğurt + yaban mersini', ingredients: ['Yoğurt', 'Yaban mersini'], emoji: '🫐' },
-        { slot: 'dinner', name: 'Kıymalı makarna', ingredients: ['Tam buğday makarna', 'Kuzu kıyma', 'Domates', 'Zeytinyağı'], emoji: '🍝' },
+        { slot: 'breakfast', name: 'Biberli omlet + labne + zeytin + avokado', ingredients: ['Yumurta', 'Biber', 'Labne peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Balık + sebzeli erişte', ingredients: ['Balık', 'Erişte', 'Kabak', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'dinner', name: 'Mercimekli bulgur pilavı + yoğurt', ingredients: ['Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi + kuruyemiş', ingredients: ['Kefir', 'Mevsim meyvesi', 'Ceviz'], emoji: '🥛' },
       ],
     },
-    // Gün 22-24: Balık ve deniz ürünleri
     {
       day: 22,
       meals: [
-        { slot: 'breakfast', name: 'Pankek + elma + tarçın', ingredients: ['Yulaf unu', 'Yumurta', 'Elma', 'Tarçın'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Balık + pirinç pilavı', ingredients: ['Balık', 'Pirinç', 'Havuç', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'snack', name: 'Muz + tahin + pekmez', ingredients: ['Muz', 'Tahin', 'Pekmez'], emoji: '🍌' },
-        { slot: 'dinner', name: 'Enginar + bezelye', ingredients: ['Enginar', 'Bezelye', 'Havuç', 'Zeytinyağı'], emoji: '🌿' },
+        { slot: 'breakfast', name: 'Pankek + labne + avokado + muz', ingredients: ['Yumurta', 'Yulaf unu', 'Labne peyniri', 'Avokado', 'Muz'], emoji: '🥞' },
+        { slot: 'lunch', name: 'Kurufasulye + pilav + yoğurt', ingredients: ['Kuru fasulye', 'Domates', 'Soğan', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'dinner', name: 'Kıymalı enginar + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Enginar', 'Havuç', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
     {
       day: 23,
       meals: [
-        { slot: 'breakfast', name: 'Krep + lor + pekmez', ingredients: ['Tam buğday unu', 'Yumurta', 'Lor peyniri', 'Pekmez', 'Zeytinyağı'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Balık çorbası + ekmek', ingredients: ['Balık', 'Havuç', 'Patates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'snack', name: 'Yoğurt + kayısı + ceviz', ingredients: ['Yoğurt', 'Kayısı', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Kıymalı ıspanak + bulgur', ingredients: ['Kuzu kıyma', 'Ispanak', 'Bulgur', 'Soğan', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'breakfast', name: 'Kaşar peynirli tost + domates + salatalık', description: 'Zeytin, avokado ile', ingredients: ['Kaşar peyniri', 'Tam buğday ekmeği', 'Domates', 'Salatalık', 'Zeytin', 'Avokado'], emoji: '🧀' },
+        { slot: 'lunch', name: 'Biber dolması + yoğurt', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌶️' },
+        { slot: 'dinner', name: 'Taze patates püresi + tavuk köfte + yoğurt', ingredients: ['Patates', 'Tavuk', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'snack', name: 'Pankek + tahin + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Tahin', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
     {
       day: 24,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + avokado + domates + ekmek', ingredients: ['Yumurta', 'Avokado', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Balıklı sebze + fırın patates', ingredients: ['Balık', 'Kabak', 'Patates', 'Havuç', 'Kekik', 'Zeytinyağı'], emoji: '🐟' },
-        { slot: 'snack', name: 'Lor peyniri + incir', ingredients: ['Lor peyniri', 'İncir'], emoji: '🧀' },
-        { slot: 'dinner', name: 'Nohut yemeği + bulgur', ingredients: ['Nohut', 'Bulgur', 'Domates', 'Havuç', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Patatesli omlet + lor + zeytin + salatalık', ingredients: ['Yumurta', 'Patates', 'Lor peyniri', 'Zeytin', 'Salatalık', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kıymalı ıspanak + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Ispanak', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'dinner', name: 'Erişte + yoğurt', ingredients: ['Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🍝' },
+        { slot: 'snack', name: 'Kefir + kuruyemiş', ingredients: ['Kefir', 'Ceviz'], emoji: '🥛' },
       ],
     },
-    // Gün 25-27: Çeşitli ana yemekler
     {
       day: 25,
       meals: [
-        { slot: 'breakfast', name: 'Tava böreği (peynirli)', ingredients: ['Tam buğday unu', 'Yumurta', 'Lor peyniri', 'Zeytinyağı'], emoji: '🥧' },
-        { slot: 'lunch', name: 'Mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
-        { slot: 'snack', name: 'Yoğurt + elma + pekmez', ingredients: ['Yoğurt', 'Elma', 'Pekmez'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Bamya yemeği', ingredients: ['Bamya', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🌿' },
+        { slot: 'breakfast', name: 'Tarhanalı omlet + dil peyniri + avokado', description: 'Zeytin ile', ingredients: ['Yumurta', 'Tarhana', 'Dil peyniri', 'Avokado', 'Zeytin', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Tavuk sote + bulgur pilavı + yoğurt', ingredients: ['Tavuk', 'Havuç', 'Kabak', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🍗' },
+        { slot: 'dinner', name: 'Mercimekli bulgur pilavı + yoğurt', ingredients: ['Yeşil mercimek', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Ev yapımı kek + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍰' },
       ],
     },
+    // Gün 26-30
     {
       day: 26,
       meals: [
-        { slot: 'breakfast', name: 'Yoğurt + muz + tahin + pekmez', ingredients: ['Yoğurt', 'Muz', 'Tahin', 'Pekmez'], emoji: '🥛' },
-        { slot: 'lunch', name: 'Biber dolması + yoğurt', ingredients: ['Biber', 'Kuzu kıyma', 'Pirinç', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🫑' },
-        { slot: 'snack', name: 'Kivi + ceviz', ingredients: ['Kivi', 'Ceviz'], emoji: '🥝' },
-        { slot: 'dinner', name: 'Mercimekli bulgur + yoğurt', ingredients: ['Yeşil mercimek', 'Bulgur', 'Soğan', 'Domates', 'Yoğurt', 'Zeytinyağı'], emoji: '🌾' },
+        { slot: 'breakfast', name: 'Menemen + lor + zeytin + avokado', ingredients: ['Yumurta', 'Domates', 'Biber', 'Lor peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Kabak yemeği kıymalı + yoğurt', ingredients: ['Kabak', 'Kuzu kıyma', 'Domates', 'Havuç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Kıymalı semizotu + bulgur pilavı + yoğurt', ingredients: ['Kuzu kıyma', 'Semizotu', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Kefir + mevsim meyvesi', ingredients: ['Kefir', 'Mevsim meyvesi'], emoji: '🥛' },
       ],
     },
     {
       day: 27,
       meals: [
-        { slot: 'breakfast', name: 'Pankek + armut + lor', ingredients: ['Yulaf unu', 'Yumurta', 'Armut', 'Lor peyniri'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Kavurma et + fırın sebze', ingredients: ['Kuzu eti', 'Kabak', 'Havuç', 'Patates', 'Kekik', 'Zeytinyağı'], emoji: '🥩' },
-        { slot: 'snack', name: 'Yoğurt + nar', ingredients: ['Yoğurt', 'Nar'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Kuru fasulye + pirinç', ingredients: ['Kuru fasulye', 'Pirinç', 'Domates', 'Soğan', 'Zeytinyağı'], emoji: '🫘' },
+        { slot: 'breakfast', name: 'Haşlanmış yumurta + lor + avokado', description: 'Zeytin, pekmez ile', ingredients: ['Yumurta', 'Lor peyniri', 'Avokado', 'Zeytin', 'Pekmez'], emoji: '🥚' },
+        { slot: 'lunch', name: 'Kavurma et + sebzeli erişte', ingredients: ['Kavurma et', 'Erişte', 'Havuç', 'Kabak', 'Zeytinyağı'], emoji: '🥩' },
+        { slot: 'dinner', name: 'Tarhana çorbası + mantı + yoğurt', ingredients: ['Tarhana', 'Tam buğday unu', 'Kuzu kıyma', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
+        { slot: 'snack', name: 'Ev yapımı bisküvi + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍪' },
       ],
     },
-    // Gün 28-30: Tekrar ve çeşitlendirme
     {
       day: 28,
       meals: [
-        { slot: 'breakfast', name: 'Krep + avokado + yumurta', ingredients: ['Tam buğday unu', 'Yumurta', 'Avokado', 'Zeytinyağı'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Tavuk sote + bulgur pilavı', ingredients: ['Tavuk', 'Bulgur', 'Kabak', 'Havuç', 'Domates', 'Zeytinyağı'], emoji: '🍗' },
-        { slot: 'snack', name: 'Elma + tahin + pekmez', ingredients: ['Elma', 'Tahin', 'Pekmez'], emoji: '🍎' },
-        { slot: 'dinner', name: 'Sebze çorbası + ekmek', ingredients: ['Kabak', 'Havuç', 'Patates', 'Kereviz', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Yulaflı kaşar peynirli tost + salatalık', description: 'Zeytin, avokado ile', ingredients: ['Yulaf unu', 'Kaşar peyniri', 'Tam buğday ekmeği', 'Salatalık', 'Zeytin', 'Avokado'], emoji: '🧀' },
+        { slot: 'lunch', name: 'Kıymalı bamya + pilav + yoğurt', ingredients: ['Kuzu kıyma', 'Bamya', 'Domates', 'Pirinç', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Etli nohut + şehriye pilavı + cacık', ingredients: ['Kuzu kıyma', 'Nohut', 'Domates', 'Şehriye', 'Yoğurt', 'Salatalık', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'snack', name: 'Pankek + tahin + mevsim meyvesi', ingredients: ['Yumurta', 'Yulaf unu', 'Tahin', 'Mevsim meyvesi'], emoji: '🥞' },
       ],
     },
     {
       day: 29,
       meals: [
-        { slot: 'breakfast', name: 'Yumurta + lor + domates + avokado + ekmek', ingredients: ['Yumurta', 'Lor peyniri', 'Domates', 'Avokado', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🥚' },
-        { slot: 'lunch', name: 'Etli nohut + pirinç pilavı', ingredients: ['Kuzu eti', 'Nohut', 'Domates', 'Havuç', 'Pirinç', 'Zeytinyağı'], emoji: '🫘' },
-        { slot: 'snack', name: 'Yoğurt + kivi + ceviz', ingredients: ['Yoğurt', 'Kivi', 'Ceviz'], emoji: '🥛' },
-        { slot: 'dinner', name: 'Tarhana çorbası + ekmek', ingredients: ['Tarhana', 'Domates', 'Tam buğday ekmeği', 'Zeytinyağı'], emoji: '🍲' },
+        { slot: 'breakfast', name: 'Sebzeli omlet + labne + zeytin', description: 'Avokado ile', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Labne peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🍳' },
+        { slot: 'lunch', name: 'Sebzeli bezelye yemeği + bulgur pilavı', ingredients: ['Bezelye', 'Havuç', 'Patates', 'Domates', 'Bulgur', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Fırın balık + fırın sebze + yoğurt', ingredients: ['Balık', 'Havuç', 'Kabak', 'Patates', 'Yoğurt', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'snack', name: 'Kefir + kuruyemiş', ingredients: ['Kefir', 'Ceviz', 'Badem'], emoji: '🥛' },
       ],
     },
     {
       day: 30,
       meals: [
-        { slot: 'breakfast', name: 'Pankek + yoğurt + meyve', ingredients: ['Yulaf unu', 'Yumurta', 'Yoğurt', 'Muz', 'Pekmez'], emoji: '🥞' },
-        { slot: 'lunch', name: 'Mantı + yoğurt', ingredients: ['Tam buğday unu', 'Kuzu kıyma', 'Soğan', 'Yoğurt', 'Zeytinyağı'], emoji: '🥟' },
-        { slot: 'snack', name: 'Lor peyniri + armut + ceviz', ingredients: ['Lor peyniri', 'Armut', 'Ceviz'], emoji: '🧀' },
-        { slot: 'dinner', name: 'Balık + sebze + pirinç pilavı', ingredients: ['Balık', 'Kabak', 'Havuç', 'Pirinç', 'Zeytinyağı'], emoji: '🐟' },
+        { slot: 'breakfast', name: 'Sebzeli bebek muffin + kaşar + zeytin', description: 'Avokado ile', ingredients: ['Yumurta', 'Kabak', 'Havuç', 'Yulaf unu', 'Kaşar peyniri', 'Zeytin', 'Avokado', 'Zeytinyağı'], emoji: '🧁' },
+        { slot: 'lunch', name: 'Sebzeli bezelye yemeği + bulgur pilavı + yoğurt', ingredients: ['Bezelye', 'Havuç', 'Patates', 'Domates', 'Bulgur', 'Yoğurt', 'Zeytinyağı'], emoji: '🥘' },
+        { slot: 'dinner', name: 'Kıymalı semizotu + erişte + yoğurt', ingredients: ['Kuzu kıyma', 'Semizotu', 'Erişte', 'Yoğurt', 'Zeytinyağı'], emoji: '🥬' },
+        { slot: 'snack', name: 'Ev yapımı kek + mevsim meyvesi', ingredients: ['Yulaf unu', 'Yumurta', 'Mevsim meyvesi'], emoji: '🍰' },
       ],
     },
   ],

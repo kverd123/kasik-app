@@ -12,6 +12,8 @@ import { usePantryStore } from './pantryStore';
 import { ALL_RECIPES, RECIPES_BY_ID, RecipeData } from '../constants/recipes';
 import { syncToFirestore } from '../lib/firestoreSync';
 import { getAllWeekMealPlans } from '../lib/firestore';
+import { MEAL_PLAN_TEMPLATES, MealTemplate } from '../constants/mealPlanTemplates';
+import { isFoodAllowed, getAllowedFoodNames, getRecommendedMealsPerDay } from '../constants/foodDatabase';
 
 export type DayMeals = Record<MealSlot, Meal[]>;
 
@@ -509,30 +511,53 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
       const state = get();
       const weekKey = state.currentWeekKey;
 
-      // Bebek ayına uygun tarifleri al
+      // 1. Şablondan o aya ait planı bul
+      const template = MEAL_PLAN_TEMPLATES.find((t) => t.month === babyMonth);
+      const allowedFoods = template?.newFoodsIntroduced?.map((f) => f.toLowerCase()) || [];
+
+      // 2. Yaş filtresi + malzeme uygunluk kontrolü
       const ageFilter: '6m' | '8m' | '12m+' = babyMonth < 8 ? '6m' : babyMonth < 12 ? '8m' : '12m+';
       const ageOrder: Record<string, number> = { '6m': 0, '8m': 1, '12m+': 2 };
       const ageLevel = ageOrder[ageFilter];
-      const availableRecipes: RecipeData[] = ALL_RECIPES.filter(
-        (r: RecipeData) => r.ingredients.length > 0 && r.steps.length > 0 && ageOrder[r.ageGroup] <= ageLevel
-      );
 
-      if (availableRecipes.length === 0) return;
+      // Tarifleri filtrele: yaş grubu uygun VE tüm malzemeleri bu ayda verilebilir
+      const availableRecipes: RecipeData[] = ALL_RECIPES.filter((r: RecipeData) => {
+        if (r.ingredients.length === 0 || r.steps.length === 0) return false;
+        if (ageOrder[r.ageGroup] > ageLevel) return false;
+        // Her malzemenin bu ayda verilebilir olduğunu kontrol et
+        const allIngredientsAllowed = r.ingredients.every((ing) => isFoodAllowed(ing.name, babyMonth));
+        return allIngredientsAllowed;
+      });
 
-      // Dolaptaki ürünleri al
+      // Eğer aya uygun tarif yoksa, sadece yaş grubuna göre filtrele (fallback)
+      const recipesToUse = availableRecipes.length >= 5
+        ? availableRecipes
+        : ALL_RECIPES.filter((r: RecipeData) => r.ingredients.length > 0 && r.steps.length > 0 && ageOrder[r.ageGroup] <= ageLevel);
+
+      if (recipesToUse.length === 0) return;
+
+      // 3. Dolaptaki ürünleri al
       const pantryItems: string[] = [];
       try {
         const pantryStore = require('./pantryStore').usePantryStore.getState();
         pantryItems.push(...(pantryStore.items || []).map((item: any) => item.name.toLowerCase()));
       } catch {}
 
-      // Bayatlayacak malzemeleri içeren tariflere EN YÜKSEK öncelik
+      // 4. Bayatlayacak malzemeler
       const expiringLower = expiringIngredients.map((e) => e.toLowerCase());
 
-      // Tarifleri puanla: dolap eşleşmesi + bayatlayacak malzeme
-      const scoredRecipes = availableRecipes.map((r) => {
+      // 5. Tarifleri puanla
+      const scoredRecipes = recipesToUse.map((r) => {
         let score = 0;
         const ingNames = r.ingredients.map((ing) => ing.name.toLowerCase());
+
+        // Aya uygun malzemeler (+5 puan)
+        if (allowedFoods.length > 0) {
+          const ageMatch = ingNames.filter((ing) =>
+            allowedFoods.some((af) => ing.includes(af) || af.includes(ing))
+          ).length;
+          score += ageMatch * 5;
+        }
 
         // Bayatlayacak malzeme eşleşmesi (+10 puan)
         const expiringMatch = expiringLower.filter((exp) =>
@@ -540,7 +565,7 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
         ).length;
         score += expiringMatch * 10;
 
-        // Dolap eşleşmesi (+3 puan her eşleşme)
+        // Dolap eşleşmesi (+3 puan)
         const pantryMatch = pantryItems.filter((p) =>
           ingNames.some((ing) => ing.includes(p) || p.includes(ing))
         ).length;
@@ -552,30 +577,52 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
         return { recipe: r, score };
       });
 
-      // Puanına göre sırala (yüksekten düşüğe)
       scoredRecipes.sort((a, b) => b.score - a.score);
 
+      // 6. Şablondan günlük plan oluştur (varsa şablon kullan)
       const slots: MealSlot[] = ['breakfast', 'lunch', 'snack', 'dinner'].slice(0, mealsPerDay) as MealSlot[];
       const newWeek: Record<number, DayMeals> = {};
-      const weekUsedIds = new Set<string>(); // Hafta boyunca tekrar kontrolü
+      const weekUsedIds = new Set<string>();
 
       for (let day = 0; day < 7; day++) {
         const dayMeals = emptyDay();
         const dayUsedIds = new Set<string>();
 
+        // Şablondan bu güne ait öğünleri al (rastgele gün seç)
+        const templateDays = template?.days || [];
+        const templateDay = templateDays.length > 0
+          ? templateDays[((day * 3) + Math.floor(Math.random() * 3)) % templateDays.length]
+          : null;
+
         for (const slot of slots) {
-          // Önce bu gün kullanılmamış ve bu hafta az kullanılmış tarifleri tercih et
           let recipe: RecipeData | undefined;
 
-          // 1. Bayatlayacak + dolap eşleşmeli tarifler (henüz bu gün kullanılmamış)
-          for (const sr of scoredRecipes) {
-            if (!dayUsedIds.has(sr.recipe.id) && !weekUsedIds.has(sr.recipe.id)) {
-              recipe = sr.recipe;
-              break;
+          // Şablonda bu slot için tarif var mı?
+          const templateMeal = templateDay?.meals?.find((m: MealTemplate) => m.slot === slot);
+
+          if (templateMeal) {
+            // Şablon tarifini recipes veritabanında bul
+            const templateIngLower = templateMeal.ingredients.map((i) => i.toLowerCase());
+            recipe = scoredRecipes.find((sr) => {
+              if (dayUsedIds.has(sr.recipe.id)) return false;
+              const recipeIngLower = sr.recipe.ingredients.map((i) => i.name.toLowerCase());
+              // En az 1 malzeme eşleşmesi
+              return templateIngLower.some((ti) =>
+                recipeIngLower.some((ri) => ri.includes(ti) || ti.includes(ri))
+              );
+            })?.recipe;
+          }
+
+          // Şablondan bulunamadıysa puanlama ile seç
+          if (!recipe) {
+            for (const sr of scoredRecipes) {
+              if (!dayUsedIds.has(sr.recipe.id) && !weekUsedIds.has(sr.recipe.id)) {
+                recipe = sr.recipe;
+                break;
+              }
             }
           }
 
-          // 2. Bu gün kullanılmamış ama haftada kullanılmış olabilir
           if (!recipe) {
             for (const sr of scoredRecipes) {
               if (!dayUsedIds.has(sr.recipe.id)) {
@@ -585,26 +632,27 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
             }
           }
 
-          // 3. Fallback
           if (!recipe) {
-            recipe = availableRecipes[Math.floor(Math.random() * availableRecipes.length)];
+            recipe = recipesToUse[Math.floor(Math.random() * recipesToUse.length)];
           }
 
           dayUsedIds.add(recipe.id);
           weekUsedIds.add(recipe.id);
 
           // Eksik malzeme kontrolü
-          const ingNames = recipe.ingredients.map((ing) => ing.name.toLowerCase());
           const missingIngredients = recipe.ingredients.filter(
             (ing) => !pantryItems.some((p) => p.includes(ing.name.toLowerCase()) || ing.name.toLowerCase().includes(p))
           );
+
+          // Şablon adı varsa kullan, yoksa tarif adı
+          const mealName = templateMeal?.name || recipe.title;
 
           const meal: Meal = {
             id: `gen-${day}-${slot}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
             slot,
             recipeId: recipe.id,
-            foodName: recipe.title,
-            emoji: recipe.emoji,
+            foodName: mealName,
+            emoji: templateMeal?.emoji || recipe.emoji,
             ageGroup: recipe.ageGroup,
             calories: recipe.calories,
             completed: false,
