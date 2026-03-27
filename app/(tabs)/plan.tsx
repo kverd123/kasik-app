@@ -890,13 +890,13 @@ export default function PlanScreen() {
             {/* Ad Banner */}
             <AdBanner />
 
-            {/* Bayatlayacak Urunler Uyarisi - Dismissable */}
+            {/* Bayatlayacak Ürünler Uyarisi - Dismissable */}
             {showExpiringWarning && expiringItems.length > 0 && (
               <View style={styles.expiringWarningBanner}>
                 <View style={styles.expiringWarningHeader}>
                   <View style={styles.expiringWarningTitleRow}>
                     <Text style={styles.expiringWarningIcon}>{'\u26A0\uFE0F'}</Text>
-                    <Text style={styles.expiringWarningTitle}>Bayatlayacak Urunler</Text>
+                    <Text style={styles.expiringWarningTitle}>Bayatlayacak Ürünler</Text>
                   </View>
                   <TouchableOpacity
                     onPress={() => {
