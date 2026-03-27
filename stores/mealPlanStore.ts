@@ -13,7 +13,7 @@ import { ALL_RECIPES, RECIPES_BY_ID, RecipeData } from '../constants/recipes';
 import { syncToFirestore } from '../lib/firestoreSync';
 import { getAllWeekMealPlans } from '../lib/firestore';
 import { MEAL_PLAN_TEMPLATES, MealTemplate } from '../constants/mealPlanTemplates';
-import { isFoodAllowed, getAllowedFoodNames, getRecommendedMealsPerDay } from '../constants/foodDatabase';
+import { isFoodAllowed } from '../constants/foodDatabase';
 
 export type DayMeals = Record<MealSlot, Meal[]>;
 
@@ -30,7 +30,6 @@ function getISOWeekNumber(date: Date): number {
 /** Tarihten weekKey oluştur: "2026-12" */
 export function getWeekKey(date: Date): string {
   const week = getISOWeekNumber(date);
-  const year = date.getFullYear();
   // Yılbaşı geçişinde ISO hafta yılı farklı olabilir
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));

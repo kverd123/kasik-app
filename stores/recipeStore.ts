@@ -231,8 +231,9 @@ export const useRecipeStore = create<RecipeStoreState>((set, get) => ({
       set({ communityRecipes: updated, isLoading: false });
       persistToStorage(updated);
 
-      // RECIPES_BY_ID'ye de ekle (global lookup için)
+      // RECIPES_BY_ID ve ALL_RECIPES'a ekle (global lookup + tarifler sekmesi için)
       RECIPES_BY_ID[recipeId] = newRecipeData;
+      ALL_RECIPES.push(newRecipeData);
 
       return recipeId;
     } catch (e: any) {
