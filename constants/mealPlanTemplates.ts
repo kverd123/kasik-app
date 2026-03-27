@@ -10,6 +10,61 @@ export interface MealTemplate {
   ingredients: string[];
   recipeId?: string;
   emoji: string;
+  imageUrl?: string;
+}
+
+// Telifsiz bebek yemek görselleri (Unsplash - ücretsiz kullanım)
+export const RECIPE_IMAGES: Record<string, string> = {
+  // Püreler
+  'kabak': 'https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=200&h=200&fit=crop',
+  'havuc': 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=200&h=200&fit=crop',
+  'patates': 'https://images.unsplash.com/photo-1518977676601-b53f82ber67a?w=200&h=200&fit=crop',
+  'brokoli': 'https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=200&h=200&fit=crop',
+  'avokado': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=200&h=200&fit=crop',
+  'elma': 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=200&h=200&fit=crop',
+  'armut': 'https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?w=200&h=200&fit=crop',
+  'muz': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&h=200&fit=crop',
+  // Kahvaltı
+  'yumurta': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=200&h=200&fit=crop',
+  'yogurt': 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&h=200&fit=crop',
+  'peynir': 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=200&h=200&fit=crop',
+  'yulaf': 'https://images.unsplash.com/photo-1517673400267-0251440c45dc?w=200&h=200&fit=crop',
+  // Et & Balık
+  'tavuk': 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=200&h=200&fit=crop',
+  'balik': 'https://images.unsplash.com/photo-1510130387422-82bed34b37e9?w=200&h=200&fit=crop',
+  'kiyma': 'https://images.unsplash.com/photo-1602473812169-36a0e1e9021d?w=200&h=200&fit=crop',
+  'kofte': 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=200&h=200&fit=crop',
+  // Çorbalar
+  'corba': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=200&h=200&fit=crop',
+  'mercimek': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=200&h=200&fit=crop',
+  'tarhana': 'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=200&h=200&fit=crop',
+  // Makarna & Pilav
+  'makarna': 'https://images.unsplash.com/photo-1551462147-ff29053bfc14?w=200&h=200&fit=crop',
+  'pilav': 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=200&h=200&fit=crop',
+  'bulgur': 'https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=200&h=200&fit=crop',
+  // Tatlılar & Atıştırmalık
+  'pankek': 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop',
+  'muhallebi': 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&h=200&fit=crop',
+  'meyve': 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=200&h=200&fit=crop',
+  // Genel
+  'omlet': 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&h=200&fit=crop',
+  'krep': 'https://images.unsplash.com/photo-1519676867240-f03562e64548?w=200&h=200&fit=crop',
+  'biskuvi': 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200&h=200&fit=crop',
+  'pekmez': 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=200&h=200&fit=crop',
+}
+
+/**
+ * Tarif adından en uygun görseli bul
+ */
+export function getRecipeImage(mealName: string): string | undefined {
+  const nameLower = mealName.toLowerCase()
+    .replace(/ş/g, 's').replace(/ç/g, 'c').replace(/ğ/g, 'g')
+    .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ü/g, 'u');
+
+  for (const [key, url] of Object.entries(RECIPE_IMAGES)) {
+    if (nameLower.includes(key)) return url;
+  }
+  return undefined;
 }
 
 export interface DayTemplate {

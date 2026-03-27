@@ -18,6 +18,7 @@ import {
   Platform,
   RefreshControl,
   Animated,
+  Image,
 } from 'react-native';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
@@ -39,6 +40,7 @@ import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { usePantryStore } from '../../stores/pantryStore';
 import { useMealPlanStore, getWeekDates, getWeekLabel, getCurrentWeekKey, isSameDay } from '../../stores/mealPlanStore';
 import { ALL_RECIPES, RECIPES_BY_ID, RecipeData } from '../../constants/recipes';
+import { getRecipeImage } from '../../constants/mealPlanTemplates';
 import { ShoppingListModal } from '../../components/plan/ShoppingListModal';
 import { ExpiringBanner } from '../../components/plan/ExpiringBanner';
 import { AllergenIntroModal } from '../../components/allergen/AllergenIntroModal';
@@ -688,7 +690,7 @@ export default function PlanScreen() {
                 onPress={() => setAllergenModalVisible(true)}
                 activeOpacity={0.7}
               >
-                <Text style={{ fontSize: 20 }}>{'\u2695\uFE0F'}</Text>
+                <Text style={{ fontSize: 36 }}>{'\u2695\uFE0F'}</Text>
                 <Text style={styles.allergenStartText}>Alerjen Açma Programı Başlat</Text>
                 <Text style={styles.allergenStartArrow}>{'\u2192'}</Text>
               </TouchableOpacity>
@@ -729,9 +731,17 @@ export default function PlanScreen() {
                       onPress={() => setDetailMeal(meal)}
                     >
                       <View style={styles.mealCardContent}>
-                        {/* Emoji circle */}
+                        {/* Recipe image or emoji */}
                         <View style={styles.emojiCircle}>
-                          <Text style={styles.emoji}>{meal.emoji}</Text>
+                          {getRecipeImage(meal.foodName) ? (
+                            <Image
+                              source={{ uri: getRecipeImage(meal.foodName) }}
+                              style={styles.recipeImage}
+                              resizeMode="cover"
+                            />
+                          ) : (
+                            <Text style={styles.emoji}>{meal.emoji}</Text>
+                          )}
                         </View>
 
                         {/* Info */}
@@ -1021,7 +1031,11 @@ export default function PlanScreen() {
                     activeOpacity={0.7}
                   >
                     <View style={styles.modalRecipeEmoji}>
-                      <Text style={{ fontSize: 26 }}>{recipe.emoji}</Text>
+                      {getRecipeImage(recipe.title) ? (
+                        <Image source={{ uri: getRecipeImage(recipe.title) }} style={styles.recipeImage} resizeMode="cover" />
+                      ) : (
+                        <Text style={{ fontSize: 52 }}>{recipe.emoji}</Text>
+                      )}
                     </View>
                     <View style={styles.modalRecipeInfo}>
                       <Text style={styles.modalRecipeName}>{recipe.title}</Text>
@@ -1053,7 +1067,11 @@ export default function PlanScreen() {
                     activeOpacity={0.7}
                   >
                     <View style={styles.modalRecipeEmoji}>
-                      <Text style={{ fontSize: 26 }}>{recipe.emoji}</Text>
+                      {getRecipeImage(recipe.title) ? (
+                        <Image source={{ uri: getRecipeImage(recipe.title) }} style={styles.recipeImage} resizeMode="cover" />
+                      ) : (
+                        <Text style={{ fontSize: 52 }}>{recipe.emoji}</Text>
+                      )}
                     </View>
                     <View style={styles.modalRecipeInfo}>
                       <Text style={styles.modalRecipeName}>{recipe.title}</Text>
@@ -1295,15 +1313,20 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     gap: Spacing.md,
   },
   emojiCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.creamMid,
+    width: 72,
+    height: 72,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   emoji: {
-    fontSize: 26,
+    fontSize: 52,
+  },
+  recipeImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 16,
   },
   mealInfo: {
     flex: 1,
@@ -1540,7 +1563,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     ...Shadow.soft,
   },
   shoppingCardIcon: {
-    fontSize: 24,
+    fontSize: 48,
   },
   shoppingCardInfo: {
     flex: 1,
@@ -1849,12 +1872,12 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     ...Shadow.soft,
   },
   modalRecipeEmoji: {
-    width: 50,
-    height: 50,
-    borderRadius: 14,
-    backgroundColor: colors.creamMid,
+    width: 72,
+    height: 72,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   modalRecipeInfo: {
     flex: 1,
