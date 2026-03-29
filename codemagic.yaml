@@ -10,8 +10,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.kasik.ekgida
-      groups:
-        - certificate_credentials
       vars:
         BUNDLE_ID: "com.kasik.ekgida"
         EXPO_PUBLIC_FIREBASE_API_KEY: "AIzaSyBkgx0FNXB2bX6AmkU4eOM5VYVoIGEYsag"
@@ -55,9 +53,7 @@ workflows:
           keychain initialize
       - name: Fetch signing files
         script: |
-          # Base64 encoded key'i decode et
-          echo "$CERTIFICATE_PRIVATE_KEY" | base64 --decode > /tmp/cert_key.pem
-          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create --certificate-key /tmp/cert_key.pem
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
       - name: Add certificates to keychain
         script: |
           keychain add-certificates
