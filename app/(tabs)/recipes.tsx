@@ -40,6 +40,7 @@ import { AIRecipeModal } from '../../components/recipe/AIRecipeModal';
 import { PantryItem } from '../../types';
 import { calculateHotScore, SortMode } from '../../lib/ranking';
 import { ALL_RECIPES, RecipeData } from '../../constants/recipes';
+import { getLocalRecipeImage } from '../../constants/recipeImages';
 import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { useRecipeStore } from '../../stores/recipeStore';
 import { haptics } from '../../lib/haptics';
@@ -397,7 +398,9 @@ export default function RecipesScreen() {
           >
             {/* Image / Emoji placeholder */}
             <View style={[styles.recipeImage, { backgroundColor: colors.creamMid }]}>
-              {item.photoURL ? (
+              {getLocalRecipeImage(item.title) ? (
+                <Image source={getLocalRecipeImage(item.title)} style={styles.recipePhoto} />
+              ) : item.photoURL ? (
                 <Image source={{ uri: item.photoURL }} style={styles.recipePhoto} />
               ) : (
                 <Text style={styles.recipeEmoji}>{item.emoji}</Text>

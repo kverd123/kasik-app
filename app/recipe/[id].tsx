@@ -17,6 +17,7 @@ import {
   Dimensions,
   Platform,
   StatusBar,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { maybeShowInterstitial } from '../../lib/ads';
@@ -34,6 +35,7 @@ import { AdBanner } from '../../components/ui/AdBanner';
 import { getAllergenLabel, getAllergenEmoji } from '../../constants/allergens';
 import { AllergenType } from '../../types';
 import { RECIPES_BY_ID, ALL_RECIPES, RecipeData } from '../../constants/recipes';
+import { getLocalRecipeImage } from '../../constants/recipeImages';
 import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { useRecipeStore } from '../../stores/recipeStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -263,7 +265,11 @@ export default function RecipeDetailScreen() {
         {/* Hero Section */}
         <View style={styles.hero}>
           <View style={styles.heroGradient}>
-            <Text style={styles.heroEmoji}>{recipe.emoji}</Text>
+            {getLocalRecipeImage(recipe.title) ? (
+              <Image source={getLocalRecipeImage(recipe.title)} style={{ width: '100%', height: '100%', borderRadius: 20 }} resizeMode="cover" />
+            ) : (
+              <Text style={styles.heroEmoji}>{recipe.emoji}</Text>
+            )}
           </View>
           {/* Badges overlay */}
           <View style={styles.heroBadges}>
@@ -723,7 +729,11 @@ export default function RecipeDetailScreen() {
                   activeOpacity={0.7}
                 >
                   <View style={styles.similarEmojiBox}>
-                    <Text style={styles.similarEmoji}>{r.emoji}</Text>
+                    {getLocalRecipeImage(r.title) ? (
+                      <Image source={getLocalRecipeImage(r.title)} style={{ width: 50, height: 50, borderRadius: 10 }} resizeMode="cover" />
+                    ) : (
+                      <Text style={styles.similarEmoji}>{r.emoji}</Text>
+                    )}
                   </View>
                   <Text style={styles.similarName} numberOfLines={2}>
                     {r.title}

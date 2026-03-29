@@ -41,6 +41,7 @@ import { usePantryStore } from '../../stores/pantryStore';
 import { useMealPlanStore, getWeekDates, getWeekLabel, getCurrentWeekKey, isSameDay } from '../../stores/mealPlanStore';
 import { ALL_RECIPES, RECIPES_BY_ID, RecipeData, getSafeRecipes } from '../../constants/recipes';
 import { getRecipeImage } from '../../constants/mealPlanTemplates';
+import { getLocalRecipeImage } from '../../constants/recipeImages';
 import { ShoppingListModal } from '../../components/plan/ShoppingListModal';
 import { ExpiringBanner } from '../../components/plan/ExpiringBanner';
 import { AllergenIntroModal } from '../../components/allergen/AllergenIntroModal';
@@ -735,7 +736,13 @@ export default function PlanScreen() {
                       <View style={styles.mealCardContent}>
                         {/* Recipe image or emoji */}
                         <View style={styles.emojiCircle}>
-                          {getRecipeImage(meal.foodName) ? (
+                          {getLocalRecipeImage(meal.foodName) ? (
+                            <Image
+                              source={getLocalRecipeImage(meal.foodName)}
+                              style={styles.recipeImage}
+                              resizeMode="cover"
+                            />
+                          ) : getRecipeImage(meal.foodName) ? (
                             <Image
                               source={{ uri: getRecipeImage(meal.foodName) }}
                               style={styles.recipeImage}
@@ -1033,7 +1040,9 @@ export default function PlanScreen() {
                     activeOpacity={0.7}
                   >
                     <View style={styles.modalRecipeEmoji}>
-                      {getRecipeImage(recipe.title) ? (
+                      {getLocalRecipeImage(recipe.title) ? (
+                        <Image source={getLocalRecipeImage(recipe.title)} style={styles.recipeImage} resizeMode="cover" />
+                      ) : getRecipeImage(recipe.title) ? (
                         <Image source={{ uri: getRecipeImage(recipe.title) }} style={styles.recipeImage} resizeMode="cover" />
                       ) : (
                         <Text style={{ fontSize: 52 }}>{recipe.emoji}</Text>
@@ -1069,7 +1078,9 @@ export default function PlanScreen() {
                     activeOpacity={0.7}
                   >
                     <View style={styles.modalRecipeEmoji}>
-                      {getRecipeImage(recipe.title) ? (
+                      {getLocalRecipeImage(recipe.title) ? (
+                        <Image source={getLocalRecipeImage(recipe.title)} style={styles.recipeImage} resizeMode="cover" />
+                      ) : getRecipeImage(recipe.title) ? (
                         <Image source={{ uri: getRecipeImage(recipe.title) }} style={styles.recipeImage} resizeMode="cover" />
                       ) : (
                         <Text style={{ fontSize: 52 }}>{recipe.emoji}</Text>
