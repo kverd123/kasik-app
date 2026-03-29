@@ -81,42 +81,12 @@ workflows:
             COMPILER_INDEX_STORE_ENABLE=NO
       - name: Export IPA
         script: |
-          # ExportOptions.plist olustur
-          PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-          PROFILE_UUID=$(ls "$PROFILES_DIR"/*.mobileprovision 2>/dev/null | head -1 | xargs -I{} /usr/libexec/PlistBuddy -c "Print :UUID" /dev/stdin 2>/dev/null || echo "")
-
-          # Alternatif: xcode-project kullanarak export
-          cat > /tmp/ExportOptions.plist << PLIST
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-            <key>method</key>
-            <string>app-store</string>
-            <key>destination</key>
-            <string>upload</string>
-            <key>signingStyle</key>
-            <string>manual</string>
-            <key>teamID</key>
-            <string>32TLAQYSU6</string>
-            <key>uploadSymbols</key>
-            <true/>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>com.kasik.ekgida</key>
-              <string>match AppStore com.kasik.ekgida</string>
-            </dict>
-          </dict>
-          </plist>
-          PLIST
-
-          xcodebuild -exportArchive \
-            -archivePath build/ios/kasik.xcarchive \
-            -exportPath build/ios/ipa \
-            -exportOptionsPlist /tmp/ExportOptions.plist
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --archive-path build/ios/kasik.xcarchive
     artifacts:
       - build/ios/ipa/*.ipa
-      - build/ios/kasik.xcarchive
       - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
