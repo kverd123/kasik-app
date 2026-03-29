@@ -373,11 +373,23 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* Allergen history — gerçek veriden */}
+          {/* Allergen history — gerçek veriden + bebek profili alerjenler */}
           <View style={styles.allergenSection}>
             <Text style={styles.subTitle}>Alerjen Geçmişi</Text>
-            {getAllPrograms().length > 0 ? (
+            {(getAllPrograms().length > 0 || (baby?.knownAllergens && baby.knownAllergens.length > 0)) ? (
               <View style={styles.allergenRow}>
+                {/* Bilinen alerjenler (baby profili) — program ile takip edilmeyenler */}
+                {(baby?.knownAllergens || [])
+                  .filter((a) => !getAllPrograms().some((p) => p.allergenType === a))
+                  .slice(0, 4 - Math.min(getAllPrograms().length, 4))
+                  .map((allergenType) => (
+                    <View key={`known-${allergenType}`} style={styles.allergenItem}>
+                      <Text style={styles.allergenEmoji}>{getAllergenEmoji(allergenType)}</Text>
+                      <Text style={styles.allergenName}>{getAllergenLabel(allergenType)}</Text>
+                      <Badge label="Alerjik" variant="danger" />
+                    </View>
+                  ))}
+                {/* Program ile takip edilen alerjenler */}
                 {getAllPrograms().slice(0, 4).map((prog) => {
                   const progReport = getProfileProgramReport(prog.id);
                   const resultMap: Record<string, { label: string; variant: 'success' | 'warning' | 'danger' }> = {
@@ -405,7 +417,7 @@ export default function ProfileScreen() {
                 })}
               </View>
             ) : (
-              <Text style={styles.allergenEmptyText}>Henüz alerjen testi yapılmadı</Text>
+              <Text style={styles.allergenEmptyText}>Henüz alerjen bilgisi eklenmedi</Text>
             )}
           </View>
         </Card>

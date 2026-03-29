@@ -53,44 +53,70 @@ export interface PantryItemForShopping {
 const INGREDIENT_CATEGORY_MAP: Record<string, PantryCategory> = {
   // Sebzeler
   havuç: 'sebze', patates: 'sebze', brokoli: 'sebze', kabak: 'sebze',
-  bezelye: 'sebze', ıspanak: 'sebze', domates: 'sebze', soğan: 'sebze',
-  sarımsak: 'sebze', pırasa: 'sebze', kereviz: 'sebze', biber: 'sebze',
-  turp: 'sebze', pancar: 'sebze', enginar: 'sebze', bamya: 'sebze',
-  fasulye: 'sebze', karnabahar: 'sebze', lahana: 'sebze', marul: 'sebze',
-  salatalık: 'sebze', patlıcan: 'sebze', semizotu: 'sebze',
-  'tatlı patates': 'sebze', 'kırmızı biber': 'sebze',
+  balkabağı: 'sebze', bezelye: 'sebze', ıspanak: 'sebze', domates: 'sebze',
+  soğan: 'sebze', sarımsak: 'sebze', pırasa: 'sebze', kereviz: 'sebze',
+  biber: 'sebze', turp: 'sebze', pancar: 'sebze', enginar: 'sebze',
+  bamya: 'sebze', fasulye: 'sebze', karnabahar: 'sebze', lahana: 'sebze',
+  marul: 'sebze', salatalık: 'sebze', patlıcan: 'sebze', semizotu: 'sebze',
+  zeytin: 'sebze',
+  'tatlı patates': 'sebze', 'kırmızı biber': 'sebze', 'kapya biber': 'sebze',
+  'taze fasulye': 'sebze', 'yeşil fasulye': 'sebze',
+  'brüksel lahanası': 'sebze', 'lahana yaprağı': 'sebze',
 
   // Meyveler
   elma: 'meyve', muz: 'meyve', armut: 'meyve', portakal: 'meyve',
   avokado: 'meyve', mango: 'meyve', kayısı: 'meyve', erik: 'meyve',
   şeftali: 'meyve', çilek: 'meyve', karpuz: 'meyve', kavun: 'meyve',
   üzüm: 'meyve', hurma: 'meyve', incir: 'meyve', limon: 'meyve',
-  'hurma ezmesi': 'meyve',
+  kivi: 'meyve',
+  'hurma ezmesi': 'meyve', 'kuru erik': 'meyve', 'kuru kayısı': 'meyve',
+  'kuru meyve': 'meyve', 'mevsim meyvesi': 'meyve',
 
   // Protein
   tavuk: 'protein', et: 'protein', balık: 'protein', yumurta: 'protein',
   mercimek: 'protein', nohut: 'protein', kıyma: 'protein',
-  'tavuk göğsü': 'protein', 'yumurta sarısı': 'protein',
+  'tavuk göğsü': 'protein', 'tavuk budu': 'protein',
+  'yumurta sarısı': 'protein',
   'kırmızı mercimek': 'protein', 'yeşil mercimek': 'protein',
+  'kuru fasulye': 'protein', barbunya: 'protein',
   hindi: 'protein', somon: 'protein', ton: 'protein', dana: 'protein',
-  kuzu: 'protein',
+  kuzu: 'protein', 'kuzu eti': 'protein', 'kuzu kıyma': 'protein',
+  'kuzu kuşbaşı': 'protein',
+  'somon fileto': 'protein', 'beyaz etli balık fileto': 'protein',
+  'mevsim balığı': 'protein',
 
   // Tahıllar
   pirinç: 'tahil', bulgur: 'tahil', yulaf: 'tahil', makarna: 'tahil',
   ekmek: 'tahil', un: 'tahil', irmik: 'tahil', arpa: 'tahil',
-  'pirinç unu': 'tahil', 'tam buğday unu': 'tahil',
+  'pirinç unu': 'tahil', 'tam buğday unu': 'tahil', 'tam buğday ekmeği': 'tahil',
+  'yulaf ezmesi': 'tahil', 'yulaf unu': 'tahil',
+  'ince bulgur': 'tahil', 'galeta unu': 'tahil',
+  'bebek makarnası': 'tahil', 'fiyonk makarna': 'tahil',
+  erişte: 'tahil', şehriye: 'tahil', tarhana: 'tahil', yufka: 'tahil',
+  İrmik: 'tahil',
 
   // Süt ürünleri
   yoğurt: 'sut_urunleri', süt: 'sut_urunleri', peynir: 'sut_urunleri',
   tereyağı: 'sut_urunleri', krema: 'sut_urunleri', kefir: 'sut_urunleri',
+  ayran: 'sut_urunleri',
   'anne sütü': 'sut_urunleri', 'formül süt': 'sut_urunleri',
-  'labne peynir': 'sut_urunleri', lor: 'sut_urunleri',
+  'anne sütü veya formül': 'sut_urunleri',
+  'labne peyniri': 'sut_urunleri', 'labne peynir': 'sut_urunleri',
+  'lor peyniri': 'sut_urunleri', lor: 'sut_urunleri',
+  'beyaz peynir': 'sut_urunleri', 'kaşar peyniri': 'sut_urunleri',
+  'dil peyniri': 'sut_urunleri', 'keçi peyniri': 'sut_urunleri',
 
   // Baharatlar
   tarçın: 'baharat', kimyon: 'baharat', zerdeçal: 'baharat',
   karabiber: 'baharat', tuz: 'baharat', nane: 'baharat',
   dereotu: 'baharat', maydanoz: 'baharat', fesleğen: 'baharat',
   kekik: 'baharat', defne: 'baharat',
+
+  // Diğer
+  zeytinyağı: 'diger', tahin: 'diger', pekmez: 'diger',
+  'hindistancevizi yağı': 'diger', 'domates sosu': 'diger',
+  'tavuk suyu': 'diger', 'limon suyu': 'diger', 'portakal suyu': 'diger',
+  badem: 'diger', ceviz: 'diger', 'bebek bisküvisi': 'diger',
 };
 
 const CATEGORY_DISPLAY: Record<PantryCategory, { label: string; emoji: string }> = {

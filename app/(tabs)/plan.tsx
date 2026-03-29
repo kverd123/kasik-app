@@ -39,7 +39,7 @@ import { MEAL_SLOT_LABELS } from '../../constants/foods';
 import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { usePantryStore } from '../../stores/pantryStore';
 import { useMealPlanStore, getWeekDates, getWeekLabel, getCurrentWeekKey, isSameDay } from '../../stores/mealPlanStore';
-import { ALL_RECIPES, RECIPES_BY_ID, RecipeData } from '../../constants/recipes';
+import { ALL_RECIPES, RECIPES_BY_ID, RecipeData, getSafeRecipes } from '../../constants/recipes';
 import { getRecipeImage } from '../../constants/mealPlanTemplates';
 import { ShoppingListModal } from '../../components/plan/ShoppingListModal';
 import { ExpiringBanner } from '../../components/plan/ExpiringBanner';
@@ -342,12 +342,14 @@ export default function PlanScreen() {
     }, 800);
   }, [generateWeeklyPlan]);
 
-  // Verisi olan tarifler (bos/verisiz tarifleri filtrele)
+  // Verisi olan tarifler (bos/verisiz tarifleri filtrele + alerjen kontrolu)
+  const knownAllergens = baby?.knownAllergens || [];
   const validRecipes = useMemo(() => {
-    return ALL_RECIPES.filter(
+    const safeRecipes = getSafeRecipes(knownAllergens);
+    return safeRecipes.filter(
       (r) => r.ingredients.length > 0 && r.steps.length > 0
     );
-  }, []);
+  }, [knownAllergens]);
 
   // Arama ile filtrelenen tum tarifler
   const filteredAllRecipes = useMemo(() => {

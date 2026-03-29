@@ -9,11 +9,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { debouncedSetItem } from '../lib/debouncedStorage';
 import { Meal, MealSlot } from '../types';
 import { usePantryStore } from './pantryStore';
-import { ALL_RECIPES, RECIPES_BY_ID, RecipeData } from '../constants/recipes';
+import { ALL_RECIPES, RECIPES_BY_ID, RecipeData, getSafeRecipes } from '../constants/recipes';
 import { syncToFirestore } from '../lib/firestoreSync';
 import { getAllWeekMealPlans } from '../lib/firestore';
 import { MEAL_PLAN_TEMPLATES, MealTemplate } from '../constants/mealPlanTemplates';
 import { isFoodAllowed } from '../constants/foodDatabase';
+import { useBabyStore } from './babyStore';
 
 export type DayMeals = Record<MealSlot, Meal[]>;
 
@@ -519,8 +520,12 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
       const ageOrder: Record<string, number> = { '6m': 0, '8m': 1, '12m+': 2 };
       const ageLevel = ageOrder[ageFilter];
 
-      // Tarifleri filtrele: yaş grubu uygun VE tüm malzemeleri bu ayda verilebilir
-      const availableRecipes: RecipeData[] = ALL_RECIPES.filter((r: RecipeData) => {
+      // Bebeğin bilinen alerjenlerini al ve güvenli tarifleri filtrele
+      const knownAllergens = useBabyStore.getState().baby?.knownAllergens || [];
+      const allergenSafeRecipes = getSafeRecipes(knownAllergens);
+
+      // Tarifleri filtrele: yaş grubu uygun VE tüm malzemeleri bu ayda verilebilir VE alerjen içermeyen
+      const availableRecipes: RecipeData[] = allergenSafeRecipes.filter((r: RecipeData) => {
         if (r.ingredients.length === 0 || r.steps.length === 0) return false;
         if (ageOrder[r.ageGroup] > ageLevel) return false;
         // Her malzemenin bu ayda verilebilir olduğunu kontrol et
@@ -528,10 +533,10 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
         return allIngredientsAllowed;
       });
 
-      // Eğer aya uygun tarif yoksa, sadece yaş grubuna göre filtrele (fallback)
+      // Eğer aya uygun tarif yoksa, sadece yaş grubuna göre filtrele (fallback) — yine alerjen güvenli
       const recipesToUse = availableRecipes.length >= 5
         ? availableRecipes
-        : ALL_RECIPES.filter((r: RecipeData) => r.ingredients.length > 0 && r.steps.length > 0 && ageOrder[r.ageGroup] <= ageLevel);
+        : allergenSafeRecipes.filter((r: RecipeData) => r.ingredients.length > 0 && r.steps.length > 0 && ageOrder[r.ageGroup] <= ageLevel);
 
       if (recipesToUse.length === 0) return;
 
