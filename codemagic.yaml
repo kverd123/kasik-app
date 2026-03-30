@@ -64,10 +64,7 @@ workflows:
           XCODE_WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 -print -quit)
           XCODE_SCHEME=$(xcodebuild -list -workspace "$XCODE_WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
           echo "Building: workspace=$XCODE_WORKSPACE scheme=$XCODE_SCHEME"
-
           mkdir -p build/ios/xcarchive build/ios/ipa
-
-          # Archive
           xcodebuild archive \
             -workspace "$XCODE_WORKSPACE" \
             -scheme "$XCODE_SCHEME" \
@@ -75,30 +72,19 @@ workflows:
             -archivePath build/ios/xcarchive/app.xcarchive \
             -destination "generic/platform=iOS" \
             COMPILER_INDEX_STORE_ENABLE=NO
-
           echo "Archive succeeded, starting export..."
-
-          # Export options plist (Xcode 16 uyumlu)
-          cat > /tmp/ExportOptions.plist << 'PLIST'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>method</key>
-  <string>app-store-connect</string>
-  <key>destination</key>
-  <string>export</string>
-  <key>stripSwiftSymbols</key>
-  <true/>
-  <key>compileBitcode</key>
-  <false/>
-</dict>
-</plist>
-PLIST
-
-          cat /tmp/ExportOptions.plist
-
-          # Export IPA
+          python3 -c "
+          import plistlib
+          opts = {
+            'method': 'app-store-connect',
+            'destination': 'export',
+            'stripSwiftSymbols': True,
+            'compileBitcode': False,
+          }
+          with open('/tmp/ExportOptions.plist', 'wb') as f:
+            plistlib.dump(opts, f)
+          print('ExportOptions.plist created')
+          "
           xcodebuild -exportArchive \
             -archivePath build/ios/xcarchive/app.xcarchive \
             -exportPath build/ios/ipa \
