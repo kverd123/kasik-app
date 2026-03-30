@@ -21,10 +21,26 @@ platform :ios do
     UI.message("Scheme: #{scheme_name}")
     UI.message("Project: #{xcproj}")
 
-    update_code_signing_settings(
-      use_automatic_signing: true,
-      path: xcproj,
+    # Sertifika ve profili otomatik indir
+    cert(
+      api_key: api_key,
       team_id: "32TLAQYSU6"
+    )
+
+    sigh(
+      api_key: api_key,
+      app_identifier: "com.kasik.ekgida",
+      team_id: "32TLAQYSU6",
+      force: true
+    )
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: xcproj,
+      team_id: "32TLAQYSU6",
+      bundle_identifier: "com.kasik.ekgida",
+      profile_name: ENV["sigh_com.kasik.ekgida_appstore_profile-name"],
+      code_sign_identity: "Apple Distribution"
     )
 
     build_app(
@@ -32,12 +48,16 @@ platform :ios do
       scheme: scheme_name,
       export_method: "app-store",
       export_options: {
-        signingStyle: "automatic",
-        teamID: "32TLAQYSU6"
+        signingStyle: "manual",
+        teamID: "32TLAQYSU6",
+        provisioningProfiles: {
+          "com.kasik.ekgida" => ENV["sigh_com.kasik.ekgida_appstore_profile-name"]
+        }
       },
       clean: true,
       output_directory: "build",
-      output_name: "kasik-app.ipa"
+      output_name: "kasik-app.ipa",
+      xcargs: "COMPILER_INDEX_STORE_ENABLE=NO"
     )
 
     upload_to_testflight(
