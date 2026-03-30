@@ -1,0 +1,45 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload to TestFlight"
+  lane :release do
+    api_key = app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_filepath: File.expand_path(ENV["ASC_KEY_PATH"]),
+      duration: 1200,
+      in_house: false
+    )
+
+    setup_ci
+
+    # Workspace bul
+    workspace = Dir.glob("*.xcworkspace").first
+    scheme_name = workspace.gsub(".xcworkspace", "")
+
+    # Otomatik signing - Xcode halleder
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: Dir.glob("#{scheme_name}.xcodeproj").first || Dir.glob("*.xcodeproj").first,
+      team_id: "32TLAQYSU6"
+    )
+
+    build_app(
+      workspace: workspace,
+      scheme: scheme_name,
+      export_method: "app-store",
+      export_options: {
+        signingStyle: "automatic",
+        teamID: "32TLAQYSU6"
+      },
+      clean: true,
+      output_directory: ".",
+      output_name: "kasik-app.ipa"
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end
