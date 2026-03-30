@@ -36,6 +36,12 @@ yarn-error.*
 
 # iOS signing (certificates & profiles)
 *.cer
+Sertifikalar.p12
+distribution.cer
+
+# Firebase config files (contain API keys — inject via CI)
+GoogleService-Info.plist
+google-services.json
 
 # typescript
 *.tsbuildinfo

@@ -12,7 +12,7 @@ import Purchases, { CustomerInfo, PurchasesPackage } from 'react-native-purchase
 import { SubscriptionInfo, SubscriptionPlan } from '../types';
 import { updateUserPremium } from '../lib/firestore';
 
-const REVENUECAT_API_KEY = 'appl_kOTQHVFKEfnenNdYfeQyYpHBVSM';
+const REVENUECAT_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || '';
 const ENTITLEMENT_ID = 'premium';
 
 /**

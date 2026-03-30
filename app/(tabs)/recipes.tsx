@@ -3,7 +3,7 @@
  * Recipe cards grid, search, filtering, pantry suggestions
  */
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -18,7 +18,9 @@ import {
   Alert,
   RefreshControl,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
@@ -45,6 +47,8 @@ import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { useRecipeStore } from '../../stores/recipeStore';
 import { haptics } from '../../lib/haptics';
 import { useAuthStore } from '../../stores/authStore';
+import { usePantryStore } from '../../stores/pantryStore';
+import { useBabyStore } from '../../stores/babyStore';
 import { analytics } from '../../lib/analytics';
 import { RecipeGridSkeleton } from '../../components/ui/SkeletonLoader';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -92,14 +96,6 @@ const mapRecipeToGrid = (r: RecipeData) => ({
   createdAt: r.createdAt,
 });
 
-// Demo pantry items for AI modal (simulating user's pantry)
-const DEMO_PANTRY_FOR_AI: PantryItem[] = [
-  { id: '1', name: 'Havuç', emoji: '🥕', category: 'sebze', addedDate: new Date() },
-  { id: '2', name: 'Patates', emoji: '🥔', category: 'sebze', addedDate: new Date() },
-  { id: '3', name: 'Elma', emoji: '🍎', category: 'meyve', addedDate: new Date() },
-  { id: '4', name: 'Yulaf', emoji: '🥣', category: 'tahil', addedDate: new Date() },
-  { id: '5', name: 'Yoğurt', emoji: '🥛', category: 'sut_urunleri', addedDate: new Date() },
-];
 
 export default function RecipesScreen() {
   const colors = useColors();
@@ -110,6 +106,11 @@ export default function RecipesScreen() {
   const [sortMode, setSortMode] = useState<SortMode>('trending');
   const [showAIModal, setShowAIModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Gerçek kullanıcı verisi (AI tarif modal için)
+  const pantryItems = usePantryStore((s) => s.items);
+  const baby = useBabyStore((s) => s.baby);
+  const babyAllergens = useBabyStore((s) => s.baby?.knownAllergens ?? []);
 
   // Topluluk tarifleri store (granular selectors)
   const getAllRecipesFromStore = useRecipeStore((s) => s.getAllRecipes);
@@ -258,7 +259,7 @@ export default function RecipesScreen() {
         title="Tarifler"
         emoji="📖"
         rightActions={[
-          { icon: '⚙️', onPress: () => router.push('/(tabs)/profile') },
+          { icon: 'settings-outline', onPress: () => router.push('/(tabs)/profile') },
         ]}
       />
 
@@ -266,7 +267,7 @@ export default function RecipesScreen() {
       <View style={styles.searchContainer}>
         <Card padding="sm" style={styles.searchCard}>
           <View style={styles.searchInner}>
-            <Text style={styles.searchIcon}>🔍</Text>
+            <Ionicons name="search" size={16} color={colors.textLight} />
             <TextInput
               style={styles.searchInput}
               value={searchQuery}
@@ -380,7 +381,7 @@ export default function RecipesScreen() {
             />
           )
         }
-        renderItem={({ item }) => (
+        renderItem={useCallback(({ item }: { item: any }) => (
           <AnimatedPressable
             style={styles.recipeCard}
             scaleValue={0.96}
@@ -422,13 +423,16 @@ export default function RecipesScreen() {
                 <TouchableOpacity
                   style={styles.likeButton}
                   onPress={() => toggleLike(item.id)}
+                  hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                   accessibilityRole="button"
                   accessibilityLabel={item.isLiked ? 'Beğeniyi kaldır' : 'Beğen'}
                   accessibilityState={{ selected: item.isLiked }}
                 >
-                  <Text style={styles.likeIcon}>
-                    {item.isLiked ? '❤️' : '🤍'}
-                  </Text>
+                  <Ionicons
+                    name={item.isLiked ? 'heart' : 'heart-outline'}
+                    size={18}
+                    color={item.isLiked ? colors.heart : colors.textLight}
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[
@@ -436,13 +440,16 @@ export default function RecipesScreen() {
                     isRecipeSaved(item.id) && styles.bookmarkButtonActive,
                   ]}
                   onPress={() => toggleBookmark(item.id)}
+                  hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                   accessibilityRole="button"
                   accessibilityLabel={isRecipeSaved(item.id) ? 'Kayıttan kaldır' : 'Kaydet'}
                   accessibilityState={{ selected: isRecipeSaved(item.id) }}
                 >
-                  <Text style={styles.likeIcon}>
-                    {isRecipeSaved(item.id) ? '🔖' : '📑'}
-                  </Text>
+                  <Ionicons
+                    name={isRecipeSaved(item.id) ? 'bookmark' : 'bookmark-outline'}
+                    size={18}
+                    color={isRecipeSaved(item.id) ? colors.sage : colors.textLight}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -466,7 +473,7 @@ export default function RecipesScreen() {
               </View>
               {/* Tags */}
               <View style={styles.tagRow}>
-                {item.tags.slice(0, 2).map((tag) => (
+                {item.tags.slice(0, 2).map((tag: string) => (
                   <Badge
                     key={tag}
                     label={tag}
@@ -486,17 +493,17 @@ export default function RecipesScreen() {
               </View>
             </View>
           </AnimatedPressable>
-        )}
+        ), [colors, toggleLike, toggleBookmark, isRecipeSaved, localLikeOverrides])}
       />
 
       {/* AI Recipe Modal */}
       <AIRecipeModal
         visible={showAIModal}
         onClose={() => setShowAIModal(false)}
-        pantryItems={DEMO_PANTRY_FOR_AI}
-        babyAgeStage="8m"
-        knownAllergens={[]}
-        babyName="Elif"
+        pantryItems={pantryItems.length > 0 ? pantryItems : []}
+        babyAgeStage={baby?.currentStage ?? '8m'}
+        knownAllergens={babyAllergens}
+        babyName={baby?.name ?? 'Bebeğiniz'}
         onSaveRecipe={(recipe) => {
           Alert.alert('Tarif Kaydedildi!', `"${recipe.title}" tariflerinize eklendi.`);
         }}
@@ -572,7 +579,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   pantrySubtitle: {
     fontFamily: FontFamily.medium,
-    fontSize: 11,
+    fontSize: 12,
     color: colors.success,
     marginTop: 2,
   },
@@ -619,7 +626,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   recipeImage: {
     width: '100%',
-    height: 110,
+    height: 140,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -644,17 +651,17 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     gap: 6,
   },
   likeButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.9)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   bookmarkButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.9)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -676,7 +683,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   recipeMeta: {
     fontFamily: FontFamily.medium,
-    fontSize: 11,
+    fontSize: 12,
     color: colors.textLight,
   },
   ratingRow: {
@@ -686,17 +693,17 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     marginTop: 2,
   },
   stars: {
-    fontSize: 10,
+    fontSize: 12,
     color: colors.warningDark,
   },
   ratingNum: {
     fontFamily: FontFamily.medium,
-    fontSize: 10,
+    fontSize: 12,
     color: colors.textLight,
   },
   viewCount: {
     fontFamily: FontFamily.medium,
-    fontSize: 9,
+    fontSize: 12,
     color: colors.textLight,
     marginLeft: 'auto',
   },
@@ -755,7 +762,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   recipeAuthor: {
     fontFamily: FontFamily.medium,
-    fontSize: 10,
+    fontSize: 12,
     color: colors.sage,
   },
   loadingContainer: {

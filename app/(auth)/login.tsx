@@ -3,7 +3,7 @@
  * Email/password login with Google & Apple Sign-In options
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
@@ -43,8 +44,21 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(false);
 
-  const { login, loginWithGoogle, loginWithApple, isLoading, error, clearError } = useAuthStore();
+  const { login, loginWithGoogle, loginWithApple, isLoading, error, clearError, user } = useAuthStore();
+
+  // Race condition düzeltmesi: user state değişince navigasyon yap
+  useEffect(() => {
+    if (pendingNavigation && user) {
+      setPendingNavigation(false);
+      if (!user.onboardingCompleted) {
+        router.replace('/(onboarding)/welcome');
+      } else {
+        router.replace('/(tabs)/plan');
+      }
+    }
+  }, [pendingNavigation, user]);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -57,15 +71,7 @@ export default function LoginScreen() {
       }
       await loginWithGoogle(idToken);
       analytics.login('google');
-      // State güncellemesi sonrası fresh state oku (race condition önleme)
-      setTimeout(() => {
-        const { user: currentUser } = useAuthStore.getState();
-        if (currentUser && !currentUser.onboardingCompleted) {
-          router.replace('/(onboarding)/welcome');
-        } else {
-          router.replace('/(tabs)/plan');
-        }
-      }, 300);
+      setPendingNavigation(true);
     } catch (error: any) {
       if (error.code !== 'SIGN_IN_CANCELLED') {
         Alert.alert('Hata', 'Google ile giriş yapılamadı.');
@@ -75,7 +81,9 @@ export default function LoginScreen() {
 
   const handleAppleSignIn = async () => {
     try {
-      const nonce = Math.random().toString(36).substring(2, 10);
+      // Kriptografik olarak güvenli nonce (Apple gereksinimleri)
+      const randomBytes = await Crypto.getRandomBytesAsync(32);
+      const nonce = Array.from(new Uint8Array(randomBytes), b => b.toString(16).padStart(2, '0')).join('');
       const hashedNonce = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         nonce
@@ -96,15 +104,7 @@ export default function LoginScreen() {
 
       await loginWithApple(credential.identityToken, nonce, credential.fullName ?? undefined);
       analytics.login('apple');
-      // State güncellemesi sonrası fresh state oku (race condition önleme)
-      setTimeout(() => {
-        const { user: currentUser } = useAuthStore.getState();
-        if (currentUser && !currentUser.onboardingCompleted) {
-          router.replace('/(onboarding)/welcome');
-        } else {
-          router.replace('/(tabs)/plan');
-        }
-      }, 300);
+      setPendingNavigation(true);
     } catch (error: any) {
       if (error.code !== 'ERR_REQUEST_CANCELED') {
         Alert.alert('Hata', 'Apple ile giriş yapılamadı.');
@@ -121,15 +121,7 @@ export default function LoginScreen() {
     try {
       await login(email.trim(), password);
       analytics.login('email');
-      // Giriş başarılı — state güncellemesi sonrası onboarding kontrolü
-      setTimeout(() => {
-        const { user: currentUser } = useAuthStore.getState();
-        if (currentUser && !currentUser.onboardingCompleted) {
-          router.replace('/(onboarding)/welcome');
-        } else {
-          router.replace('/(tabs)/plan');
-        }
-      }, 300);
+      setPendingNavigation(true);
     } catch {
       // Error is set in the store
     }
@@ -160,10 +152,11 @@ export default function LoginScreen() {
 
         {/* Error message */}
         {error && (
-          <View style={styles.errorBanner}>
-            <Text style={[styles.errorText, { color: colors.warningDark }]}>⚠️ {error}</Text>
-            <TouchableOpacity onPress={clearError}>
-              <Text style={[styles.errorDismiss, { color: colors.warningDark }]}>✕</Text>
+          <View style={[styles.errorBanner, { backgroundColor: colors.warningBg }]}>
+            <Ionicons name="warning-outline" size={18} color={colors.warningDark} />
+            <Text style={[styles.errorText, { color: colors.warningDark }]}> {error}</Text>
+            <TouchableOpacity onPress={clearError} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <Ionicons name="close" size={18} color={colors.warningDark} />
             </TouchableOpacity>
           </View>
         )}
@@ -174,7 +167,7 @@ export default function LoginScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.inputLabel, { color: colors.textMid }]}>E-posta</Text>
             <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
-              <Text style={styles.inputIcon}>✉️</Text>
+              <Ionicons name="mail-outline" size={18} color={colors.textLight} style={styles.inputIconStyle} />
               <TextInput
                 style={[styles.input, { color: colors.textDark }]}
                 value={email}
@@ -192,7 +185,7 @@ export default function LoginScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.inputLabel, { color: colors.textMid }]}>Şifre</Text>
             <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
-              <Text style={styles.inputIcon}>🔒</Text>
+              <Ionicons name="lock-closed-outline" size={18} color={colors.textLight} style={styles.inputIconStyle} />
               <TextInput
                 style={[styles.input, { color: colors.textDark }]}
                 value={password}
@@ -204,10 +197,13 @@ export default function LoginScreen() {
               <TouchableOpacity
                 onPress={() => setShowPassword(!showPassword)}
                 style={styles.showPassword}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Text style={styles.showPasswordText}>
-                  {showPassword ? '🙈' : '👁️'}
-                </Text>
+                <Ionicons
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={20}
+                  color={colors.textLight}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -242,7 +238,7 @@ export default function LoginScreen() {
             variant="outline"
             fullWidth
             size="lg"
-            icon={<Text style={{ fontSize: 18 }}>🔵</Text>}
+            icon={<Ionicons name="logo-google" size={20} color={colors.textMid} />}
           />
 
           <View style={{ height: Spacing.md }} />
@@ -312,22 +308,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xxl,
   },
   errorBanner: {
-    backgroundColor: '#FFF0E0',
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: Spacing.sm,
     marginBottom: Spacing.lg,
   },
   errorText: {
     fontFamily: FontFamily.medium,
     fontSize: FontSize.sm,
     flex: 1,
-  },
-  errorDismiss: {
-    fontSize: 16,
-    paddingLeft: Spacing.md,
   },
   form: {
     gap: Spacing.lg,
@@ -348,8 +339,7 @@ const styles = StyleSheet.create({
     height: 52,
     ...Shadow.soft,
   },
-  inputIcon: {
-    fontSize: 16,
+  inputIconStyle: {
     marginRight: Spacing.md,
   },
   input: {
@@ -359,9 +349,6 @@ const styles = StyleSheet.create({
   },
   showPassword: {
     padding: Spacing.xs,
-  },
-  showPasswordText: {
-    fontSize: 18,
   },
   forgotPassword: {
     alignSelf: 'flex-end',

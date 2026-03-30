@@ -5,11 +5,11 @@
  */
 
 export const LightColors = {
-  // Primary - Sage Green
-  sage: '#A3BA91',
-  sageDark: '#8FAA7B',
-  sageLight: '#D4E0C8',
-  sagePale: '#E8F5E0',
+  // Primary - Sage Green (biraz daha canlı ve sıcak)
+  sage: '#8FB87A',
+  sageDark: '#7AA065',
+  sageLight: '#C8DDB8',
+  sagePale: '#EEF6E8',
 
   // Neutrals - Cream
   cream: '#F7F3ED',
@@ -22,39 +22,41 @@ export const LightColors = {
   blueLight: '#E8F0FA',
   blueMid: '#5B7BA8',
 
-  // Text
-  textDark: '#3A3A2A',
-  textMid: '#6A6A5A',
-  textLight: '#A0997E',
+  // Text (güçlendirilmiş kontrast)
+  textDark: '#2E2E1E',
+  textMid: '#5A5A4A',
+  textLight: '#9A937A',
+  textXLight: '#C8C1A8',
   textOnPrimary: '#FFFFFF',
 
   // Semantic
   warning: '#F5D590',
-  warningDark: '#C4882B',
-  warningBg: '#FFF0E0',
+  warningDark: '#E8A030',
+  warningBg: '#FEF5E7',
   heart: '#F5A0A0',
   heartDark: '#C06070',
   success: '#6B8F55',
-  successBg: '#E8F5E0',
+  successBg: '#EEF6E8',
   info: '#5B7BA8',
   infoDark: '#3D5A80',
   infoBg: '#E8F0FA',
   danger: '#D95555',
   dangerDark: '#B33A3A',
   dangerBg: '#FDECEC',
+  star: '#E8A030',
 
   // UI
   white: '#FFFFFF',
   black: '#000000',
   border: '#D4CFC5',
-  cardShadow: 'rgba(143, 170, 123, 0.08)',
+  cardShadow: 'rgba(143, 170, 123, 0.12)',
   overlay: 'rgba(0, 0, 0, 0.4)',
 
   // Background gradients
   bgStart: '#F7F3ED',
   bgEnd: '#F0EBE3',
-  headerStart: '#A3BA91',
-  headerEnd: '#8FAA7B',
+  headerStart: '#8FB87A',
+  headerEnd: '#7AA065',
 } as const;
 
 export const DarkColors: ThemeColors = {
@@ -79,6 +81,7 @@ export const DarkColors: ThemeColors = {
   textDark: '#E8E8E0',
   textMid: '#B0B0A0',
   textLight: '#808070',
+  textXLight: '#5A5A50',
   textOnPrimary: '#FFFFFF',
 
   // Semantic (koyu bg'ye uyumlu)
@@ -95,6 +98,7 @@ export const DarkColors: ThemeColors = {
   danger: '#E06060',
   dangerDark: '#F07070',
   dangerBg: '#3A1E1E',
+  star: '#E0A030',
 
   // UI
   white: '#1E1E1E',

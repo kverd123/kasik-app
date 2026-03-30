@@ -33,47 +33,51 @@ service firebase.storage {
       allow write: if isAuthenticated()
         && request.auth.uid == userId
         && isImage()
-        && maxSize(5); // Maks 5 MB
+        && maxSize(5);
     }
 
     // ===== BEBEK FOTOGRAFLARI =====
-    // babies/{babyId}/{filename}
-    match /babies/{babyId}/{allPaths=**} {
-      // Giris yapmis herkes okuyabilir (bebek sahipligi Firestore'da kontrol edilir)
-      allow read: if isAuthenticated();
-
-      // Yukleme — giris yapmis kullanici, gorsel, maks 5 MB
+    // users/{userId}/babies/{babyId}/{filename} — kullaniciya bagli path
+    match /users/{userId}/babies/{babyId}/{allPaths=**} {
+      // Sadece sahibi okuyabilir/yazabilir
+      allow read: if isAuthenticated() && request.auth.uid == userId;
       allow write: if isAuthenticated()
+        && request.auth.uid == userId
         && isImage()
         && maxSize(5);
+    }
+
+    // Eski path icin geriye uyumluluk (sadece okuma)
+    match /babies/{babyId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if false;
     }
 
     // ===== TARIF FOTOGRAFLARI =====
     // recipes/{recipeId}/{filename}
     match /recipes/{recipeId}/{allPaths=**} {
-      // Herkes gorebilir (tarifler herkese acik)
       allow read: if isAuthenticated();
 
-      // Yukleme — giris yapmis, gorsel, maks 10 MB
+      // Yazma — sadece tarif yazari (Firestore'dan kontrol)
       allow write: if isAuthenticated()
         && isImage()
-        && maxSize(10);
+        && maxSize(10)
+        && firestore.get(/databases/(default)/documents/recipes/$(recipeId)).data.authorId == request.auth.uid;
     }
 
     // ===== TOPLULUK POST FOTOGRAFLARI =====
     // posts/{postId}/{filename}
     match /posts/{postId}/{allPaths=**} {
-      // Herkes gorebilir
       allow read: if isAuthenticated();
 
-      // Yukleme — giris yapmis, gorsel, maks 10 MB
+      // Yazma — sadece post yazari (Firestore'dan kontrol)
       allow write: if isAuthenticated()
         && isImage()
-        && maxSize(10);
+        && maxSize(10)
+        && firestore.get(/databases/(default)/documents/posts/$(postId)).data.authorId == request.auth.uid;
     }
 
     // ===== YORUM FOTOGRAFLARI =====
-    // comments/{commentId}/{filename}
     match /comments/{commentId}/{allPaths=**} {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated()

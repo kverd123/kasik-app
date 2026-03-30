@@ -14,7 +14,7 @@ export const FontFamily = {
 } as const;
 
 export const FontSize = {
-  xs: 10,
+  xs: 12,
   sm: 12,
   md: 14,
   base: 15,
@@ -117,7 +117,7 @@ export const Typography = {
   },
   badge: {
     fontFamily: FontFamily.semiBold,
-    fontSize: 9,
+    fontSize: 11,
     lineHeight: 14,
   },
   button: {

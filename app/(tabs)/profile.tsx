@@ -275,7 +275,7 @@ export default function ProfileScreen() {
         variant="large"
         emoji="👤"
         rightActions={[
-          { icon: '⚙️', onPress: () => Alert.alert('Ayarlar', 'Aşağıda ayar seçeneklerini bulabilirsiniz.') },
+          { icon: 'settings-outline', onPress: () => Alert.alert('Ayarlar', 'Aşağıda ayar seçeneklerini bulabilirsiniz.') },
         ]}
       />
       <ScrollView
@@ -819,7 +819,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     alignItems: 'center', gap: 4,
   },
   statValue: { fontFamily: FontFamily.bold, fontSize: FontSize.xl, color: colors.textDark },
-  statLabel: { fontFamily: FontFamily.medium, fontSize: 10, color: colors.textLight, textAlign: 'center' },
+  statLabel: { fontFamily: FontFamily.medium, fontSize: 12, color: colors.textLight, textAlign: 'center' },
   allergenSection: { gap: Spacing.md },
   subTitle: { fontFamily: FontFamily.semiBold, fontSize: FontSize.md, color: colors.textMid },
   allergenRow: { flexDirection: 'row', gap: Spacing.md },
@@ -888,7 +888,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   bookTabEmoji: { fontSize: 16 },
   bookTabText: {
     fontFamily: FontFamily.medium,
-    fontSize: 9,
+    fontSize: 12,
     color: colors.textLight,
     textAlign: 'center',
   },
@@ -910,7 +910,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   bookTabBadgeText: {
     fontFamily: FontFamily.bold,
-    fontSize: 9,
+    fontSize: 12,
     color: colors.textLight,
   },
   bookTabBadgeTextActive: {
@@ -960,7 +960,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   bookItemCategory: { fontSize: 12 },
   bookItemRating: {
     fontFamily: FontFamily.bold,
-    fontSize: 11,
+    fontSize: 12,
     color: colors.warningDark,
   },
   bookItemActions: {
@@ -1022,7 +1022,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   premiumSubtitle: { fontFamily: FontFamily.medium, fontSize: FontSize.sm, color: 'rgba(255,255,255,0.8)' },
   premiumArrow: { fontFamily: FontFamily.bold, fontSize: 20, color: colors.white },
   premiumFeatures: { flexDirection: 'row', gap: Spacing.lg, marginTop: Spacing.md },
-  premiumFeature: { fontFamily: FontFamily.medium, fontSize: 11, color: 'rgba(255,255,255,0.9)' },
+  premiumFeature: { fontFamily: FontFamily.medium, fontSize: 12, color: 'rgba(255,255,255,0.9)' },
   premiumPricing: { marginTop: Spacing.md, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.2)', paddingTop: Spacing.md },
   premiumPrice: { fontFamily: FontFamily.bold, fontSize: FontSize.xl, color: colors.white },
   premiumSave: { fontFamily: FontFamily.medium, fontSize: FontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },

@@ -11,8 +11,9 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Colors } from '../../constants/colors';
+import { useColors } from '../../hooks/useColors';
 import {
   FontFamily,
   FontSize,
@@ -25,6 +26,7 @@ import { Button } from '../../components/ui/Button';
 import { useAuthStore } from '../../stores/authStore';
 
 export default function ForgotPasswordScreen() {
+  const colors = useColors();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
 
@@ -45,11 +47,13 @@ export default function ForgotPasswordScreen() {
 
   if (sent) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.cream }]}>
         <View style={styles.content}>
-          <Text style={styles.successEmoji}>📧</Text>
-          <Text style={styles.successTitle}>E-posta Gönderildi!</Text>
-          <Text style={styles.successText}>
+          <View style={[styles.successIconCircle, { backgroundColor: colors.sagePale }]}>
+            <Ionicons name="mail" size={48} color={colors.sage} />
+          </View>
+          <Text style={[styles.successTitle, { color: colors.sage }]}>E-posta Gönderildi!</Text>
+          <Text style={[styles.successText, { color: colors.textMid }]}>
             Şifre sıfırlama bağlantısı {email} adresine gönderildi.
             Lütfen gelen kutunuzu kontrol edin.
           </Text>
@@ -65,34 +69,44 @@ export default function ForgotPasswordScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.cream }]}>
       <View style={styles.content}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>← Geri</Text>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <View style={styles.backRow}>
+            <Ionicons name="arrow-back" size={20} color={colors.sage} />
+            <Text style={[styles.backText, { color: colors.sage }]}>Geri</Text>
+          </View>
         </TouchableOpacity>
 
-        <Text style={styles.emoji}>🔑</Text>
+        <View style={[styles.iconCircle, { backgroundColor: colors.sagePale }]}>
+          <Ionicons name="key-outline" size={40} color={colors.sage} />
+        </View>
         <Text style={styles.title}>Şifre Sıfırlama</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.subtitleText, { color: colors.textLight }]}>
           E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.
         </Text>
 
         {error && (
-          <View style={styles.errorBanner}>
-            <Text style={styles.errorText}>⚠️ {error}</Text>
+          <View style={[styles.errorBanner, { backgroundColor: colors.warningBg }]}>
+            <Ionicons name="warning-outline" size={18} color={colors.warningDark} />
+            <Text style={[styles.errorText, { color: colors.warningDark }]}> {error}</Text>
           </View>
         )}
 
         <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>E-posta</Text>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.inputIcon}>✉️</Text>
+          <Text style={[styles.inputLabel, { color: colors.textMid }]}>E-posta</Text>
+          <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
+            <Ionicons name="mail-outline" size={18} color={colors.textLight} style={styles.inputIconStyle} />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: colors.textDark }]}
               value={email}
               onChangeText={setEmail}
               placeholder="ornek@email.com"
-              placeholderTextColor={Colors.border}
+              placeholderTextColor={colors.border}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -115,7 +129,6 @@ export default function ForgotPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.cream,
     justifyContent: 'center',
     paddingHorizontal: Spacing.xxl,
   },
@@ -125,34 +138,43 @@ const styles = StyleSheet.create({
   backButton: {
     marginBottom: Spacing.md,
   },
+  backRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
   backText: {
     fontFamily: FontFamily.semiBold,
     fontSize: FontSize.base,
-    color: Colors.sage,
   },
-  emoji: {
-    fontSize: 48,
-    textAlign: 'center',
+  iconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   title: {
     ...Typography.h2,
     textAlign: 'center',
   },
-  subtitle: {
+  subtitleText: {
     ...Typography.bodySmall,
-    color: Colors.textLight,
     textAlign: 'center',
     lineHeight: 22,
   },
   errorBanner: {
-    backgroundColor: '#FFF0E0',
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
   },
   errorText: {
     fontFamily: FontFamily.medium,
     fontSize: FontSize.sm,
-    color: Colors.warningDark,
+    flex: 1,
   },
   inputGroup: {
     gap: Spacing.sm,
@@ -160,41 +182,38 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontFamily: FontFamily.semiBold,
     fontSize: FontSize.md,
-    color: Colors.textMid,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.white,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.creamDark,
     paddingHorizontal: Spacing.lg,
     height: 52,
     ...Shadow.soft,
   },
-  inputIcon: {
-    fontSize: 16,
+  inputIconStyle: {
     marginRight: Spacing.md,
   },
   input: {
     flex: 1,
     fontFamily: FontFamily.medium,
     fontSize: FontSize.base,
-    color: Colors.textDark,
   },
-  successEmoji: {
-    fontSize: 56,
-    textAlign: 'center',
+  successIconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   successTitle: {
     ...Typography.h2,
     textAlign: 'center',
-    color: Colors.sage,
   },
   successText: {
     ...Typography.body,
-    color: Colors.textMid,
     textAlign: 'center',
     lineHeight: 24,
   },

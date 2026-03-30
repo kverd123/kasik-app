@@ -19,6 +19,7 @@ import {
   KeyboardAvoidingView,
   RefreshControl,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
@@ -238,7 +239,7 @@ export default function PantryScreen() {
           title="Dolabım"
           emoji="🗄️"
           rightActions={[
-            { icon: '➕', onPress: () => setShowAddModal(true) },
+            { icon: 'add-circle-outline', onPress: () => setShowAddModal(true) },
           ]}
         />
 
@@ -280,7 +281,7 @@ export default function PantryScreen() {
         {/* Search */}
         <View style={styles.searchContainer}>
           <View style={styles.searchWrapper}>
-            <Text style={styles.searchIcon}>🔍</Text>
+            <Ionicons name="search" size={16} color={colors.textLight} />
             <TextInput
               style={styles.searchInput}
               value={searchQuery}
@@ -865,7 +866,7 @@ function AddPantryItemModal({ visible, onClose, onAdd }: AddPantryItemModalProps
             {/* Search */}
             <View style={modalStyles.searchContainer}>
               <View style={modalStyles.searchWrapper}>
-                <Text style={modalStyles.searchIcon}>🔍</Text>
+                <Ionicons name="search" size={16} color={colors.textLight} />
                 <TextInput
                   style={modalStyles.searchInput}
                   value={searchQuery}

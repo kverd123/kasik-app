@@ -3,7 +3,7 @@
  * New user registration with email/password
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import {
   Alert,
   Linking,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
 import {
@@ -37,8 +38,17 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(false);
 
-  const { register, isLoading, error, clearError } = useAuthStore();
+  const { register, isLoading, error, clearError, user } = useAuthStore();
+
+  // Race condition düzeltmesi
+  useEffect(() => {
+    if (pendingNavigation && user) {
+      setPendingNavigation(false);
+      router.replace('/(onboarding)/welcome');
+    }
+  }, [pendingNavigation, user]);
 
   const handleRegister = async () => {
     if (!displayName.trim()) {
@@ -61,10 +71,7 @@ export default function RegisterScreen() {
     try {
       await register(email.trim(), password, displayName.trim());
       analytics.register('email');
-      // Kayıt başarılı — state güncellemesi tamamlandıktan sonra yönlendir
-      setTimeout(() => {
-        router.replace('/(onboarding)/welcome');
-      }, 100);
+      setPendingNavigation(true);
     } catch {
       // Error handled in store
     }
@@ -84,8 +91,12 @@ export default function RegisterScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.backButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text style={[styles.backText, { color: colors.sage }]}>← Geri</Text>
+          <View style={styles.backRow}>
+            <Ionicons name="arrow-back" size={20} color={colors.sage} />
+            <Text style={[styles.backText, { color: colors.sage }]}>Geri</Text>
+          </View>
         </TouchableOpacity>
 
         {/* Header */}
@@ -99,10 +110,11 @@ export default function RegisterScreen() {
 
         {/* Error */}
         {error && (
-          <View style={styles.errorBanner}>
-            <Text style={[styles.errorText, { color: colors.warningDark }]}>⚠️ {error}</Text>
-            <TouchableOpacity onPress={clearError}>
-              <Text style={[styles.errorDismiss, { color: colors.warningDark }]}>✕</Text>
+          <View style={[styles.errorBanner, { backgroundColor: colors.warningBg }]}>
+            <Ionicons name="warning-outline" size={18} color={colors.warningDark} />
+            <Text style={[styles.errorText, { color: colors.warningDark }]}> {error}</Text>
+            <TouchableOpacity onPress={clearError} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <Ionicons name="close" size={18} color={colors.warningDark} />
             </TouchableOpacity>
           </View>
         )}
@@ -113,7 +125,7 @@ export default function RegisterScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.inputLabel, { color: colors.textMid }]}>Adınız</Text>
             <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
-              <Text style={styles.inputIcon}>👤</Text>
+              <Ionicons name="person-outline" size={18} color={colors.textLight} style={styles.inputIconStyle} />
               <TextInput
                 style={[styles.input, { color: colors.textDark }]}
                 value={displayName}
@@ -129,7 +141,7 @@ export default function RegisterScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.inputLabel, { color: colors.textMid }]}>E-posta</Text>
             <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
-              <Text style={styles.inputIcon}>✉️</Text>
+              <Ionicons name="mail-outline" size={18} color={colors.textLight} style={styles.inputIconStyle} />
               <TextInput
                 style={[styles.input, { color: colors.textDark }]}
                 value={email}
@@ -147,7 +159,7 @@ export default function RegisterScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.inputLabel, { color: colors.textMid }]}>Şifre</Text>
             <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
-              <Text style={styles.inputIcon}>🔒</Text>
+              <Ionicons name="lock-closed-outline" size={18} color={colors.textLight} style={styles.inputIconStyle} />
               <TextInput
                 style={[styles.input, { color: colors.textDark }]}
                 value={password}
@@ -156,8 +168,15 @@ export default function RegisterScreen() {
                 placeholderTextColor={colors.border}
                 secureTextEntry={!showPassword}
               />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Text style={{ fontSize: 18 }}>{showPassword ? '🙈' : '👁️'}</Text>
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={20}
+                  color={colors.textLight}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -166,7 +185,7 @@ export default function RegisterScreen() {
           <View style={styles.inputGroup}>
             <Text style={[styles.inputLabel, { color: colors.textMid }]}>Şifre Tekrar</Text>
             <View style={[styles.inputWrapper, { backgroundColor: colors.white, borderColor: colors.creamDark }]}>
-              <Text style={styles.inputIcon}>🔒</Text>
+              <Ionicons name="lock-closed-outline" size={18} color={colors.textLight} style={styles.inputIconStyle} />
               <TextInput
                 style={[styles.input, { color: colors.textDark }]}
                 value={confirmPassword}
@@ -261,6 +280,11 @@ const styles = StyleSheet.create({
   backButton: {
     marginBottom: Spacing.lg,
   },
+  backRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
   backText: {
     fontFamily: FontFamily.semiBold,
     fontSize: FontSize.base,
@@ -283,22 +307,17 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   errorBanner: {
-    backgroundColor: '#FFF0E0',
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: Spacing.sm,
     marginBottom: Spacing.lg,
   },
   errorText: {
     fontFamily: FontFamily.medium,
     fontSize: FontSize.sm,
     flex: 1,
-  },
-  errorDismiss: {
-    fontSize: 16,
-    paddingLeft: Spacing.md,
   },
   form: {
     gap: Spacing.lg,
@@ -319,8 +338,7 @@ const styles = StyleSheet.create({
     height: 52,
     ...Shadow.soft,
   },
-  inputIcon: {
-    fontSize: 16,
+  inputIconStyle: {
     marginRight: Spacing.md,
   },
   input: {
@@ -340,13 +358,13 @@ const styles = StyleSheet.create({
   },
   strengthText: {
     fontFamily: FontFamily.medium,
-    fontSize: FontSize.xs,
+    fontSize: 12,
   },
   terms: {
     fontFamily: FontFamily.medium,
-    fontSize: FontSize.xs,
+    fontSize: 12,
     textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 18,
   },
   termsLink: {
     fontFamily: FontFamily.semiBold,

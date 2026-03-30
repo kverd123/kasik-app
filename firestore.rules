@@ -30,8 +30,11 @@ service cloud.firestore {
       allow read: if isAuthenticated();
 
       // Sadece kendi profilini olusturabilir/guncelleyebilir
+      // isPremium ve subscription alanlari sadece server (Cloud Functions) tarafindan yazilabilir
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
+      allow update: if isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['isPremium', 'premiumSince', 'subscriptionPlatform', 'subscription']);
 
       // Hesap silme — sadece kendi
       allow delete: if isOwner(userId);
@@ -81,6 +84,12 @@ service cloud.firestore {
       // Silme — sadece yazar
       allow delete: if isAuthenticated() &&
         resource.data.authorId == request.auth.uid;
+
+      // ===== TARIF BEGENI (subcollection) =====
+      match /likes/{userId} {
+        allow read: if isAuthenticated();
+        allow create, delete: if isAuthenticated() && request.auth.uid == userId;
+      }
     }
 
     // ===== TOPLULUK POSTLARI =====
@@ -102,6 +111,12 @@ service cloud.firestore {
       // Silme — sadece yazar
       allow delete: if isAuthenticated() &&
         resource.data.authorId == request.auth.uid;
+
+      // ===== POST BEGENI (subcollection) =====
+      match /likes/{userId} {
+        allow read: if isAuthenticated();
+        allow create, delete: if isAuthenticated() && request.auth.uid == userId;
+      }
 
       // ===== YORUMLAR (Alt koleksiyon) =====
       match /comments/{commentId} {

@@ -83,12 +83,14 @@ export function initializeSync(): void {
     }
   });
 
-  // Flush when app comes to foreground
-  AppState.addEventListener('change', (state: AppStateStatus) => {
-    if (state === 'active') {
-      flushQueue().catch((e) =>
-        console.warn('[FirestoreSync] Foreground flush failed:', e)
-      );
-    }
-  });
+  // Flush when app comes to foreground (store subscription for cleanup)
+  if (!(globalThis as any).__kasikAppStateSub) {
+    (globalThis as any).__kasikAppStateSub = AppState.addEventListener('change', (state: AppStateStatus) => {
+      if (state === 'active') {
+        flushQueue().catch((e) =>
+          console.warn('[FirestoreSync] Foreground flush failed:', e)
+        );
+      }
+    });
+  }
 }

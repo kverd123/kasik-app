@@ -13,6 +13,7 @@ import {
   getPosts as firestoreGetPosts,
   togglePostLike as firestoreTogglePostLike,
   addComment as firestoreAddComment,
+  getPostLikeStatuses,
 } from '../lib/firestore';
 
 export interface CommunityComment {
@@ -57,9 +58,13 @@ export interface CommunityPost {
 interface CommunityState {
   posts: CommunityPost[];
   isLoaded: boolean;
+  isLoadingMore: boolean;
+  hasMore: boolean;
+  lastPostDoc: any | null;
 
   loadFromStorage: () => Promise<void>;
   loadPosts: () => Promise<void>;
+  loadMorePosts: () => Promise<void>;
   addPost: (post: CommunityPost) => void;
   deletePost: (postId: string) => void;
   togglePostLike: (postId: string) => void;
@@ -78,6 +83,28 @@ const persistToStorage = (posts: CommunityPost[]) => {
     console.error('Topluluk kaydedilemedi:', e);
   }
 };
+
+const mapFirestorePost = (p: any): CommunityPost => ({
+  id: p.id,
+  author: p.authorName || p.author || 'Anonim',
+  avatar: p.avatar || '👤',
+  avatarBg: p.avatarBg || '#E0E0E0',
+  badge: p.isVerified ? 'verified' : null,
+  category: p.category || 'experience',
+  time: '',
+  babyAge: p.babyAge || '',
+  content: p.content || '',
+  photos: p.photos || [],
+  photoLabel: p.photoLabel,
+  likes: p.likes || 0,
+  views: p.views || 0,
+  comments: [],
+  isLiked: false,
+  hasRecipe: p.hasRecipe || false,
+  recipeId: p.recipeId,
+  isVerified: p.isVerified || false,
+  createdAt: p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt),
+});
 
 const hoursAgo = (h: number) => new Date(Date.now() - h * 60 * 60 * 1000);
 
@@ -402,6 +429,9 @@ const DEFAULT_POSTS: CommunityPost[] = [
 export const useCommunityStore = create<CommunityState>((set, get) => ({
   posts: [],
   isLoaded: false,
+  isLoadingMore: false,
+  hasMore: true,
+  lastPostDoc: null,
 
   loadFromStorage: async () => {
     try {
@@ -427,35 +457,47 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
     const userId = getAuthUserId();
     if (!userId) return;
     try {
-      const remotePosts = await firestoreGetPosts(undefined, 50);
+      const PAGE_SIZE = 20;
+      const { posts: remotePosts, lastDoc } = await firestoreGetPosts(undefined, PAGE_SIZE);
       if (remotePosts.length > 0) {
-        // Firestore Post → CommunityPost mapping
-        const mapped: CommunityPost[] = remotePosts.map((p: any) => ({
-          id: p.id,
-          author: p.authorName || p.author || 'Anonim',
-          avatar: p.avatar || '👤',
-          avatarBg: p.avatarBg || '#E0E0E0',
-          badge: p.isVerified ? 'verified' : null,
-          category: p.category || 'experience',
-          time: '',
-          babyAge: p.babyAge || '',
-          content: p.content || '',
-          photos: p.photos || [],
-          photoLabel: p.photoLabel,
-          likes: p.likes || 0,
-          views: p.views || 0,
-          comments: [], // Comments loaded separately
-          isLiked: (p.likedBy || []).includes(userId),
-          hasRecipe: p.hasRecipe || false,
-          recipeId: p.recipeId,
-          isVerified: p.isVerified || false,
-          createdAt: p.createdAt?.toDate ? p.createdAt.toDate() : new Date(p.createdAt),
-        }));
-        set({ posts: mapped });
+        const mapped: CommunityPost[] = remotePosts.map((p: any) => mapFirestorePost(p));
+        set({ posts: mapped, lastPostDoc: lastDoc, hasMore: remotePosts.length === PAGE_SIZE });
         persistToStorage(mapped);
+
+        // Subcollection'dan gerçek like durumlarını çek
+        const likeStatuses = await getPostLikeStatuses(mapped.map((p) => p.id), userId);
+        const withLikes = mapped.map((p) => ({ ...p, isLiked: likeStatuses[p.id] ?? false }));
+        set({ posts: withLikes });
+        persistToStorage(withLikes);
       }
     } catch (e) {
       console.warn('[CommunityStore] Firestore load failed, using local cache:', e);
+    }
+  },
+
+  loadMorePosts: async () => {
+    const { isLoadingMore, hasMore, lastPostDoc, posts } = get();
+    if (isLoadingMore || !hasMore || !lastPostDoc) return;
+    const userId = getAuthUserId();
+    if (!userId) return;
+
+    set({ isLoadingMore: true });
+    try {
+      const PAGE_SIZE = 20;
+      const { posts: morePosts, lastDoc } = await firestoreGetPosts(undefined, PAGE_SIZE, lastPostDoc);
+      if (morePosts.length > 0) {
+        const mapped: CommunityPost[] = morePosts.map((p: any) => mapFirestorePost(p));
+        const likeStatuses = await getPostLikeStatuses(mapped.map((p) => p.id), userId);
+        const withLikes = mapped.map((p) => ({ ...p, isLiked: likeStatuses[p.id] ?? false }));
+        const combined = [...posts, ...withLikes];
+        set({ posts: combined, lastPostDoc: lastDoc, hasMore: morePosts.length === PAGE_SIZE, isLoadingMore: false });
+        persistToStorage(combined);
+      } else {
+        set({ hasMore: false, isLoadingMore: false });
+      }
+    } catch (e) {
+      console.warn('[CommunityStore] loadMorePosts failed:', e);
+      set({ isLoadingMore: false });
     }
   },
 

@@ -75,12 +75,8 @@ export const getMealPlansForWeek = async (
   userId: string,
   dates: string[]
 ): Promise<MealPlan[]> => {
-  const plans: MealPlan[] = [];
-  for (const date of dates) {
-    const plan = await getMealPlan(userId, date);
-    if (plan) plans.push(plan);
-  }
-  return plans;
+  const results = await Promise.all(dates.map((date) => getMealPlan(userId, date)));
+  return results.filter((plan): plan is MealPlan => plan !== null);
 };
 
 // ===== PANTRY =====
@@ -152,18 +148,40 @@ export const getRecipes = async (
 };
 
 export const toggleRecipeLike = async (recipeId: string, userId: string, isLiked: boolean): Promise<void> => {
-  const ref = doc(db, `recipes/${recipeId}`);
+  const recipeRef = doc(db, `recipes/${recipeId}`);
+  const likeRef = doc(db, `recipes/${recipeId}/likes/${userId}`);
   if (isLiked) {
-    await updateDoc(ref, {
-      likes: increment(-1),
-      likedBy: arrayRemove(userId),
-    });
+    // Unlike: subcollection doc sil + counter azalt
+    await deleteDoc(likeRef).catch(() => {});
+    await updateDoc(recipeRef, { likes: increment(-1) });
   } else {
-    await updateDoc(ref, {
-      likes: increment(1),
-      likedBy: arrayUnion(userId),
-    });
+    // Like: subcollection doc oluştur + counter artır
+    await setDoc(likeRef, { userId, createdAt: serverTimestamp() });
+    await updateDoc(recipeRef, { likes: increment(1) });
   }
+};
+
+export const isRecipeLikedByUser = async (recipeId: string, userId: string): Promise<boolean> => {
+  const likeRef = doc(db, `recipes/${recipeId}/likes/${userId}`);
+  const snap = await getDoc(likeRef);
+  return snap.exists();
+};
+
+export const isPostLikedByUser = async (postId: string, userId: string): Promise<boolean> => {
+  const likeRef = doc(db, `posts/${postId}/likes/${userId}`);
+  const snap = await getDoc(likeRef);
+  return snap.exists();
+};
+
+export const getPostLikeStatuses = async (postIds: string[], userId: string): Promise<Record<string, boolean>> => {
+  const results = await Promise.all(
+    postIds.map(async (id) => {
+      const likeRef = doc(db, `posts/${id}/likes/${userId}`);
+      const snap = await getDoc(likeRef);
+      return [id, snap.exists()] as [string, boolean];
+    })
+  );
+  return Object.fromEntries(results);
 };
 
 export const getRecipesByIngredients = async (ingredientNames: string[]): Promise<Recipe[]> => {
@@ -249,39 +267,47 @@ export const createPost = async (post: Omit<Post, 'id'>): Promise<string> => {
 
 export const getPosts = async (
   category?: string,
-  maxResults = 20
-): Promise<Post[]> => {
-  let q;
+  maxResults = 20,
+  lastDoc?: DocumentSnapshot
+): Promise<{ posts: Post[]; lastDoc: DocumentSnapshot | null }> => {
+  let constraints: any[] = [];
+
   if (category && category !== 'popular') {
-    q = query(
-      collection(db, 'posts'),
-      where('category', '==', category),
-      orderBy('createdAt', 'desc'),
-      limit(maxResults)
-    );
+    constraints.push(where('category', '==', category), orderBy('createdAt', 'desc'));
   } else {
-    q = query(collection(db, 'posts'), orderBy('likes', 'desc'), limit(maxResults));
+    constraints.push(orderBy('likes', 'desc'));
   }
 
+  if (lastDoc) {
+    constraints.push(startAfter(lastDoc));
+  }
+
+  constraints.push(limit(maxResults));
+
+  const q = query(collection(db, 'posts'), ...constraints);
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
+
+  const posts = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   })) as Post[];
+
+  const newLastDoc = snapshot.docs.length > 0
+    ? snapshot.docs[snapshot.docs.length - 1]
+    : null;
+
+  return { posts, lastDoc: newLastDoc };
 };
 
 export const togglePostLike = async (postId: string, userId: string, isLiked: boolean): Promise<void> => {
-  const ref = doc(db, `posts/${postId}`);
+  const postRef = doc(db, `posts/${postId}`);
+  const likeRef = doc(db, `posts/${postId}/likes/${userId}`);
   if (isLiked) {
-    await updateDoc(ref, {
-      likes: increment(-1),
-      likedBy: arrayRemove(userId),
-    });
+    await deleteDoc(likeRef).catch(() => {});
+    await updateDoc(postRef, { likes: increment(-1) });
   } else {
-    await updateDoc(ref, {
-      likes: increment(1),
-      likedBy: arrayUnion(userId),
-    });
+    await setDoc(likeRef, { userId, createdAt: serverTimestamp() });
+    await updateDoc(postRef, { likes: increment(1) });
   }
 };
 

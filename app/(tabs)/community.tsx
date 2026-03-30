@@ -13,6 +13,7 @@ import {
   StyleSheet,
   SafeAreaView,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
@@ -58,20 +59,23 @@ export default function CommunityScreen() {
   const deletePost = useCommunityStore((s) => s.deletePost);
   const addPostToStore = useCommunityStore((s) => s.addPost);
   const communityLoaded = useCommunityStore((s) => s.isLoaded);
+  const loadMorePosts = useCommunityStore((s) => s.loadMorePosts);
+  const isLoadingMore = useCommunityStore((s) => s.isLoadingMore);
+  const hasMore = useCommunityStore((s) => s.hasMore);
   const publishRecipe = useRecipeStore((s) => s.publishRecipe);
 
   const notifPrefs = useNotificationStore((s) => s.preferences);
   const [refreshing, setRefreshing] = useState(false);
-  const loadCommunity = useCommunityStore((s) => s.loadFromStorage);
+  const loadPostsFromFirestore = useCommunityStore((s) => s.loadPosts);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await loadCommunity();
+      await loadPostsFromFirestore();
     } finally {
       setRefreshing(false);
     }
-  }, [loadCommunity]);
+  }, [loadPostsFromFirestore]);
 
   const toggleLike = useCallback((id: string) => {
     haptics.light();
@@ -168,8 +172,7 @@ export default function CommunityScreen() {
         title="Topluluk"
         emoji="👥"
         rightActions={[
-          { icon: '✏️', onPress: () => setCreateModalVisible(true) },
-          { icon: '🔔', onPress: () => {}, badge: 2 },
+          { icon: 'create-outline', onPress: () => setCreateModalVisible(true) },
         ]}
       />
 
@@ -228,6 +231,15 @@ export default function CommunityScreen() {
             tintColor={colors.sage}
             colors={[colors.sage]}
           />
+        }
+        onEndReached={() => { if (hasMore) loadMorePosts(); }}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          isLoadingMore ? (
+            <View style={{ paddingVertical: 16, alignItems: 'center' }}>
+              <ActivityIndicator size="small" color={colors.sage} />
+            </View>
+          ) : null
         }
         ListEmptyComponent={
           !communityLoaded ? (
@@ -320,7 +332,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
   verifiedIcon: { fontFamily: FontFamily.bold, fontSize: 8, color: colors.white },
-  authorMeta: { fontFamily: FontFamily.medium, fontSize: 11, color: colors.textLight },
+  authorMeta: { fontFamily: FontFamily.medium, fontSize: 12, color: colors.textLight },
   moreIcon: { fontFamily: FontFamily.bold, fontSize: 16, color: colors.textLight, letterSpacing: 2 },
   postContent: { fontFamily: FontFamily.medium, fontSize: FontSize.md, color: colors.textDark, lineHeight: 22 },
   photoContainer: {
@@ -344,7 +356,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   recipeTagSaved: {
     backgroundColor: colors.sagePale,
   },
-  recipeTagText: { fontFamily: FontFamily.semiBold, fontSize: 10, color: colors.success },
+  recipeTagText: { fontFamily: FontFamily.semiBold, fontSize: 12, color: colors.success },
   articleCard: {
     backgroundColor: colors.creamMid, borderRadius: BorderRadius.md,
     padding: Spacing.md, flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
@@ -352,12 +364,12 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   articleMascot: { fontSize: 28 },
   articleInfo: { flex: 1, gap: 4 },
   articleTitle: { fontFamily: FontFamily.semiBold, fontSize: FontSize.sm, color: colors.textDark },
-  articleSubtitle: { fontFamily: FontFamily.medium, fontSize: 11, color: colors.textLight },
+  articleSubtitle: { fontFamily: FontFamily.medium, fontSize: 12, color: colors.textLight },
   articleTags: { flexDirection: 'row', gap: Spacing.xs, marginTop: 4 },
   engagementRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xl, paddingTop: Spacing.sm },
-  engageBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  engageBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 44, minWidth: 44 },
   engageCount: { fontFamily: FontFamily.medium, fontSize: FontSize.sm, color: colors.textLight },
-  bookmarkBtn: { marginLeft: 'auto' },
+  bookmarkBtn: { marginLeft: 'auto', minHeight: 44, minWidth: 44, alignItems: 'center', justifyContent: 'center' },
   commentPreview: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
     backgroundColor: colors.cream, borderRadius: BorderRadius.sm,
@@ -368,8 +380,8 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     backgroundColor: colors.sagePale,
     justifyContent: 'center', alignItems: 'center',
   },
-  commentAuthor: { fontFamily: FontFamily.semiBold, fontSize: 11, color: colors.textDark },
-  commentText: { fontFamily: FontFamily.medium, fontSize: 11, color: colors.textLight },
+  commentAuthor: { fontFamily: FontFamily.semiBold, fontSize: 12, color: colors.textDark },
+  commentText: { fontFamily: FontFamily.medium, fontSize: 12, color: colors.textLight },
   fab: {
     position: 'absolute', bottom: 100, right: 24,
     width: 56, height: 56, borderRadius: 28,

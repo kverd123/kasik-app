@@ -164,6 +164,7 @@ const PostCard = React.memo(function PostCard({
           <TouchableOpacity
             onPress={() => onToggleLike(post.id)}
             style={styles.engageBtn}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             accessibilityRole="button"
             accessibilityLabel={post.isLiked ? 'Beğeniyi kaldır' : 'Beğen'}
             accessibilityState={{ selected: post.isLiked }}
@@ -173,6 +174,7 @@ const PostCard = React.memo(function PostCard({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.engageBtn}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             accessibilityRole="button"
             accessibilityLabel={`${post.comments.length} yorum`}
           >
@@ -181,6 +183,7 @@ const PostCard = React.memo(function PostCard({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.engageBtn}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             accessibilityRole="button"
             accessibilityLabel="Paylaş"
           >
@@ -190,6 +193,7 @@ const PostCard = React.memo(function PostCard({
           {post.recipeId && (
             <TouchableOpacity
               style={styles.bookmarkBtn}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               onPress={() => {
                 if (!isRecipeSaved(post.recipeId!)) {
                   onSaveRecipe(post.recipeId!, 'favorites');
@@ -200,7 +204,10 @@ const PostCard = React.memo(function PostCard({
             </TouchableOpacity>
           )}
           {!post.recipeId && (
-            <TouchableOpacity style={styles.bookmarkBtn}>
+            <TouchableOpacity
+              style={styles.bookmarkBtn}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <Text>🔖</Text>
             </TouchableOpacity>
           )}

@@ -20,6 +20,7 @@ import {
   Animated,
   Image,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
 import {
@@ -412,7 +413,7 @@ export default function PlanScreen() {
         subtitle={subtitleText}
         emoji="🥄"
         rightActions={[
-          { icon: '🛒', onPress: () => setShoppingModalVisible(true) },
+          { icon: 'cart-outline', onPress: () => setShoppingModalVisible(true) },
         ]}
       />
 
@@ -1007,7 +1008,7 @@ export default function PlanScreen() {
           {/* Arama */}
           <View style={styles.modalSearchContainer}>
             <View style={styles.modalSearchWrapper}>
-              <Text style={styles.modalSearchIcon}>{'🔍'}</Text>
+              <Ionicons name="search" size={16} color={colors.textLight} />
               <TextInput
                 style={styles.modalSearchInput}
                 value={recipeSearch}
@@ -1112,7 +1113,7 @@ export default function PlanScreen() {
             {/* Empty state */}
             {filteredSavedRecipes.length === 0 && filteredOtherRecipes.length === 0 && (
               <View style={styles.modalEmpty}>
-                <Text style={{ fontSize: 48 }}>{'🔍'}</Text>
+                <Ionicons name="search" size={48} color={colors.textLight} />
                 <Text style={styles.modalEmptyTitle}>Sonuc bulunamadi</Text>
                 <Text style={styles.modalEmptyText}>
                   Farkli bir arama terimi deneyin.
@@ -1525,7 +1526,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   pausedBadgeText: {
     fontFamily: FontFamily.bold,
-    fontSize: 10,
+    fontSize: 12,
     color: colors.warningDark,
   },
   allergenCancelBtn: {
@@ -1767,7 +1768,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   expiringWarningChipDays: {
     fontFamily: FontFamily.bold,
-    fontSize: 10,
+    fontSize: 12,
     color: '#E65100',
   },
 
@@ -1908,7 +1909,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   modalRecipeAllergen: {
     fontFamily: FontFamily.medium,
-    fontSize: 10,
+    fontSize: 12,
     color: colors.warning,
   },
   modalRecipeAdd: {
