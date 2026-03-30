@@ -10,7 +10,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   Alert,
   Switch,
   RefreshControl,
@@ -360,7 +359,7 @@ export default function ProfileScreen() {
           {/* Stats Grid */}
           <View style={styles.statsGrid}>
             <View style={styles.statBox}>
-              <Text style={styles.statValue}>24</Text>
+              <Text style={styles.statValue}>{baby?.triedFoods?.length || 0}</Text>
               <Text style={styles.statLabel}>Denenen Besin</Text>
             </View>
             <View style={styles.statBox}>
@@ -368,7 +367,7 @@ export default function ProfileScreen() {
               <Text style={styles.statLabel}>Alerjen Takip</Text>
             </View>
             <View style={styles.statBox}>
-              <Text style={styles.statValue}>8.2 kg</Text>
+              <Text style={styles.statValue}>{baby?.weight?.[baby.weight.length-1]?.value ? baby.weight[baby.weight.length-1].value + ' kg' : '-'}</Text>
               <Text style={styles.statLabel}>Güncel Ağırlık</Text>
             </View>
           </View>
@@ -762,7 +761,7 @@ export default function ProfileScreen() {
 
         {/* App Version */}
         <Text style={styles.versionText}>
-          Kasik v{Constants.expoConfig?.version ?? '1.0.0'}
+          Kaşık v{Constants.expoConfig?.version ?? '1.0.0'}
         </Text>
       </ScrollView>
 

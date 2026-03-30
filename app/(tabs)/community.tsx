@@ -11,7 +11,6 @@ import {
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
@@ -19,8 +18,6 @@ import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
 import { FontFamily, FontSize, Spacing, BorderRadius, Shadow, Typography } from '../../constants/theme';
-import { AdBanner } from '../../components/ui/AdBanner';
-import { calculateHotScore } from '../../lib/ranking';
 import PostCard from '../../components/community/PostCard';
 import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { useCommunityStore, CommunityPost } from '../../stores/communityStore';

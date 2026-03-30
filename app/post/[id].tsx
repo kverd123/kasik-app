@@ -52,9 +52,9 @@ export default function PostDetailScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.emptyState}>
           <Text style={{ fontSize: 56 }}>🥄</Text>
-          <Text style={styles.emptyTitle}>Gonderi bulunamadi</Text>
+          <Text style={styles.emptyTitle}>Gönderi bulunamadı</Text>
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Text style={styles.backBtnText}>← Geri Don</Text>
+            <Text style={styles.backBtnText}>← Geri Dön</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -110,7 +110,7 @@ export default function PostDetailScreen() {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `${post.author}: "${post.content.slice(0, 100)}..."\n\nKasik - Ek Gida Rehberi`,
+        message: `${post.author}: "${post.content.slice(0, 100)}..."\n\nKaşık - Ek Gıda Rehberi`,
       });
     } catch (e) { console.error('Post paylaşma hatası:', e); }
   };
@@ -121,7 +121,7 @@ export default function PostDetailScreen() {
       {
         text: 'Bildir',
         style: 'destructive',
-        onPress: () => Alert.alert('Bildirildi', 'Gonderiniz incelenecektir. Tesekkurler.'),
+        onPress: () => Alert.alert('Bildirildi', 'Gönderiniz incelenecektir. Teşekkürler.'),
       },
     ]);
   };
@@ -186,7 +186,7 @@ export default function PostDetailScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.headerIconBtn}>
             <Text style={styles.headerIcon}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Gonderi</Text>
+          <Text style={styles.headerTitle}>Gönderi</Text>
           <TouchableOpacity onPress={handleReport} style={styles.headerIconBtn}>
             <Text style={styles.headerIcon}>···</Text>
           </TouchableOpacity>

@@ -14,7 +14,7 @@
       "backgroundColor": "#A3BA91"
     },
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.kasik.ekgida",
       "buildNumber": "17",
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -25,7 +25,8 @@
           "remote-notification"
         ],
         "ITSAppUsesNonExemptEncryption": false,
-        "NSPrivacyPolicyURL": "https://kverd123.github.io/kasik-app/privacy.html"
+        "NSPrivacyPolicyURL": "https://kverd123.github.io/kasik-app/privacy.html",
+        "NSUserTrackingUsageDescription": "Kaşık, size daha uygun reklamlar gösterebilmek için cihaz tanımlayıcınızı kullanmak istiyor. Bu bilgi üçüncü taraflarla paylaşılmaz."
       },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": []
@@ -82,7 +83,8 @@
           "androidAppId": "ca-app-pub-8099877386187148~1136119394",
           "userTrackingUsageDescription": "Bebeğiniz için daha uygun içerikler sunabilmemiz amacıyla reklam kişiselleştirme izni istenmektedir."
         }
-      ]
+      ],
+      "expo-tracking-transparency"
     ],
     "extra": {
       "router": {},

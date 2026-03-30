@@ -3,7 +3,7 @@
  * Recipe cards grid, search, filtering, pantry suggestions
  */
 
-import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,14 +11,11 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  SafeAreaView,
   Image,
   FlatList,
   Dimensions,
   Alert,
   RefreshControl,
-  ActivityIndicator,
-  Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -36,10 +33,8 @@ import { Card } from '../../components/ui/Card';
 import { Badge, AllergenBadge } from '../../components/ui/Badge';
 import { getAllergenLabel, getAllergenEmoji } from '../../constants/allergens';
 import ScreenHeader from '../../components/ui/ScreenHeader';
-import { AdBanner } from '../../components/ui/AdBanner';
 import { AnimatedPressable } from '../../components/ui/AnimatedPressable';
 import { AIRecipeModal } from '../../components/recipe/AIRecipeModal';
-import { PantryItem } from '../../types';
 import { calculateHotScore, SortMode } from '../../lib/ranking';
 import { ALL_RECIPES, RecipeData } from '../../constants/recipes';
 import { getLocalRecipeImage } from '../../constants/recipeImages';

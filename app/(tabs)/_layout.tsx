@@ -4,7 +4,7 @@
  */
 
 import { Tabs } from 'expo-router';
-import { Text, StyleSheet, View, Platform, Animated } from 'react-native';
+import { Text, StyleSheet, View, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useColors } from '../../hooks/useColors';
 import { FontFamily, Spacing } from '../../constants/theme';

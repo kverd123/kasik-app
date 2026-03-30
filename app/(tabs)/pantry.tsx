@@ -21,7 +21,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
 import {
@@ -43,6 +42,7 @@ import ScreenHeader from '../../components/ui/ScreenHeader';
 import { haptics } from '../../lib/haptics';
 import { analytics } from '../../lib/analytics';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { useBabyStore } from '../../stores/babyStore';
 
 // ===== BIRIM SECENEKLERI =====
 const UNIT_OPTIONS = ['adet', 'gram', 'ml', 'bardak', 'kaşık', 'dilim', 'demet', 'porsiyon'];
@@ -114,6 +114,7 @@ export default function PantryScreen() {
   const [editingItem, setEditingItem] = useState<PantryEntry | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const loadPantry = usePantryStore((s) => s.loadFromStorage);
+  const baby = useBabyStore((s) => s.baby);
 
   // Onboarding overlay state
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -169,7 +170,6 @@ export default function PantryScreen() {
 
   const handleFillManually = useCallback(async () => {
     await dismissOnboarding();
-    router.replace('/(tabs)/plan');
   }, [dismissOnboarding]);
 
   const handleRefresh = async () => {
@@ -494,9 +494,9 @@ export default function PantryScreen() {
           visible={showAIModal}
           onClose={() => setShowAIModal(false)}
           pantryItems={pantryItemsForAI}
-          babyAgeStage="8m"
-          knownAllergens={[]}
-          babyName="Elif"
+          babyAgeStage={baby?.currentStage ?? '8m'}
+          knownAllergens={baby?.knownAllergens ?? []}
+          babyName={baby?.name ?? 'Bebeğiniz'}
           onSaveRecipe={(recipe) => {
             if (Platform.OS === 'web') {
               window.alert(`"${recipe.title}" tariflerinize eklendi.`);

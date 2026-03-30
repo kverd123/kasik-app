@@ -28,7 +28,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { useColors } from '../../hooks/useColors';
 import { FontFamily, FontSize, Spacing, BorderRadius, Shadow } from '../../constants/theme';
 import {
@@ -122,13 +122,23 @@ export const PremiumGate: React.FC<PremiumGateProps> = ({
           activeOpacity={0.7}
         >
           <Text style={[styles.upgradeButtonText, { color: colors.white }]}>
-            ✨ Premium'a Geç
+            ✨ Premium'a Geç — 19.99 TL/ay
           </Text>
         </TouchableOpacity>
 
-        <Text style={[styles.lockSubtext, { color: colors.textLight }]}>
-          Aylık ₺79.99'dan başlayan fiyatlarla
+        <Text style={[styles.legalText, { color: colors.textLight }]}>
+          Ödeme, satın alma onayında Apple ID hesabınıza yansıtılacaktır. Abonelik, mevcut dönemin bitiminden en az 24 saat önce iptal edilmediği sürece otomatik olarak yenilenir. Hesabınızdan, mevcut dönemin bitiminden 24 saat önce yenileme ücreti tahsil edilir. Aboneliklerinizi satın aldıktan sonra Ayarlar'daki hesap ayarlarınızdan yönetebilir ve iptal edebilirsiniz.
         </Text>
+
+        <View style={styles.legalLinks}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/privacy.html')}>
+            <Text style={[styles.legalLinkText, { color: colors.sage }]}>Gizlilik Politikası</Text>
+          </TouchableOpacity>
+          <Text style={[styles.legalSeparator, { color: colors.textLight }]}>|</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/terms.html')}>
+            <Text style={[styles.legalLinkText, { color: colors.sage }]}>Kullanım Koşulları</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -184,7 +194,25 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.bold,
     fontSize: FontSize.base,
   },
-  lockSubtext: {
+  legalText: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.xs,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginTop: Spacing.sm,
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginTop: Spacing.xs,
+  },
+  legalLinkText: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: FontSize.xs,
+    textDecorationLine: 'underline',
+  },
+  legalSeparator: {
     fontFamily: FontFamily.medium,
     fontSize: FontSize.xs,
   },

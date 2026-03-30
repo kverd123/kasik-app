@@ -1114,7 +1114,7 @@ export default function PlanScreen() {
             {filteredSavedRecipes.length === 0 && filteredOtherRecipes.length === 0 && (
               <View style={styles.modalEmpty}>
                 <Ionicons name="search" size={48} color={colors.textLight} />
-                <Text style={styles.modalEmptyTitle}>Sonuc bulunamadi</Text>
+                <Text style={styles.modalEmptyTitle}>Sonuç bulunamadı</Text>
                 <Text style={styles.modalEmptyText}>
                   Farkli bir arama terimi deneyin.
                 </Text>

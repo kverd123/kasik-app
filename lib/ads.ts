@@ -13,12 +13,22 @@ let interstitial: InterstitialAd | null = null;
 let isLoaded = false;
 let showCount = 0;
 
+// ATT tracking durumu — varsayılan olarak kişiselleştirilmemiş reklam göster
+let trackingAuthorized = false;
+
+/**
+ * ATT izin durumunu ayarla — layout'tan çağrılır
+ */
+export function setTrackingAuthorized(authorized: boolean) {
+  trackingAuthorized = authorized;
+}
+
 // Show interstitial every N actions (e.g. every 3 recipe views)
 const SHOW_FREQUENCY = 3;
 
 function loadInterstitial() {
   interstitial = InterstitialAd.createForAdRequest(INTERSTITIAL_ID, {
-    requestNonPersonalizedAdsOnly: true,
+    requestNonPersonalizedAdsOnly: !trackingAuthorized,
   });
 
   interstitial.addAdEventListener(AdEventType.LOADED, () => {
