@@ -65,7 +65,14 @@ workflows:
           security find-identity -v -p codesigning || true
           echo "======================================"
           XCODE_WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 -print -quit)
-          XCODE_SCHEME=$(xcodebuild -list -workspace "$XCODE_WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
+          XCODE_SCHEME=$(xcodebuild -list -workspace "$XCODE_WORKSPACE" -json | python3 -c "
+import sys,json
+schemes = json.load(sys.stdin)['workspace']['schemes']
+# Ana uygulama scheme'ini bul (AppAuth, Pods gibi dependency scheme'lerini atla)
+skip = ['AppAuth', 'Pods', 'GTMAppAuth', 'GoogleSignIn']
+main = [s for s in schemes if s not in skip and not s.startswith('Pods-')]
+print(main[0] if main else schemes[0])
+")
           echo "Building: workspace=$XCODE_WORKSPACE scheme=$XCODE_SCHEME"
           mkdir -p build/ios/xcarchive build/ios/ipa
           xcodebuild archive \
