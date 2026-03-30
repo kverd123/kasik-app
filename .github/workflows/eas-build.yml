@@ -41,11 +41,26 @@ jobs:
       - name: List ios directory
         run: ls -la ios/
 
+      - name: Find workspace and scheme
+        run: |
+          echo "=== ios/ contents ==="
+          ls -la ios/
+          WS=$(find ios -name "*.xcworkspace" -maxdepth 1 | head -1)
+          SCHEME=$(basename "$WS" .xcworkspace)
+          PROJ=$(find ios -name "*.xcodeproj" -maxdepth 1 | head -1)
+          echo "XCODE_WS=$WS" >> $GITHUB_ENV
+          echo "XCODE_SCHEME=$SCHEME" >> $GITHUB_ENV
+          echo "XCODE_PROJ=$PROJ" >> $GITHUB_ENV
+          echo "Found: WS=$WS SCHEME=$SCHEME PROJ=$PROJ"
+
       - name: Build & Upload with Fastlane
         env:
           ASC_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
           ASC_KEY_PATH: ~/private_keys/AuthKey_${{ secrets.ASC_API_KEY_ID }}.p8
+          FL_WORKSPACE: ${{ env.XCODE_WS }}
+          FL_SCHEME: ${{ env.XCODE_SCHEME }}
+          FL_PROJECT: ${{ env.XCODE_PROJ }}
         run: fastlane release
 
       - name: Upload IPA artifact

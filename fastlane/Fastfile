@@ -13,11 +13,9 @@ platform :ios do
 
     setup_ci
 
-    # ios/ dizininden workspace bul
-    ws = Dir.glob("ios/*.xcworkspace").first
-    UI.user_error!("No xcworkspace found in ios/") unless ws
-    scheme_name = File.basename(ws, ".xcworkspace")
-    xcproj = Dir.glob("ios/*.xcodeproj").first
+    ws = ENV["FL_WORKSPACE"]
+    scheme_name = ENV["FL_SCHEME"]
+    xcproj = ENV["FL_PROJECT"]
 
     UI.message("Workspace: #{ws}")
     UI.message("Scheme: #{scheme_name}")
@@ -38,7 +36,7 @@ platform :ios do
         teamID: "32TLAQYSU6"
       },
       clean: true,
-      output_directory: "../ios",
+      output_directory: "build",
       output_name: "kasik-app.ipa"
     )
 
