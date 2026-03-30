@@ -73,18 +73,10 @@ workflows:
             -destination "generic/platform=iOS" \
             COMPILER_INDEX_STORE_ENABLE=NO
           echo "Archive succeeded, starting export..."
-          python3 -c "
-          import plistlib
-          opts = {
-            'method': 'app-store-connect',
-            'destination': 'export',
-            'stripSwiftSymbols': True,
-            'compileBitcode': False,
-          }
-          with open('/tmp/ExportOptions.plist', 'wb') as f:
-            plistlib.dump(opts, f)
-          print('ExportOptions.plist created')
-          "
+          /usr/libexec/PlistBuddy -c "Add :method string app-store-connect" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :destination string export" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :stripSwiftSymbols bool true" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :compileBitcode bool false" /tmp/ExportOptions.plist
           xcodebuild -exportArchive \
             -archivePath build/ios/xcarchive/app.xcarchive \
             -exportPath build/ios/ipa \
