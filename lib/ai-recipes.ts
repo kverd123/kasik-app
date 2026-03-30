@@ -19,10 +19,10 @@ import { analytics } from './analytics';
 
 // ===== CONFIGURATION =====
 
-type AIProvider = 'openai' | 'claude' | 'fallback';
+type AIProvider = 'openai' | 'claude' | 'gemini' | 'fallback';
 
 const AI_CONFIG = {
-  provider: 'openai' as AIProvider,
+  provider: 'gemini' as AIProvider,
   openai: {
     apiUrl: 'https://api.openai.com/v1/chat/completions',
     model: 'gpt-4o-mini',
@@ -31,6 +31,10 @@ const AI_CONFIG = {
   claude: {
     apiUrl: 'https://api.anthropic.com/v1/messages',
     model: 'claude-3-haiku-20240307',
+    apiKey: process.env.EXPO_PUBLIC_AI_API_KEY || '',
+  },
+  gemini: {
+    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
     apiKey: process.env.EXPO_PUBLIC_AI_API_KEY || '',
   },
   maxTokens: 1500,
@@ -218,6 +222,39 @@ async function callClaude(prompt: string): Promise<string> {
 
   const data = await response.json();
   return data.content[0].text;
+}
+
+async function callGemini(prompt: string): Promise<string> {
+  const response = await fetch(
+    `${AI_CONFIG.gemini.apiUrl}?key=${AI_CONFIG.gemini.apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `Sen bir çocuk beslenme uzmanısın. Yanıtlarını her zaman geçerli JSON formatında ver. Türkçe yanıt ver.\n\n${prompt}`,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: AI_CONFIG.temperature,
+          maxOutputTokens: AI_CONFIG.maxTokens,
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Gemini API hatası: ${response.status} - ${error}`);
+  }
+
+  const data = await response.json();
+  return data.candidates[0].content.parts[0].text;
 }
 
 // ===== FALLBACK RECIPES (offline / no API key) =====
@@ -564,6 +601,14 @@ export async function generateAIRecipes(request: AIRecipeRequest): Promise<AIRec
           return getFallbackRecipes(request);
         }
         responseText = await callClaude(prompt);
+        break;
+
+      case 'gemini':
+        if (!AI_CONFIG.gemini.apiKey) {
+          console.log('Gemini API key yok, fallback tarifler kullanılıyor...');
+          return getFallbackRecipes(request);
+        }
+        responseText = await callGemini(prompt);
         break;
 
       case 'fallback':

@@ -24,6 +24,7 @@ workflows:
         EXPO_PUBLIC_ADMOB_BANNER_ID_IOS: "ca-app-pub-8099877386187148/3160748553"
         EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS: "ca-app-pub-8099877386187148/2055416996"
         EXPO_PUBLIC_REVENUECAT_API_KEY: "appl_kOTQHVFKEfnenNdYfeQyYpHBVSM"
+        EXPO_PUBLIC_AI_API_KEY: "AIzaSyAq51XKthrJStmjvDQNrkaG7i4zLseI490"
       node: 20
       xcode: 16.2
       cocoapods: default
