@@ -63,8 +63,6 @@ workflows:
           set -e
           echo "=== Signing identities in keychain ==="
           security find-identity -v -p codesigning || true
-          echo "=== Installed provisioning profiles ==="
-          ls ~/Library/MobileDevice/Provisioning\ Profiles/ 2>/dev/null || echo "No profiles found"
           echo "======================================"
           XCODE_WORKSPACE=$(find ios -name "*.xcworkspace" -maxdepth 1 -print -quit)
           XCODE_SCHEME=$(xcodebuild -list -workspace "$XCODE_WORKSPACE" -json | python3 -c "import sys,json; print(json.load(sys.stdin)['workspace']['schemes'][0])")
@@ -76,12 +74,9 @@ workflows:
             -configuration Release \
             -archivePath build/ios/xcarchive/app.xcarchive \
             -destination "generic/platform=iOS" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
             COMPILER_INDEX_STORE_ENABLE=NO
           echo "Archive succeeded, starting export..."
           /usr/libexec/PlistBuddy -c "Add :destination string export" /tmp/ExportOptions.plist
-          /usr/libexec/PlistBuddy -c "Add :signingStyle string manual" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :stripSwiftSymbols bool true" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :compileBitcode bool false" /tmp/ExportOptions.plist
           xcodebuild -exportArchive \
