@@ -13,19 +13,24 @@ platform :ios do
 
     setup_ci
 
-    # Workspace bul
-    workspace = Dir.glob("*.xcworkspace").first
-    scheme_name = workspace.gsub(".xcworkspace", "")
+    # ios/ dizininden workspace bul
+    ws = Dir.glob("ios/*.xcworkspace").first
+    UI.user_error!("No xcworkspace found in ios/") unless ws
+    scheme_name = File.basename(ws, ".xcworkspace")
+    xcproj = Dir.glob("ios/*.xcodeproj").first
 
-    # Otomatik signing - Xcode halleder
+    UI.message("Workspace: #{ws}")
+    UI.message("Scheme: #{scheme_name}")
+    UI.message("Project: #{xcproj}")
+
     update_code_signing_settings(
       use_automatic_signing: true,
-      path: Dir.glob("#{scheme_name}.xcodeproj").first || Dir.glob("*.xcodeproj").first,
+      path: xcproj,
       team_id: "32TLAQYSU6"
     )
 
     build_app(
-      workspace: workspace,
+      workspace: ws,
       scheme: scheme_name,
       export_method: "app-store",
       export_options: {
@@ -33,7 +38,7 @@ platform :ios do
         teamID: "32TLAQYSU6"
       },
       clean: true,
-      output_directory: ".",
+      output_directory: "../ios",
       output_name: "kasik-app.ipa"
     )
 

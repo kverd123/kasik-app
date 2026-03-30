@@ -38,17 +38,14 @@ jobs:
           mkdir -p ~/private_keys
           echo "${{ secrets.ASC_API_KEY_P8 }}" > ~/private_keys/AuthKey_${{ secrets.ASC_API_KEY_ID }}.p8
 
-      - name: Copy Fastfile to ios
-        run: |
-          mkdir -p ios/fastlane
-          cp fastlane/Fastfile ios/fastlane/Fastfile
+      - name: List ios directory
+        run: ls -la ios/
 
       - name: Build & Upload with Fastlane
         env:
           ASC_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_API_KEY_ISSUER_ID }}
           ASC_KEY_PATH: ~/private_keys/AuthKey_${{ secrets.ASC_API_KEY_ID }}.p8
-        working-directory: ios
         run: fastlane release
 
       - name: Upload IPA artifact
