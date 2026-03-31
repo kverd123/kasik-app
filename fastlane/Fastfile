@@ -21,16 +21,7 @@ platform :ios do
     UI.message("Scheme: #{scheme_name}")
     UI.message("Project: #{xcproj}")
 
-    # Sertifika ve profil otomatik indir
-    keychain_path = ENV["KEYCHAIN_PATH"] || "#{ENV['HOME']}/Library/Keychains/fastlane_tmp_keychain-db"
-
-    cert(
-      api_key: api_key,
-      team_id: "32TLAQYSU6",
-      keychain_path: keychain_path,
-      keychain_password: ""
-    )
-
+    # Profil otomatik indir (sertifika workflow'da import edildi)
     sigh(
       api_key: api_key,
       app_identifier: "com.kasik.ekgida",

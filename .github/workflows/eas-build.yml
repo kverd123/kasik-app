@@ -38,6 +38,28 @@ jobs:
           mkdir -p ~/private_keys
           echo "${{ secrets.ASC_API_KEY_P8 }}" > ~/private_keys/AuthKey_${{ secrets.ASC_API_KEY_ID }}.p8
 
+      - name: Import Distribution Certificate
+        env:
+          CERT_P12_BASE64: ${{ secrets.DIST_CERT_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.DIST_CERT_PASSWORD }}
+        run: |
+          # Create keychain (same as fastlane setup_ci)
+          KC_PATH="$HOME/Library/Keychains/fastlane_tmp_keychain-db"
+          security create-keychain -p "" fastlane_tmp_keychain || true
+          security unlock-keychain -p "" fastlane_tmp_keychain || true
+          security set-keychain-settings -lut 7200 fastlane_tmp_keychain || true
+
+          # Decode and import p12
+          printf '%s' "$CERT_P12_BASE64" | base64 --decode > /tmp/dist.p12
+          ls -la /tmp/dist.p12
+          security import /tmp/dist.p12 -k "$KC_PATH" -P "$CERT_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" "$KC_PATH"
+
+          # Verify
+          echo "=== Signing identities ==="
+          security find-identity -v -p codesigning "$KC_PATH"
+          rm /tmp/dist.p12
+
       - name: List ios directory
         run: ls -la ios/
 
