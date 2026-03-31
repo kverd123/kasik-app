@@ -21,7 +21,12 @@ platform :ios do
     UI.message("Scheme: #{scheme_name}")
     UI.message("Project: #{xcproj}")
 
-    # Profili otomatik indir (sertifika workflow'da import edildi)
+    # Sertifika ve profil otomatik indir
+    cert(
+      api_key: api_key,
+      team_id: "32TLAQYSU6"
+    )
+
     sigh(
       api_key: api_key,
       app_identifier: "com.kasik.ekgida",
