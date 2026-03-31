@@ -39,9 +39,9 @@ yarn-error.*
 Sertifikalar.p12
 distribution.cer
 
-# Firebase config files (contain API keys — inject via CI)
-GoogleService-Info.plist
-google-services.json
+# Firebase config files - tracked for EAS Build
+# GoogleService-Info.plist
+# google-services.json
 
 # typescript
 *.tsbuildinfo
