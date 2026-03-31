@@ -18,6 +18,7 @@ import {
   Platform,
   StatusBar,
   Image,
+  Alert,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { maybeShowInterstitial } from '../../lib/ads';
@@ -786,7 +787,16 @@ export default function RecipeDetailScreen() {
         <TouchableOpacity
           style={styles.fabMainBtn}
           onPress={() => {
-            // TODO: Plana ekle
+            Alert.alert(
+              'Plana Ekle',
+              'Bu tarifi bugünkü hangi öğüne eklemek istersiniz?',
+              [
+                { text: 'Kahvaltı', onPress: () => { router.push('/(tabs)/plan'); } },
+                { text: 'Öğle', onPress: () => { router.push('/(tabs)/plan'); } },
+                { text: 'Akşam', onPress: () => { router.push('/(tabs)/plan'); } },
+                { text: 'İptal', style: 'cancel' },
+              ]
+            );
           }}
         >
           <Text style={styles.fabMainText}>📋 Plana Ekle</Text>

@@ -24,17 +24,17 @@ interface TabIconProps {
 function TabIcon({ iconName, iconNameFocused, label, focused }: TabIconProps) {
   const colors = useColors();
   const scaleX = useRef(new Animated.Value(focused ? 1.27 : 1)).current;
-  const opacity = useRef(new Animated.Value(focused ? 1 : 0)).current;
+  const bgOpacity = useRef(new Animated.Value(focused ? 1 : 0)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.spring(scaleX, {
         toValue: focused ? 1.27 : 1,
         useNativeDriver: true,
-        speed: 30,
-        bounciness: 0,
+        speed: 16,
+        bounciness: 4,
       }),
-      Animated.timing(opacity, {
+      Animated.timing(bgOpacity, {
         toValue: focused ? 1 : 0,
         duration: 200,
         useNativeDriver: true,
@@ -49,11 +49,20 @@ function TabIcon({ iconName, iconNameFocused, label, focused }: TabIconProps) {
           styles.iconWrap,
           {
             transform: [{ scaleX }],
-            backgroundColor: colors.sagePale,
-            opacity: Animated.add(0.001, opacity),
           },
         ]}
       >
+        {/* Background pill — fades in/out */}
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              backgroundColor: colors.sagePale,
+              borderRadius: 16,
+              opacity: bgOpacity,
+            },
+          ]}
+        />
         <Ionicons
           name={focused ? iconNameFocused : iconName}
           size={22}
@@ -178,8 +187,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowOpacity: 0.10,
+    shadowRadius: 12,
     elevation: 8,
   },
   tabItem: {
@@ -189,6 +198,7 @@ const styles = StyleSheet.create({
   },
   iconWrap: {
     height: 32,
+    paddingHorizontal: 20,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',

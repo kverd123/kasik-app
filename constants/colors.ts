@@ -6,14 +6,14 @@
 
 export const LightColors = {
   // Primary - Sage Green (biraz daha canlı ve sıcak)
-  sage: '#8FB87A',
-  sageDark: '#7AA065',
-  sageLight: '#C8DDB8',
+  sage: '#6B9B5E',
+  sageDark: '#4A7A42',
+  sageLight: '#B8D4A8',
   sagePale: '#EEF6E8',
 
   // Neutrals - Cream
-  cream: '#F7F3ED',
-  creamDark: '#E8E2D8',
+  cream: '#FAF8F5',
+  creamDark: '#F0ECE6',
   creamMid: '#F0EBE3',
 
   // Accents
@@ -25,7 +25,7 @@ export const LightColors = {
   // Text (güçlendirilmiş kontrast)
   textDark: '#2E2E1E',
   textMid: '#5A5A4A',
-  textLight: '#9A937A',
+  textLight: '#7A7560',
   textXLight: '#C8C1A8',
   textOnPrimary: '#FFFFFF',
 
@@ -53,10 +53,10 @@ export const LightColors = {
   overlay: 'rgba(0, 0, 0, 0.4)',
 
   // Background gradients
-  bgStart: '#F7F3ED',
+  bgStart: '#FAF8F5',
   bgEnd: '#F0EBE3',
-  headerStart: '#8FB87A',
-  headerEnd: '#7AA065',
+  headerStart: '#6B9B5E',
+  headerEnd: '#4A7A42',
 } as const;
 
 export const DarkColors: ThemeColors = {

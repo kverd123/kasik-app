@@ -108,6 +108,32 @@ export function isSameDay(a: Date, b: Date): boolean {
     a.getDate() === b.getDate();
 }
 
+// ===== ALERJEN FİLTRELEME HELPER =====
+
+/** Bir haftanın yemeklerinden bilinen alerjenleri içerenleri çıkar */
+function filterWeekMealsByAllergens(
+  weekData: Record<number, DayMeals>,
+  knownAllergens: string[],
+): Record<number, DayMeals> {
+  if (knownAllergens.length === 0) return weekData;
+  const filtered: Record<number, DayMeals> = {};
+  for (const [dayIdx, dayMeals] of Object.entries(weekData)) {
+    const filteredDay: DayMeals = {
+      breakfast: [],
+      lunch: [],
+      snack: [],
+      dinner: [],
+    };
+    for (const slot of Object.keys(filteredDay) as MealSlot[]) {
+      filteredDay[slot] = (dayMeals[slot] || []).filter(
+        (meal) => !meal.allergenWarning?.some((a) => knownAllergens.includes(a))
+      );
+    }
+    filtered[Number(dayIdx)] = filteredDay;
+  }
+  return filtered;
+}
+
 // ===== STORE =====
 
 interface MealPlanState {
@@ -127,6 +153,7 @@ interface MealPlanState {
   goToPreviousWeek: () => void;
   goToCurrentWeek: () => void;
   addMealToSlot: (dayIndex: number, slot: MealSlot, meal: Meal) => void;
+  replaceMealsInSlot: (dayIndex: number, slot: MealSlot, meals: Meal[]) => void;
   removeMeal: (dayIndex: number, mealId: string) => void;
   toggleMealCompleted: (dayIndex: number, mealId: string) => void;
   getCompletedMealsThisWeek: () => number;
@@ -300,13 +327,15 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
             persistToStorage(migratedWeeks);
           }
         } else {
-          // İlk açılış — demo verisi
+          // İlk açılış — demo verisi (alerjen filtreli)
+          const knownAllergens = useBabyStore.getState().baby?.knownAllergens || [];
+          const filteredDefault = filterWeekMealsByAllergens(DEFAULT_WEEK_MEALS, knownAllergens);
           const initial: Record<string, Record<number, DayMeals>> = {
-            [thisWeekKey]: DEFAULT_WEEK_MEALS,
+            [thisWeekKey]: filteredDefault,
           };
           set({
             allWeekMeals: initial,
-            weekMeals: DEFAULT_WEEK_MEALS,
+            weekMeals: filteredDefault,
             currentWeekKey: thisWeekKey,
             isLoaded: true,
           });
@@ -314,12 +343,14 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
         }
       } catch (e) {
         console.error('Yemek planı yüklenemedi:', e);
+        const knownAllergens = useBabyStore.getState().baby?.knownAllergens || [];
+        const filteredDefault = filterWeekMealsByAllergens(DEFAULT_WEEK_MEALS, knownAllergens);
         const initial: Record<string, Record<number, DayMeals>> = {
-          [thisWeekKey]: DEFAULT_WEEK_MEALS,
+          [thisWeekKey]: filteredDefault,
         };
         set({
           allWeekMeals: initial,
-          weekMeals: DEFAULT_WEEK_MEALS,
+          weekMeals: filteredDefault,
           currentWeekKey: thisWeekKey,
           isLoaded: true,
         });
@@ -392,6 +423,25 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
       const updatedDay: DayMeals = {
         ...dayMeals,
         [slot]: [...dayMeals[slot], meal],
+      };
+      const updatedWeek = { ...weekData, [dayIndex]: updatedDay };
+      const updatedAll = { ...state.allWeekMeals, [weekKey]: updatedWeek };
+      set({
+        allWeekMeals: updatedAll,
+        weekMeals: updatedWeek,
+      });
+      persistToStorage(updatedAll);
+      syncToFirestore('mealPlan.saveWeek', (userId) => [userId, weekKey, updatedWeek]);
+    },
+
+    replaceMealsInSlot: (dayIndex, slot, meals) => {
+      const state = get();
+      const weekKey = state.currentWeekKey;
+      const weekData = state.allWeekMeals[weekKey] || emptyWeek();
+      const dayMeals = weekData[dayIndex] || emptyDay();
+      const updatedDay: DayMeals = {
+        ...dayMeals,
+        [slot]: meals,
       };
       const updatedWeek = { ...weekData, [dayIndex]: updatedDay };
       const updatedAll = { ...state.allWeekMeals, [weekKey]: updatedWeek };
@@ -575,13 +625,8 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
         ).length;
         score += pantryMatch * 3;
 
-        // Çeşitlilik için küçük rastgele bonus
-        score += Math.random() * 2;
-
         return { recipe: r, score };
       });
-
-      scoredRecipes.sort((a, b) => b.score - a.score);
 
       // 6. Şablondan günlük plan oluştur (varsa şablon kullan)
       const slots: MealSlot[] = ['breakfast', 'lunch', 'snack', 'dinner'].slice(0, mealsPerDay) as MealSlot[];
@@ -591,6 +636,13 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
       for (let day = 0; day < 7; day++) {
         const dayMeals = emptyDay();
         const dayUsedIds = new Set<string>();
+
+        // Her gün için tarifleri yeniden rastgele sırala (taze plan garantisi)
+        const dayScored = scoredRecipes.map((sr) => ({
+          ...sr,
+          score: sr.score + Math.random() * 30,
+        }));
+        dayScored.sort((a, b) => b.score - a.score);
 
         // Şablondan bu güne ait öğünleri al (rastgele gün seç)
         const templateDays = template?.days || [];
@@ -607,7 +659,7 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
           if (templateMeal) {
             // Şablon tarifini recipes veritabanında bul
             const templateIngLower = templateMeal.ingredients.map((i) => i.toLowerCase());
-            recipe = scoredRecipes.find((sr) => {
+            recipe = dayScored.find((sr) => {
               if (dayUsedIds.has(sr.recipe.id)) return false;
               const recipeIngLower = sr.recipe.ingredients.map((i) => i.name.toLowerCase());
               // En az 1 malzeme eşleşmesi
@@ -619,7 +671,7 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
 
           // Şablondan bulunamadıysa puanlama ile seç
           if (!recipe) {
-            for (const sr of scoredRecipes) {
+            for (const sr of dayScored) {
               if (!dayUsedIds.has(sr.recipe.id) && !weekUsedIds.has(sr.recipe.id)) {
                 recipe = sr.recipe;
                 break;
@@ -628,7 +680,7 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
           }
 
           if (!recipe) {
-            for (const sr of scoredRecipes) {
+            for (const sr of dayScored) {
               if (!dayUsedIds.has(sr.recipe.id)) {
                 recipe = sr.recipe;
                 break;

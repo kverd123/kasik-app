@@ -28,7 +28,7 @@ export function EmptyState({ emoji, icon, title, subtitle, ctaLabel, onCtaPress 
     <View style={styles.container} accessibilityRole="text">
       <View style={[styles.iconCircle, { backgroundColor: colors.sagePale }]}>
         {icon ? (
-          <Ionicons name={icon} size={40} color={colors.sage} />
+          <Ionicons name={icon} size={48} color={colors.sage} />
         ) : (
           <Text style={styles.emoji}>{emoji}</Text>
         )}
@@ -59,15 +59,15 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   iconCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.sm,
   },
   emoji: {
-    fontSize: 40,
+    fontSize: 48,
   },
   title: {
     fontFamily: FontFamily.bold,

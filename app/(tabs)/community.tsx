@@ -315,7 +315,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     width: 30, height: 3, borderRadius: 1.5,
     backgroundColor: colors.sage,
   },
-  postsContent: { padding: Spacing.xl, gap: Spacing.lg, paddingBottom: 100 },
+  postsContent: { padding: Spacing.xl, gap: Spacing.xl, paddingBottom: 100 },
   postCard: { gap: Spacing.md },
   authorRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   avatar: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },

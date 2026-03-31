@@ -14,10 +14,10 @@ export const FontFamily = {
 } as const;
 
 export const FontSize = {
-  xs: 12,
-  sm: 12,
-  md: 14,
-  base: 15,
+  xs: 11,
+  sm: 13,
+  md: 15,
+  base: 16,
   lg: 16,
   xl: 18,
   xxl: 22,
@@ -50,9 +50,9 @@ export const BorderRadius = {
 export const Shadow = {
   card: {
     shadowColor: Colors.sage,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
     elevation: 3,
   },
   soft: {
@@ -64,9 +64,9 @@ export const Shadow = {
   },
   elevated: {
     shadowColor: Colors.sage,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.10,
+    shadowRadius: 24,
     elevation: 6,
   },
 } as const;
@@ -76,19 +76,19 @@ export const Typography = {
     fontFamily: FontFamily.extraBold,
     fontSize: FontSize.xxxl,
     color: Colors.textDark,
-    lineHeight: 36,
+    lineHeight: 42,
   },
   h2: {
     fontFamily: FontFamily.bold,
     fontSize: FontSize.xxl,
     color: Colors.textDark,
-    lineHeight: 30,
+    lineHeight: 33,
   },
   h3: {
     fontFamily: FontFamily.bold,
     fontSize: FontSize.xl,
     color: Colors.textDark,
-    lineHeight: 24,
+    lineHeight: 28,
   },
   body: {
     fontFamily: FontFamily.medium,

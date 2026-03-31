@@ -13,6 +13,8 @@ import {
   Alert,
   Switch,
   RefreshControl,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
@@ -39,6 +41,8 @@ import { useBabyStore } from '../../stores/babyStore';
 import { NotificationPreferences } from '../../lib/notifications';
 import { analytics } from '../../lib/analytics';
 import { useThemeStore, ThemeMode } from '../../stores/themeStore';
+import * as ImagePicker from 'expo-image-picker';
+import { uploadBabyPhoto } from '../../lib/storage';
 
 type BookTab = 'all' | 'favorites' | 'try_later' | 'made_it';
 
@@ -166,6 +170,8 @@ export default function ProfileScreen() {
   const [bookTab, setBookTab] = useState<BookTab>('all');
   const [profileDetailProgram, setProfileDetailProgram] = useState<AllergenIntroProgramConfig | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [uploadingBabyPhoto, setUploadingBabyPhoto] = useState(false);
+  const updateBaby = useBabyStore((s) => s.updateBaby);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -251,6 +257,38 @@ export default function ProfileScreen() {
     );
   };
 
+  const handlePickBabyPhoto = async () => {
+    try {
+      const permResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permResult.granted) {
+        Alert.alert('İzin Gerekli', 'Fotoğraf seçebilmek için galeri izni vermeniz gerekiyor.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (result.canceled || !result.assets?.[0]?.uri) return;
+
+      if (!user?.uid || !baby?.id) {
+        Alert.alert('Hata', 'Kullanıcı veya bebek bilgisi bulunamadı.');
+        return;
+      }
+
+      setUploadingBabyPhoto(true);
+      const photoURL = await uploadBabyPhoto(user.uid, baby.id, result.assets[0].uri);
+      updateBaby({ photoURL });
+      setUploadingBabyPhoto(false);
+    } catch (e) {
+      setUploadingBabyPhoto(false);
+      Alert.alert('Hata', 'Fotoğraf yüklenirken bir hata oluştu.');
+    }
+  };
+
   const handleRemoveRecipe = (recipeId: string, title: string) => {
     Alert.alert('Tarifi Kaldır', `"${title}" tarif defterinden kaldırılsın mı?`, [
       { text: 'İptal', style: 'cancel' },
@@ -315,7 +353,12 @@ export default function ProfileScreen() {
                     if (auth.currentUser) {
                       await fbUpdateProfile(auth.currentUser, { displayName: newName.trim() });
                       await updateDoc(doc(db, 'users', auth.currentUser.uid), { displayName: newName.trim() });
-                      Alert.alert('Başarılı', 'İsminiz güncellendi. Uygulamayı yeniden açınca görünecek.');
+                      // Update Zustand store immediately so UI re-renders
+                      const currentUser = useAuthStore.getState().user;
+                      if (currentUser) {
+                        useAuthStore.setState({ user: { ...currentUser, displayName: newName.trim() } });
+                      }
+                      Alert.alert('Başarılı', 'İsminiz güncellendi.');
                     }
                   } catch (e) {
                     Alert.alert('Hata', 'İsim güncellenemedi.');
@@ -338,9 +381,23 @@ export default function ProfileScreen() {
           </View>
 
           <View style={styles.babyInfo}>
-            <View style={styles.babyAvatar}>
-              <Text style={{ fontSize: 40 }}>{baby?.gender === 'female' ? '👧' : baby?.gender === 'male' ? '👦' : '👶'}</Text>
-            </View>
+            <TouchableOpacity
+              style={styles.babyAvatar}
+              onPress={handlePickBabyPhoto}
+              activeOpacity={0.7}
+              accessibilityLabel="Bebek fotoğrafı ekle"
+            >
+              {uploadingBabyPhoto ? (
+                <ActivityIndicator size="small" color={colors.sage} />
+              ) : baby?.photoURL ? (
+                <Image source={{ uri: baby.photoURL }} style={styles.babyAvatarImage} />
+              ) : (
+                <Text style={{ fontSize: 40 }}>{baby?.gender === 'female' ? '👧' : baby?.gender === 'male' ? '👦' : '👶'}</Text>
+              )}
+              <View style={styles.babyAvatarBadge}>
+                <Text style={{ fontSize: 12 }}>📷</Text>
+              </View>
+            </TouchableOpacity>
             <View style={styles.babyDetails}>
               <Text style={styles.babyName}>{baby?.name || 'Bebek'}</Text>
               <Text style={styles.babyAge}>
@@ -806,6 +863,23 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     width: 72, height: 72, borderRadius: 36,
     backgroundColor: colors.sagePale,
     justifyContent: 'center', alignItems: 'center',
+    position: 'relative' as const,
+  },
+  babyAvatarImage: {
+    width: 72, height: 72, borderRadius: 36,
+  },
+  babyAvatarBadge: {
+    position: 'absolute' as const,
+    bottom: 0,
+    right: 0,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.white,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    borderWidth: 1.5,
+    borderColor: colors.sagePale,
   },
   babyDetails: { gap: 2 },
   babyName: { fontFamily: FontFamily.bold, fontSize: FontSize.xl, color: colors.textDark },

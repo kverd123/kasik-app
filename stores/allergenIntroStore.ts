@@ -5,7 +5,7 @@
 
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AllergenType } from '../types';
+import { AllergenType, Meal } from '../types';
 import {
   AllergenIntroProgramConfig,
   AllergenReactionResult,
@@ -13,6 +13,7 @@ import {
 } from '../constants/allergenIntro';
 import { syncToFirestore } from '../lib/firestoreSync';
 import { getAllergenPrograms } from '../lib/firestore';
+import { getAllergenEmoji } from '../constants/allergens';
 
 interface AllergenIntroState {
   programs: AllergenIntroProgramConfig[];
@@ -116,6 +117,34 @@ export const useAllergenIntroStore = create<AllergenIntroState>((set, get) => ({
     set({ programs: updated });
     persistToStorage(updated);
     syncToFirestore('allergen.save', (userId) => [userId, program]);
+
+    // Alerjen test yemeklerini bugünün planına enjekte et
+    try {
+      const { useMealPlanStore } = require('./mealPlanStore');
+      const mealPlanStore = useMealPlanStore.getState();
+      const todayDay = new Date().getDay(); // 0=Paz, 1=Pzt...
+      const todayIndex = todayDay === 0 ? 6 : todayDay - 1; // Pazartesi=0
+
+      // İlk günün öğünlerini al
+      const day1 = program.dailyPlan.find((d) => d.day === 1);
+      if (day1) {
+        for (const introMeal of day1.meals) {
+          const meal: Meal = {
+            id: `allergen-${program.id}-${introMeal.id}`,
+            slot: introMeal.slot,
+            foodName: introMeal.recipeName,
+            emoji: introMeal.emoji || getAllergenEmoji(program.allergenType),
+            ageGroup: '8m',
+            completed: false,
+            isFirstTry: true,
+            allergenWarning: [program.allergenType],
+          };
+          mealPlanStore.addMealToSlot(todayIndex, introMeal.slot, meal);
+        }
+      }
+    } catch (e) {
+      console.warn('[AllergenIntroStore] Bugünün planına alerjen yemekleri eklenemedi:', e);
+    }
   },
 
   recordReaction: (programId, day, mealId, reaction) => {

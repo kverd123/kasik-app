@@ -115,19 +115,33 @@ export default function RootLayout() {
   }, [user?.uid]);
 
   // Auth-gated Firestore sync — login sonrası tüm store'ları sync et
+  // Sıralama önemli: auth -> baby -> allergen programs -> meal plans
   useEffect(() => {
     if (!user?.uid) return;
-    Promise.allSettled([
-      useBabyStore.getState().syncFromFirestore(user.uid),
-      usePantryStore.getState().syncFromFirestore(user.uid),
-      useMealPlanStore.getState().syncFromFirestore(user.uid),
-      useRecipeBookStore.getState().syncFromFirestore(user.uid),
-      useCommunityStore.getState().loadPosts(),
-      useAllergenIntroStore.getState().syncFromFirestore(user.uid),
-    ]).then(() => {
-      // Sync sonrası kuyrukdaki bekleyen yazımları gönder
-      flushQueue().catch(console.error);
-    }).catch(console.error);
+    const uid = user.uid;
+
+    (async () => {
+      try {
+        // 1. Baby profili ve bağımsız store'lar paralel yüklensin
+        await Promise.allSettled([
+          useBabyStore.getState().syncFromFirestore(uid),
+          usePantryStore.getState().syncFromFirestore(uid),
+          useRecipeBookStore.getState().syncFromFirestore(uid),
+          useCommunityStore.getState().loadPosts(),
+        ]);
+
+        // 2. Alerjen programları — baby profiline bağlı
+        await useAllergenIntroStore.getState().syncFromFirestore(uid);
+
+        // 3. Yemek planı — alerjen programlarına bağlı
+        await useMealPlanStore.getState().syncFromFirestore(uid);
+
+        // 4. Sync sonrası kuyrukdaki bekleyen yazımları gönder
+        await flushQueue();
+      } catch (e) {
+        console.error('Firestore sync hatası:', e);
+      }
+    })();
   }, [user?.uid]);
 
   // Bebek profili yüklendikten sonra zamanlanmış bildirimleri başlat

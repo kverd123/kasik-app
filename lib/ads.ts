@@ -73,3 +73,31 @@ export function maybeShowInterstitial(): boolean {
     return false;
   }
 }
+
+/**
+ * Show interstitial ad and wait for it to close (async).
+ * Resolves true if the ad was shown and closed, false if it couldn't be shown.
+ * Use this when you need to gate an action behind an ad.
+ */
+export function showInterstitialAsync(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (!isLoaded || !interstitial) {
+      resolve(false);
+      return;
+    }
+
+    // Listen for close to resolve the promise
+    const closeListener = interstitial.addAdEventListener(AdEventType.CLOSED, () => {
+      closeListener();
+      resolve(true);
+    });
+
+    try {
+      interstitial.show();
+      isLoaded = false;
+    } catch {
+      closeListener();
+      resolve(false);
+    }
+  });
+}

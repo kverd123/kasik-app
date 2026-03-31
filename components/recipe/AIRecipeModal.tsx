@@ -26,6 +26,7 @@ import {
   incrementDailyUsage,
   AIRecipeResult,
 } from '../../lib/ai-recipes';
+import { showInterstitialAsync } from '../../lib/ads';
 import { useSubscriptionStore } from '../../stores/subscriptionStore';
 import { PantryItem, AgeStage, AllergenType } from '../../types';
 
@@ -73,6 +74,7 @@ export const AIRecipeModal: React.FC<AIRecipeModalProps> = ({
   const [selectedPrefs, setSelectedPrefs] = useState<string[]>([]);
   const [remaining, setRemaining] = useState(3);
   const [showResults, setShowResults] = useState(false);
+  const sessionRequestCountRef = React.useRef(0);
 
   useEffect(() => {
     if (visible) {
@@ -99,6 +101,12 @@ export const AIRecipeModal: React.FC<AIRecipeModalProps> = ({
         ]
       );
       return;
+    }
+
+    // Show interstitial ad before 2nd request for free users
+    sessionRequestCountRef.current += 1;
+    if (!subscription.isPremium && sessionRequestCountRef.current === 2) {
+      await showInterstitialAsync();
     }
 
     setIsGenerating(true);

@@ -35,7 +35,7 @@ import { Card } from '../../components/ui/Card';
 import ScreenHeader from '../../components/ui/ScreenHeader';
 import { Badge, AllergenBadge, FirstTryBadge, LikedBadge, NutrientBadge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/ui/AdBanner';
-import { Meal, MealSlot } from '../../types';
+import { Meal, MealSlot, AllergenType } from '../../types';
 import { MEAL_SLOT_LABELS } from '../../constants/foods';
 import { useRecipeBookStore } from '../../stores/recipeBookStore';
 import { usePantryStore } from '../../stores/pantryStore';
@@ -292,8 +292,26 @@ export default function PlanScreen() {
 
   const weekLabel = useMemo(() => getWeekLabel(currentWeekKey), [currentWeekKey]);
 
-  // Secilen gunun yemekleri
-  const meals = getDayMeals(selectedDayIndex);
+  // Bebegin bilinen alerjenleri (filtering icin)
+  const knownAllergens = baby?.knownAllergens || [];
+
+  // Secilen gunun yemekleri (alerjen filtreli)
+  const rawMeals = getDayMeals(selectedDayIndex);
+  const meals = useMemo(() => {
+    if (knownAllergens.length === 0) return rawMeals;
+    const filtered: Record<MealSlot, Meal[]> = {
+      breakfast: [],
+      lunch: [],
+      snack: [],
+      dinner: [],
+    };
+    for (const slot of Object.keys(filtered) as MealSlot[]) {
+      filtered[slot] = (rawMeals[slot] || []).filter(
+        (meal) => !meal.allergenWarning?.some((a) => knownAllergens.includes(a))
+      );
+    }
+    return filtered;
+  }, [rawMeals, knownAllergens]);
 
   // Calculate progress
   const allMeals = Object.values(meals).flat();
@@ -301,20 +319,57 @@ export default function PlanScreen() {
   const totalCount = allMeals.length;
   const progress = totalCount > 0 ? completedCount / totalCount : 0;
 
-  // Weekly overview: meal counts and names per day
+  // Animated progress bar
+  const progressAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(progressAnim, {
+      toValue: progress,
+      duration: 600,
+      useNativeDriver: false,
+    }).start();
+  }, [progress]);
+
+  // Weekly overview: meal counts and names per day (alerjen filtreli)
   const weeklyMealCounts = useMemo(() => {
     return [0, 1, 2, 3, 4, 5, 6].map((dayIdx) => {
       const dayMeals = getDayMeals(dayIdx);
-      return Object.values(dayMeals).flat().length;
+      const allSlotMeals = Object.values(dayMeals).flat() as Meal[];
+      if (knownAllergens.length === 0) return allSlotMeals.length;
+      return allSlotMeals.filter(
+        (meal) => !meal.allergenWarning?.some((a) => knownAllergens.includes(a as AllergenType))
+      ).length;
     });
-  }, [weekMeals, currentWeekKey, shuffleKey]);
+  }, [weekMeals, currentWeekKey, shuffleKey, knownAllergens]);
 
   const weeklyMealNames = useMemo(() => {
     return [0, 1, 2, 3, 4, 5, 6].map((dayIdx) => {
       const dayMeals = getDayMeals(dayIdx);
-      return Object.values(dayMeals).flat().map((m: any) => m.foodName || m.name || m.title || '').filter(Boolean);
+      let allSlotMeals = Object.values(dayMeals).flat() as Meal[];
+      if (knownAllergens.length > 0) {
+        allSlotMeals = allSlotMeals.filter(
+          (meal) => !meal.allergenWarning?.some((a) => knownAllergens.includes(a as AllergenType))
+        );
+      }
+      return allSlotMeals.map((m) => m.foodName || '').filter(Boolean);
     });
-  }, [weekMeals, currentWeekKey, shuffleKey]);
+  }, [weekMeals, currentWeekKey, shuffleKey, knownAllergens]);
+
+  // Weekly day completion status: 'completed' | 'partial' | 'empty'
+  const weeklyDayStatus = useMemo(() => {
+    return [0, 1, 2, 3, 4, 5, 6].map((dayIdx) => {
+      const dayMeals = getDayMeals(dayIdx);
+      let allSlotMeals = Object.values(dayMeals).flat() as Meal[];
+      if (knownAllergens.length > 0) {
+        allSlotMeals = allSlotMeals.filter(
+          (meal) => !meal.allergenWarning?.some((a) => knownAllergens.includes(a as AllergenType))
+        );
+      }
+      if (allSlotMeals.length === 0) return 'empty';
+      const completedMeals = allSlotMeals.filter((m) => m.completed).length;
+      if (completedMeals === allSlotMeals.length) return 'completed';
+      return 'partial';
+    });
+  }, [weekMeals, currentWeekKey, shuffleKey, knownAllergens]);
 
   const generateWeeklyPlan = useMealPlanStore((s) => s.generateWeeklyPlan);
 
@@ -345,7 +400,6 @@ export default function PlanScreen() {
   }, [generateWeeklyPlan]);
 
   // Verisi olan tarifler (bos/verisiz tarifleri filtrele + alerjen kontrolu)
-  const knownAllergens = baby?.knownAllergens || [];
   const validRecipes = useMemo(() => {
     const safeRecipes = getSafeRecipes(knownAllergens);
     return safeRecipes.filter(
@@ -412,6 +466,14 @@ export default function PlanScreen() {
         title={greetingText}
         subtitle={subtitleText}
         emoji="🥄"
+        leftIcon={
+          baby?.photoURL ? (
+            <Image
+              source={{ uri: baby.photoURL }}
+              style={{ width: 36, height: 36, borderRadius: 18 }}
+            />
+          ) : undefined
+        }
         rightActions={[
           { icon: 'cart-outline', onPress: () => setShoppingModalVisible(true) },
         ]}
@@ -475,7 +537,7 @@ export default function PlanScreen() {
           {/* Week Navigator */}
           <View style={styles.weekNavigator}>
             <TouchableOpacity onPress={() => { goToPreviousWeek(); analytics.weekNavigate('previous'); }} style={styles.weekNavBtn}>
-              <Text style={styles.weekNavArrow}>{'\u25C0'}</Text>
+              <Ionicons name="chevron-back" size={16} color={colors.textLight} />
             </TouchableOpacity>
             <View style={styles.weekNavCenter}>
               <Text style={styles.weekNavLabel}>{weekLabel}</Text>
@@ -486,7 +548,7 @@ export default function PlanScreen() {
               )}
             </View>
             <TouchableOpacity onPress={() => { goToNextWeek(); analytics.weekNavigate('next'); }} style={styles.weekNavBtn}>
-              <Text style={styles.weekNavArrow}>{'\u25B6'}</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.textLight} />
             </TouchableOpacity>
           </View>
 
@@ -494,11 +556,16 @@ export default function PlanScreen() {
           {weekDays.map((day, index) => {
             const mealCount = weeklyMealCounts[index];
             const mealNames = weeklyMealNames[index] || [];
+            const dayStatus = weeklyDayStatus[index];
+            const stripColor = dayStatus === 'completed' ? colors.sage
+              : dayStatus === 'partial' ? colors.warning
+              : colors.creamDark;
             return (
               <TouchableOpacity
                 key={index}
                 style={[
                   styles.weeklyDayCard,
+                  { borderLeftWidth: 4, borderLeftColor: stripColor },
                   day.isToday && styles.weeklyDayCardToday,
                 ]}
                 onPress={() => handleWeeklyDayTap(index)}
@@ -551,7 +618,7 @@ export default function PlanScreen() {
           {/* Week Navigator */}
           <View style={styles.weekNavigator}>
             <TouchableOpacity onPress={() => { goToPreviousWeek(); analytics.weekNavigate('previous'); }} style={styles.weekNavBtn}>
-              <Text style={styles.weekNavArrow}>{'\u25C0'}</Text>
+              <Ionicons name="chevron-back" size={16} color={colors.textLight} />
             </TouchableOpacity>
             <View style={styles.weekNavCenter}>
               <Text style={styles.weekNavLabel}>{weekLabel}</Text>
@@ -562,7 +629,7 @@ export default function PlanScreen() {
               )}
             </View>
             <TouchableOpacity onPress={() => { goToNextWeek(); analytics.weekNavigate('next'); }} style={styles.weekNavBtn}>
-              <Text style={styles.weekNavArrow}>{'\u25B6'}</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.textLight} />
             </TouchableOpacity>
           </View>
 
@@ -667,7 +734,10 @@ export default function PlanScreen() {
                       {/* Bugunku durum */}
                       {dayStatus && !isPaused && (
                         <Text style={styles.allergenTodayStatus}>
-                          Bugün: {dayStatus.todayCompleted}/{dayStatus.todayMeals} öğün {dayStatus.todayCompleted >= dayStatus.todayMeals && dayStatus.todayMeals > 0 ? '\u2713' : ''}
+                          Bugün: {dayStatus.todayCompleted}/{dayStatus.todayMeals} öğün {dayStatus.todayCompleted >= dayStatus.todayMeals && dayStatus.todayMeals > 0 ? ' ' : ''}
+                          {dayStatus.todayCompleted >= dayStatus.todayMeals && dayStatus.todayMeals > 0 && (
+                            <Ionicons name="checkmark" size={12} color={colors.success} />
+                          )}
                         </Text>
                       )}
                     </View>
@@ -678,10 +748,10 @@ export default function PlanScreen() {
                           style={styles.allergenResumeBtn}
                           onPress={(e) => { e.stopPropagation(); resumeProgram(prog.id); }}
                         >
-                          <Text style={styles.allergenResumeBtnText}>{'\u25B6'}</Text>
+                          <Ionicons name="chevron-forward" size={14} color={colors.white} />
                         </TouchableOpacity>
                       ) : (
-                        <Text style={styles.allergenDetailArrow}>{'\u25B6'}</Text>
+                        <Ionicons name="chevron-forward" size={16} color={colors.textLight} />
                       )}
                     </View>
                   </TouchableOpacity>
@@ -836,7 +906,7 @@ export default function PlanScreen() {
                             accessibilityState={{ checked: meal.completed }}
                           >
                             {meal.completed && (
-                              <Text style={styles.checkmark}>{'\u2713'}</Text>
+                              <Ionicons name="checkmark" size={14} color={colors.white} />
                             )}
                           </TouchableOpacity>
                           <TouchableOpacity
@@ -845,7 +915,7 @@ export default function PlanScreen() {
                             accessibilityLabel={`${meal.foodName} ogunu kaldir`}
                             style={styles.removeBtn}
                           >
-                            <Text style={styles.removeIcon}>{'\u2715'}</Text>
+                            <Ionicons name="close" size={16} color={colors.textLight} />
                           </TouchableOpacity>
                         </View>
                       </View>
@@ -873,8 +943,13 @@ export default function PlanScreen() {
                 </Text>
               </View>
               <View style={styles.progressBarBg}>
-                <View
-                  style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
+                <Animated.View
+                  style={[styles.progressBarFill, {
+                    width: progressAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0%', '100%'],
+                    }),
+                  }]}
                 />
               </View>
             </Card>
@@ -918,7 +993,7 @@ export default function PlanScreen() {
                     style={styles.expiringWarningClose}
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
-                    <Text style={styles.expiringWarningCloseText}>{'\u2715'}</Text>
+                    <Ionicons name="close" size={18} color={colors.textLight} />
                   </TouchableOpacity>
                 </View>
                 <Text style={styles.expiringWarningText}>
@@ -996,7 +1071,7 @@ export default function PlanScreen() {
         <SafeAreaView style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setAddModalVisible(false)}>
-              <Text style={styles.modalClose}>{'\u2715'}</Text>
+              <Ionicons name="close" size={24} color={colors.textMid} />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>
               {MEAL_SLOT_LABELS[addingSlot]?.emoji}{' '}
@@ -1018,7 +1093,7 @@ export default function PlanScreen() {
               />
               {recipeSearch.length > 0 && (
                 <TouchableOpacity onPress={() => setRecipeSearch('')}>
-                  <Text style={styles.modalSearchClear}>{'\u2715'}</Text>
+                  <Ionicons name="close" size={16} color={colors.textLight} />
                 </TouchableOpacity>
               )}
             </View>
@@ -1296,7 +1371,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   mealListContent: {
     padding: Spacing.xl,
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
   mealSection: {
     marginBottom: Spacing.lg,

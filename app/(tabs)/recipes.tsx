@@ -18,6 +18,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
@@ -209,6 +210,8 @@ export default function RecipesScreen() {
   const saveRecipe = useRecipeBookStore((s) => s.saveRecipe);
   const removeRecipe = useRecipeBookStore((s) => s.removeRecipe);
   const isRecipeSaved = useRecipeBookStore((s) => s.isRecipeSaved);
+  // Subscribe to entries so FlatList re-renders when bookmarks change
+  const _bookmarkEntries = useRecipeBookStore((s) => s.entries);
 
   const toggleBookmark = useCallback((id: string) => {
     haptics.light();
@@ -401,6 +404,20 @@ export default function RecipesScreen() {
               ) : (
                 <Text style={styles.recipeEmoji}>{item.emoji}</Text>
               )}
+              {/* Gradient overlay at bottom */}
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.35)']}
+                style={styles.gradientOverlay}
+              >
+                <Text style={styles.gradientMeta}>
+                  {item.ageGroup === '6m' ? '6+' : item.ageGroup === '8m' ? '8+' : '12+'} ay  {'\u00B7'}  {item.prepTime} dk  {'\u00B7'}  {item.calories} kcal
+                </Text>
+              </LinearGradient>
+              {/* Cooking time badge */}
+              <View style={styles.cookingTimeBadge}>
+                <Ionicons name="time-outline" size={11} color={colors.textDark} />
+                <Text style={styles.cookingTimeBadgeText}>{item.prepTime} dk</Text>
+              </View>
               {/* Allergen badge */}
               {item.allergens.length > 0 && (
                 <View style={styles.allergenOverlay}>
@@ -454,9 +471,6 @@ export default function RecipesScreen() {
               <Text style={styles.recipeTitle} numberOfLines={1}>
                 {item.title}
               </Text>
-              <Text style={styles.recipeMeta}>
-                {item.ageGroup === '6m' ? '6+' : item.ageGroup === '8m' ? '8+' : '12+'} ay · {item.prepTime} dk · {item.calories} kcal
-              </Text>
               {item.source === 'community' && (
                 <Text style={styles.recipeAuthor}>👤 {item.authorName}</Text>
               )}
@@ -488,7 +502,7 @@ export default function RecipesScreen() {
               </View>
             </View>
           </AnimatedPressable>
-        ), [colors, toggleLike, toggleBookmark, isRecipeSaved, localLikeOverrides])}
+        ), [colors, toggleLike, toggleBookmark, isRecipeSaved, localLikeOverrides, _bookmarkEntries])}
       />
 
       {/* AI Recipe Modal */}
@@ -610,7 +624,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   gridRow: {
     justifyContent: 'space-between',
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   recipeCard: {
     width: CARD_WIDTH,
@@ -621,10 +635,47 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
   },
   recipeImage: {
     width: '100%',
-    height: 140,
+    height: 160,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+  },
+  gradientOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 48,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 8,
+    paddingBottom: 6,
+  },
+  gradientMeta: {
+    fontFamily: FontFamily.medium,
+    fontSize: 10,
+    color: '#FFFFFF',
+  },
+  cookingTimeBadge: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(255,255,255,0.92)',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cookingTimeBadgeText: {
+    fontFamily: FontFamily.semiBold,
+    fontSize: 10,
+    color: colors.textDark,
   },
   recipePhoto: {
     width: '100%',

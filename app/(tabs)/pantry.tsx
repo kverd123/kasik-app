@@ -122,22 +122,23 @@ export default function PantryScreen() {
 
   // Check onboarding status on mount
   useEffect(() => {
-    const checkOnboarding = async () => {
-      try {
-        const done = await AsyncStorage.getItem(ONBOARDING_KEY);
-        if (!done && isLoaded && items.length === 0) {
+    if (!isLoaded) return;
+    // Read current pantry count directly from store to avoid stale closure
+    const currentItems = usePantryStore.getState().items;
+    if (currentItems.length > 0) {
+      setOnboardingChecked(true);
+      return;
+    }
+    // Pantry is empty — check if onboarding was previously dismissed
+    AsyncStorage.getItem(ONBOARDING_KEY)
+      .then((done) => {
+        if (!done) {
           setShowOnboarding(true);
         }
-      } catch (e) {
-        console.warn('Onboarding check failed:', e);
-      } finally {
-        setOnboardingChecked(true);
-      }
-    };
-    if (isLoaded) {
-      checkOnboarding();
-    }
-  }, [isLoaded, items.length]);
+      })
+      .catch((e) => console.warn('Onboarding check failed:', e))
+      .finally(() => setOnboardingChecked(true));
+  }, [isLoaded]);
 
   const dismissOnboarding = useCallback(async () => {
     setShowOnboarding(false);
@@ -1211,7 +1212,7 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
 
   // Liste layout
   itemList: {
-    gap: Spacing.xs,
+    gap: Spacing.sm,
   },
   itemRow: {
     flexDirection: 'row',

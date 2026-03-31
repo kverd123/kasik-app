@@ -92,9 +92,8 @@ export const usePantryStore = create<PantryState>((set, get) => ({
         }));
         set({ items: parsed, isLoaded: true });
       } else {
-        // İlk açılış — demo verisi
-        set({ items: DEFAULT_PANTRY, isLoaded: true });
-        persistToStorage(DEFAULT_PANTRY);
+        // İlk açılış — boş dolap (onboarding overlay gösterilecek)
+        set({ items: [], isLoaded: true });
       }
     } catch (e) {
       console.error('Dolap yüklenemedi:', e);

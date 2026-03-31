@@ -18,7 +18,7 @@ import {
 import { useColors } from '../../hooks/useColors';
 import { FontFamily, FontSize, Spacing, BorderRadius, Shadow } from '../../constants/theme';
 import { ALLERGENS } from '../../constants/allergens';
-import { AllergenType, MealSlot, AgeStage, PantryCategory } from '../../types';
+import { AllergenType, MealSlot, AgeStage, PantryCategory, Meal } from '../../types';
 import {
   ALLERGEN_PROGRAM_TEMPLATES,
   DISCLAIMER_TEXT,
@@ -88,7 +88,7 @@ export function AllergenIntroModal({ visible, onClose }: AllergenIntroModalProps
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
 
   const { startProgram } = useAllergenIntroStore();
-  const { addMealToSlot } = useMealPlanStore();
+  const { addMealToSlot, replaceMealsInSlot } = useMealPlanStore();
   const { getAllSavedRecipes } = useRecipeBookStore();
   const { preferences: notifPrefs } = useNotificationStore();
   const { baby } = useBabyStore();
@@ -184,7 +184,7 @@ export function AllergenIntroModal({ visible, onClose }: AllergenIntroModalProps
       scheduleAllergenCheck(allergenName, baby.name).catch(console.error);
     }
 
-    // Plana otomatik öğün ekle (bugünün indeksinden başla)
+    // Plana otomatik öğün ekle — mevcut slot öğünlerini alerjen test yemeğiyle değiştir
     const todayDayIndex = new Date().getDay();
     const mondayIndex = todayDayIndex === 0 ? 6 : todayDayIndex - 1;
 
@@ -193,7 +193,7 @@ export function AllergenIntroModal({ visible, onClose }: AllergenIntroModalProps
       day.meals.forEach((meal, mealIdx) => {
         const mealKey = `${idx}-${mealIdx}`;
         const customData = customMealNames[mealKey];
-        addMealToSlot(dayIndex, meal.slot, {
+        const allergenMeal: Meal = {
           id: meal.id,
           slot: meal.slot,
           foodName: meal.recipeName,
@@ -214,7 +214,9 @@ export function AllergenIntroModal({ visible, onClose }: AllergenIntroModalProps
           } : {}),
           ...(customData?.steps?.length ? { steps: customData.steps } : {}),
           ...(customData?.prepTime ? { prepTime: customData.prepTime } : {}),
-        });
+        };
+        // Mevcut slot içeriğini alerjen test yemeğiyle değiştir
+        replaceMealsInSlot(dayIndex, meal.slot, [allergenMeal]);
       });
     });
 
