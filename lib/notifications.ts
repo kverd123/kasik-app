@@ -112,7 +112,7 @@ export async function registerForPushNotifications(): Promise<string | null> {
     // Token'ı kaydet
     await AsyncStorage.setItem(STORAGE_KEYS.PUSH_TOKEN, token);
 
-    console.log('Push token:', token);
+    // Push token log kaldirildi (guvenlik)
     return token;
   } catch (error) {
     console.error('Push token alınamadı:', error);

@@ -12,6 +12,7 @@ import { useColors } from '../hooks/useColors';
 export default function Index() {
   const colors = useColors();
   const { user, isLoading, isAuthenticated } = useAuthStore();
+  const baby = require('../stores/babyStore').useBabyStore((s: any) => s.baby);
   const [timeout, setTimeoutReached] = useState(false);
 
   // 5 saniye sonra hâlâ yükleniyorsa zorla login'e yönlendir
@@ -26,8 +27,9 @@ export default function Index() {
     if (isLoading && !timeout) return;
 
     if (isAuthenticated && user) {
-      // Onboarding tamamlanmamissa onboarding'e yonlendir
-      if (!user.onboardingCompleted) {
+      // Onboarding tamamlanmışsa veya bebek profili varsa → ana ekrana git
+      const onboardingDone = user.onboardingCompleted || baby?.name;
+      if (!onboardingDone) {
         router.replace('/(onboarding)/welcome');
       } else {
         router.replace('/(tabs)/plan');

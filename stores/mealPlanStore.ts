@@ -7,7 +7,7 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { debouncedSetItem } from '../lib/debouncedStorage';
-import { Meal, MealSlot } from '../types';
+import { Meal, MealSlot, AllergenType } from '../types';
 import { usePantryStore } from './pantryStore';
 import { ALL_RECIPES, RECIPES_BY_ID, RecipeData, getSafeRecipes } from '../constants/recipes';
 import { syncToFirestore } from '../lib/firestoreSync';
@@ -724,7 +724,30 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
             calories: recipe.calories,
             completed: false,
             isFirstTry: false,
-            allergenWarning: recipe.allergens.length > 0 ? recipe.allergens : undefined,
+            allergenWarning: (() => {
+              // Hem recipe.allergens hem de keyword-based detection
+              const detected = new Set<string>(recipe.allergens || []);
+              const KEYWORDS: Record<string, string[]> = {
+                egg: ['yumurta', 'omlet', 'menemen'],
+                milk: ['süt', 'yoğurt', 'peynir', 'labne', 'lor', 'kaşar', 'kefir', 'ayran', 'tereyağı'],
+                wheat: ['buğday', 'bulgur', 'irmik', 'un', 'ekmek', 'makarna', 'erişte', 'yulaf', 'tarhana'],
+                fish: ['balık', 'somon'],
+                peanut: ['fıstık'],
+                tree_nuts: ['ceviz', 'badem', 'fındık'],
+                sesame: ['susam', 'tahin'],
+              };
+              const titleLower = (mealName || recipe.title).toLowerCase();
+              const ingNames = recipe.ingredients.map((i: any) => i.name.toLowerCase());
+              for (const [allergen, keywords] of Object.entries(KEYWORDS)) {
+                for (const kw of keywords) {
+                  if (titleLower.includes(kw) || ingNames.some((n: string) => n.includes(kw))) {
+                    detected.add(allergen);
+                    break;
+                  }
+                }
+              }
+              return detected.size > 0 ? Array.from(detected) as AllergenType[] : undefined;
+            })(),
             missingIngredients: missingIngredients.length > 0 ? missingIngredients.map((i) => i.name) : undefined,
             nutrients: recipe.nutrients.slice(0, 2).map((n) => ({
               name: n.name,

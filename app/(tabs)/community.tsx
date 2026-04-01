@@ -81,11 +81,8 @@ export default function CommunityScreen() {
     if (!wasLiked) analytics.postLike(id);
     togglePostLike(id);
 
-    // Beğeni bildirimi gönder (sadece beğeni ekleme durumunda, kendi paylaşımını beğenirse gönderme)
-    const isOwnPost = !!(user?.uid && post?.authorId && user.uid === post.authorId);
-    if (!wasLiked && post && notifPrefs.communityUpdates && !isOwnPost) {
-      notifyLike(post.author, post.content).catch(console.error);
-    }
+    // Not: Local bildirim kaldırıldı - beğeni bildirimi sadece push notification ile
+    // post sahibine gönderilmeli (server-side). Local bildirim yanlış kişiye gidiyordu.
   }, [posts, togglePostLike, notifPrefs.communityUpdates, user]);
 
   const handleCreatePost = async (data: CreatePostData) => {
