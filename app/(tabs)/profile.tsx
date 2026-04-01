@@ -429,15 +429,15 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* Allergen history — gerçek veriden + bebek profili alerjenler */}
+          {/* Allergen history — bebek profili alerjenler (program ile takip edilmeyenler) */}
           <View style={styles.allergenSection}>
-            <Text style={styles.subTitle}>Alerjen Geçmişi</Text>
-            {(getAllPrograms().length > 0 || (baby?.knownAllergens && baby.knownAllergens.length > 0)) ? (
+            <Text style={styles.subTitle}>Bilinen Alerjenler</Text>
+            {(baby?.knownAllergens && baby.knownAllergens.length > 0) ? (
               <View style={styles.allergenRow}>
                 {/* Bilinen alerjenler (baby profili) — program ile takip edilmeyenler */}
                 {(baby?.knownAllergens || [])
+                  .filter((a, index, arr) => arr.indexOf(a) === index) // deduplicate
                   .filter((a) => !getAllPrograms().some((p) => p.allergenType === a))
-                  .slice(0, 4 - Math.min(getAllPrograms().length, 4))
                   .map((allergenType) => (
                     <View key={`known-${allergenType}`} style={styles.allergenItem}>
                       <Text style={styles.allergenEmoji}>{getAllergenEmoji(allergenType)}</Text>
@@ -445,32 +445,6 @@ export default function ProfileScreen() {
                       <Badge label="Alerjik" variant="danger" />
                     </View>
                   ))}
-                {/* Program ile takip edilen alerjenler */}
-                {getAllPrograms().slice(0, 4).map((prog) => {
-                  const progReport = getProfileProgramReport(prog.id);
-                  const resultMap: Record<string, { label: string; variant: 'success' | 'warning' | 'danger' }> = {
-                    safe: { label: '✓ Sorunsuz', variant: 'success' },
-                    caution: { label: '⚠ Dikkat', variant: 'warning' },
-                    allergic: { label: '✕ Alerjik', variant: 'danger' },
-                    in_progress: { label: 'Takipte', variant: 'warning' },
-                  };
-                  const result = resultMap[progReport?.overallResult || 'in_progress'];
-                  return (
-                    <TouchableOpacity
-                      key={prog.id}
-                      style={styles.allergenItem}
-                      onPress={() => setProfileDetailProgram(prog)}
-                    >
-                      <Text style={styles.allergenEmoji}>{getAllergenEmoji(prog.allergenType)}</Text>
-                      <Text style={styles.allergenName}>
-                        {prog.allergenType === 'other' && prog.customAllergenName
-                          ? prog.customAllergenName
-                          : getAllergenLabel(prog.allergenType)}
-                      </Text>
-                      <Badge label={result.label} variant={result.variant} />
-                    </TouchableOpacity>
-                  );
-                })}
               </View>
             ) : (
               <Text style={styles.allergenEmptyText}>Henüz alerjen bilgisi eklenmedi</Text>

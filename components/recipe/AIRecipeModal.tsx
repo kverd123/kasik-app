@@ -25,6 +25,7 @@ import {
   canGenerateRecipe,
   incrementDailyUsage,
   AIRecipeResult,
+  clearSessionCache,
 } from '../../lib/ai-recipes';
 import { showInterstitialAsync } from '../../lib/ads';
 import { useSubscriptionStore } from '../../stores/subscriptionStore';
@@ -81,6 +82,7 @@ export const AIRecipeModal: React.FC<AIRecipeModalProps> = ({
       checkLimit();
       setResults([]);
       setShowResults(false);
+      clearSessionCache();
     }
   }, [visible]);
 

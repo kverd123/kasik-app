@@ -302,25 +302,35 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
         if (data) {
           const parsed = JSON.parse(data);
 
+          // Re-filter cached plans against current allergens on every load
+          const knownAllergens = useBabyStore.getState().baby?.knownAllergens || [];
+
           // v2 format kontrolü
           if (parsed.version === 2 && parsed.weeks) {
             const weeks = parsed.weeks as Record<string, Record<number, DayMeals>>;
-            const currentWeek = weeks[thisWeekKey] || emptyWeek();
+            // Filter all cached weeks by current allergens
+            const filteredWeeks: Record<string, Record<number, DayMeals>> = {};
+            for (const [key, weekData] of Object.entries(weeks)) {
+              filteredWeeks[key] = filterWeekMealsByAllergens(weekData, knownAllergens);
+            }
+            const currentWeek = filteredWeeks[thisWeekKey] || emptyWeek();
             set({
-              allWeekMeals: weeks,
+              allWeekMeals: filteredWeeks,
               weekMeals: currentWeek,
               currentWeekKey: thisWeekKey,
               isLoaded: true,
             });
+            persistToStorage(filteredWeeks);
           } else {
             // Eski format (v1) — tek haftalık Record<number, DayMeals>
             // Mevcut haftanın key'ine migrate et
+            const filteredParsed = filterWeekMealsByAllergens(parsed, knownAllergens);
             const migratedWeeks: Record<string, Record<number, DayMeals>> = {
-              [thisWeekKey]: parsed,
+              [thisWeekKey]: filteredParsed,
             };
             set({
               allWeekMeals: migratedWeeks,
-              weekMeals: parsed,
+              weekMeals: filteredParsed,
               currentWeekKey: thisWeekKey,
               isLoaded: true,
             });
@@ -363,11 +373,12 @@ export const useMealPlanStore = create<MealPlanState>((set, get) => {
         const remoteWeeks = await getAllWeekMealPlans(userId);
         if (Object.keys(remoteWeeks).length > 0) {
           const { currentWeekKey } = get();
-          // Remove updatedAt from week data
+          const knownAllergens = useBabyStore.getState().baby?.knownAllergens || [];
+          // Remove updatedAt from week data and filter by allergens
           const cleaned: Record<string, Record<number, DayMeals>> = {};
           for (const [key, data] of Object.entries(remoteWeeks)) {
             const { updatedAt, ...weekData } = data as any;
-            cleaned[key] = weekData;
+            cleaned[key] = filterWeekMealsByAllergens(weekData, knownAllergens);
           }
           set({
             allWeekMeals: cleaned,

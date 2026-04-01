@@ -190,11 +190,15 @@ export default function AllergensScreen() {
         {/* CTA */}
         <View style={styles.ctaContainer}>
           <Button
-            title={selected.length > 0 ? `${selected.length} Alerjen Seçildi — Tamamla` : 'Alerjen Seçmeden Devam Et'}
+            title={
+              selected.length > 0 || customAllergens.length > 0
+                ? `${selected.length + customAllergens.length} Alerjen Seçildi — Tamamla`
+                : 'Alerjen Seçmeden Devam Et'
+            }
             onPress={handleComplete}
             fullWidth
             size="lg"
-            variant={selected.length > 0 ? 'primary' : 'outline'}
+            variant={selected.length > 0 || customAllergens.length > 0 ? 'primary' : 'outline'}
           />
         </View>
       </ScrollView>

@@ -81,11 +81,12 @@ export default function CommunityScreen() {
     if (!wasLiked) analytics.postLike(id);
     togglePostLike(id);
 
-    // Beğeni bildirimi gönder (sadece beğeni ekleme durumunda)
-    if (!wasLiked && post && notifPrefs.communityUpdates) {
+    // Beğeni bildirimi gönder (sadece beğeni ekleme durumunda, kendi paylaşımını beğenirse gönderme)
+    const isOwnPost = user?.displayName === post?.author;
+    if (!wasLiked && post && notifPrefs.communityUpdates && !isOwnPost) {
       notifyLike(post.author, post.content).catch(console.error);
     }
-  }, [posts, togglePostLike, notifPrefs.communityUpdates]);
+  }, [posts, togglePostLike, notifPrefs.communityUpdates, user]);
 
   const handleCreatePost = async (data: CreatePostData) => {
     let recipeId: string | undefined;

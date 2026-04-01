@@ -20,6 +20,20 @@ const compressImage = async (uri: string): Promise<string> => {
 };
 
 /**
+ * Convert a local file URI to a Blob (React Native compatible)
+ */
+const uriToBlob = (uri: string): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => resolve(xhr.response as Blob);
+    xhr.onerror = () => reject(new Error('Failed to convert URI to blob'));
+    xhr.responseType = 'blob';
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+  });
+};
+
+/**
  * Upload a photo to Firebase Storage
  */
 export const uploadPhoto = async (
@@ -29,9 +43,8 @@ export const uploadPhoto = async (
   // Compress the image first
   const compressedUri = await compressImage(uri);
 
-  // Convert URI to blob
-  const response = await fetch(compressedUri);
-  const blob = await response.blob();
+  // Convert URI to blob (use XMLHttpRequest for React Native compatibility)
+  const blob = await uriToBlob(compressedUri);
 
   // Upload to Firebase Storage
   const storageRef = ref(storage, path);

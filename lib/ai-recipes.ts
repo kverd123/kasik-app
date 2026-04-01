@@ -17,6 +17,29 @@ import { getAllergenLabel } from '../constants/allergens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { analytics } from './analytics';
 
+// ===== SESSION-LEVEL RECIPE CACHE (prevents duplicate AI recipes) =====
+
+const _sessionGeneratedTitles: string[] = [];
+
+/** Add titles to the session cache so future requests avoid duplicates */
+export function addToSessionCache(titles: string[]): void {
+  for (const t of titles) {
+    if (!_sessionGeneratedTitles.includes(t)) {
+      _sessionGeneratedTitles.push(t);
+    }
+  }
+}
+
+/** Get previously generated recipe titles in this session */
+export function getSessionGeneratedTitles(): string[] {
+  return [..._sessionGeneratedTitles];
+}
+
+/** Clear session cache (e.g. when modal closes) */
+export function clearSessionCache(): void {
+  _sessionGeneratedTitles.length = 0;
+}
+
 // ===== CONFIGURATION =====
 
 type AIProvider = 'openai' | 'claude' | 'gemini' | 'fallback';
@@ -95,7 +118,7 @@ interface AIRecipeRequest {
   count?: number; // how many recipes to generate (1-3)
 }
 
-function buildPrompt(request: AIRecipeRequest): string {
+function buildPrompt(request: AIRecipeRequest, previouslyGenerated: string[] = []): string {
   const ageLabel = request.babyAgeStage === '6m' ? '6 aylık'
     : request.babyAgeStage === '8m' ? '8 aylık' : '12 ay ve üzeri';
 
@@ -133,6 +156,7 @@ ${request.preferences ? `TERCİH: ${request.preferences}` : ''}
 ÖĞÜN TİPİ: ${mealLabel}
 ${request.babyName ? `BEBEĞİN ADI: ${request.babyName}` : ''}
 
+${previouslyGenerated.length > 0 ? `\nÖNCEDEN ÖNERİLEN TARİFLER (bunları TEKRAR önerme, farklı tarifler oluştur):\n${previouslyGenerated.map((t) => `- ${t}`).join('\n')}\n` : ''}
 ${count} adet tarif oluştur. Her tarif için aşağıdaki JSON formatını kullan.
 Yanıtını SADECE JSON olarak ver, başka metin ekleme.
 
@@ -581,7 +605,8 @@ function parseAIResponse(responseText: string): AIRecipeResult[] {
  * Generate recipe(s) using AI based on pantry and baby profile
  */
 export async function generateAIRecipes(request: AIRecipeRequest): Promise<AIRecipeResult[]> {
-  const prompt = buildPrompt(request);
+  const previouslyGenerated = getSessionGeneratedTitles();
+  const prompt = buildPrompt(request, previouslyGenerated);
 
   try {
     let responseText: string;
@@ -617,6 +642,7 @@ export async function generateAIRecipes(request: AIRecipeRequest): Promise<AIRec
     }
 
     const recipes = parseAIResponse(responseText);
+    addToSessionCache(recipes.map((r) => r.title));
     analytics.aiRecipeGenerate(AI_CONFIG.provider, recipes.length);
     return recipes;
   } catch (error) {

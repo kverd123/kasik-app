@@ -97,6 +97,7 @@ export default function PlanScreen() {
 
   const notifPrefs = useNotificationStore((s) => s.preferences);
   const baby = useBabyStore((s) => s.baby);
+  const knownAllergens = useBabyStore((s) => s.baby?.knownAllergens ?? []);
   const user = useAuthStore((s) => s.user);
   const entries = useRecipeBookStore((s) => s.entries);
   const loadRecipeBook = useRecipeBookStore((s) => s.loadFromStorage);
@@ -291,9 +292,6 @@ export default function PlanScreen() {
   }, [currentWeekKey]);
 
   const weekLabel = useMemo(() => getWeekLabel(currentWeekKey), [currentWeekKey]);
-
-  // Bebegin bilinen alerjenleri (filtering icin)
-  const knownAllergens = baby?.knownAllergens || [];
 
   // Secilen gunun yemekleri (alerjen filtreli)
   const rawMeals = getDayMeals(selectedDayIndex);
@@ -746,7 +744,7 @@ export default function PlanScreen() {
                       {isPaused ? (
                         <TouchableOpacity
                           style={styles.allergenResumeBtn}
-                          onPress={(e) => { e.stopPropagation(); resumeProgram(prog.id); }}
+                          onPress={() => resumeProgram(prog.id)}
                         >
                           <Ionicons name="chevron-forward" size={14} color={colors.white} />
                         </TouchableOpacity>

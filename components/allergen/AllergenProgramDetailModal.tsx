@@ -84,6 +84,7 @@ export function AllergenProgramDetailModal({ visible, program, onClose }: Allerg
 
   const handleResume = () => {
     resumeProgram(program.id);
+    onClose();
   };
 
   return (

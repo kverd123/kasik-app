@@ -44,13 +44,17 @@ const YEARS = [currentYear - 3, currentYear - 2, currentYear - 1, currentYear];
 
 export default function BabyInfoScreen() {
   const colors = useColors();
-  const [babyName, setBabyName] = useState('');
-  const [gender, setGender] = useState<'male' | 'female' | 'other' | ''>('');
-  const [stage, setStage] = useState<AgeStage | ''>('');
-  const [birthMonth, setBirthMonth] = useState<number | null>(null);
-  const [birthYear, setBirthYear] = useState<number | null>(null);
-
   const { updateBaby, baby } = useBabyStore();
+
+  const [babyName, setBabyName] = useState(baby?.name || '');
+  const [gender, setGender] = useState<'male' | 'female' | 'other' | ''>(baby?.gender || '');
+  const [stage, setStage] = useState<AgeStage | ''>(baby?.currentStage || '');
+  const [birthMonth, setBirthMonth] = useState<number | null>(
+    baby?.birthDate ? new Date(baby.birthDate).getMonth() : null
+  );
+  const [birthYear, setBirthYear] = useState<number | null>(
+    baby?.birthDate ? new Date(baby.birthDate).getFullYear() : null
+  );
 
   const canContinue = babyName.trim().length > 0 && gender && stage;
 

@@ -120,33 +120,20 @@ export default function PantryScreen() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
 
-  // Check onboarding status on mount
+  // Show onboarding every time pantry is empty (not just first time)
   useEffect(() => {
     if (!isLoaded) return;
-    // Read current pantry count directly from store to avoid stale closure
     const currentItems = usePantryStore.getState().items;
-    if (currentItems.length > 0) {
-      setOnboardingChecked(true);
-      return;
+    if (currentItems.length === 0) {
+      setShowOnboarding(true);
+    } else {
+      setShowOnboarding(false);
     }
-    // Pantry is empty — check if onboarding was previously dismissed
-    AsyncStorage.getItem(ONBOARDING_KEY)
-      .then((done) => {
-        if (!done) {
-          setShowOnboarding(true);
-        }
-      })
-      .catch((e) => console.warn('Onboarding check failed:', e))
-      .finally(() => setOnboardingChecked(true));
-  }, [isLoaded]);
+    setOnboardingChecked(true);
+  }, [isLoaded, items.length]);
 
   const dismissOnboarding = useCallback(async () => {
     setShowOnboarding(false);
-    try {
-      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-    } catch (e) {
-      console.warn('Failed to save onboarding state:', e);
-    }
   }, []);
 
   const handleReadyPantry = useCallback(async () => {
