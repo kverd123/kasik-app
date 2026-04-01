@@ -31,6 +31,7 @@ export interface CommunityComment {
 
 export interface CommunityPost {
   id: string;
+  authorId?: string;
   author: string;
   avatar: string;
   avatarBg: string;
@@ -86,6 +87,7 @@ const persistToStorage = (posts: CommunityPost[]) => {
 
 const mapFirestorePost = (p: any): CommunityPost => ({
   id: p.id,
+  authorId: p.authorId,
   author: p.authorName || p.author || 'Anonim',
   avatar: p.avatar || '👤',
   avatarBg: p.avatarBg || '#E0E0E0',

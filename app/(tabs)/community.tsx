@@ -82,7 +82,7 @@ export default function CommunityScreen() {
     togglePostLike(id);
 
     // Beğeni bildirimi gönder (sadece beğeni ekleme durumunda, kendi paylaşımını beğenirse gönderme)
-    const isOwnPost = user?.displayName === post?.author;
+    const isOwnPost = !!(user?.uid && post?.authorId && user.uid === post.authorId);
     if (!wasLiked && post && notifPrefs.communityUpdates && !isOwnPost) {
       notifyLike(post.author, post.content).catch(console.error);
     }
@@ -125,6 +125,7 @@ export default function CommunityScreen() {
 
     const newPost: CommunityPost = {
       id: `post-${Date.now()}`,
+      authorId: user?.uid,
       author: 'Ben',
       avatar: '👤',
       avatarBg: colors.sageLight,

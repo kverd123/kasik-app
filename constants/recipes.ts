@@ -14648,12 +14648,47 @@ export function getRecipesByMonth(babyMonth: number): RecipeData[] {
   });
 }
 
+// Alerjen anahtar kelimeleri (Türkçe)
+const ALLERGEN_KEYWORDS: Record<string, string[]> = {
+  egg: ['yumurta', 'omlet', 'menemen'],
+  milk: ['süt', 'yoğurt', 'peynir', 'labne', 'lor', 'kaşar', 'kefir', 'ayran', 'cacık', 'tereyağı'],
+  wheat: ['buğday', 'bulgur', 'irmik', 'un', 'ekmek', 'makarna', 'erişte', 'yulaf', 'tarhana'],
+  fish: ['balık', 'somon'],
+  peanut: ['fıstık', 'yer fıstığı'],
+  tree_nuts: ['ceviz', 'badem', 'fındık', 'antep fıstığı', 'kaju'],
+  soy: ['soya'],
+  sesame: ['susam', 'tahin'],
+  shellfish: ['kabuklu', 'karides', 'midye'],
+  celery: ['kereviz'],
+};
+
 // Alerjen kontrolü
 export function getSafeRecipes(allergens: AllergenType[]): RecipeData[] {
   if (allergens.length === 0) return ALL_RECIPES;
-  return ALL_RECIPES.filter(
-    (r) => !r.allergens.some((a) => allergens.includes(a))
-  );
+
+  // Kullanıcının alerjenleri için tüm anahtar kelimeleri topla
+  const keywords: string[] = [];
+  for (const allergen of allergens) {
+    const kw = ALLERGEN_KEYWORDS[allergen];
+    if (kw) keywords.push(...kw);
+  }
+
+  return ALL_RECIPES.filter((r) => {
+    // Mevcut allergens dizisini kontrol et
+    if (r.allergens.some((a) => allergens.includes(a))) return false;
+
+    // Başlıkta alerjen anahtar kelimesi var mı kontrol et
+    const titleLower = r.title.toLowerCase();
+    if (keywords.some((kw) => titleLower.includes(kw))) return false;
+
+    // Malzeme isimlerinde alerjen anahtar kelimesi var mı kontrol et
+    if (r.ingredients.some((i) => {
+      const nameLower = i.name.toLowerCase();
+      return keywords.some((kw) => nameLower.includes(kw));
+    })) return false;
+
+    return true;
+  });
 }
 
 // Topluluk tarifi ekleme
