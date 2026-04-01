@@ -73,11 +73,14 @@ export default function AllergensScreen() {
       customAllergens.forEach((name) => addCustomAllergen(name));
     }
 
-    // Onboarding tamamlandı flag'ini Firestore'a yaz
+    // Onboarding tamamlandı flag'ini Firestore'a yaz + local store güncelle
     if (user?.uid) {
       try {
         await completeOnboarding(user.uid);
-        await refreshProfile();
+        // Local store'u hemen güncelle (Firestore cache beklemeden)
+        useAuthStore.setState((state) => ({
+          user: state.user ? { ...state.user, onboardingCompleted: true } : state.user,
+        }));
       } catch (e) {
         console.error('Onboarding tamamlama hatası:', e);
       }
