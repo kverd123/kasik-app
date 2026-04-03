@@ -28,6 +28,12 @@
         "ascApiKeyPath": "./AuthKey_55WBKJ3625.p8",
         "ascApiKeyId": "55WBKJ3625",
         "ascApiKeyIssuerId": "c7db0adb-455d-4c4f-aa3b-ba9327302766"
+      },
+      "android": {
+        "serviceAccountKeyPath": "./google/play-store-service-account.json",
+        "track": "internal",
+        "releaseStatus": "draft",
+        "changesNotSentForReview": true
       }
     }
   }

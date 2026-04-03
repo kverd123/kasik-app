@@ -43,6 +43,7 @@ import { analytics } from '../../lib/analytics';
 import { useThemeStore, ThemeMode } from '../../stores/themeStore';
 import * as ImagePicker from 'expo-image-picker';
 import { uploadBabyPhoto } from '../../lib/storage';
+import { GuestBlockScreen } from '../../components/ui/GuestBanner';
 
 type BookTab = 'all' | 'favorites' | 'try_later' | 'made_it';
 
@@ -143,6 +144,18 @@ function AllergenReport() {
 }
 
 export default function ProfileScreen() {
+  const isGuest = useAuthStore((s) => s.isGuest);
+
+  if (isGuest) {
+    return (
+      <GuestBlockScreen
+        icon="👤"
+        title="Profil"
+        description="Bebek profilinizi olusturun, tarif defterinizi yonetin ve alerjen takibi yapin. Kayit olarak tum ozelliklere erisebilirsiniz."
+      />
+    );
+  }
+
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const user = useAuthStore((s) => s.user);
@@ -625,7 +638,7 @@ export default function ProfileScreen() {
               }
             } catch (e: any) {
               if (!e?.userCancelled) {
-                Alert.alert('Hata', 'Satın alma işlemi tamamlanamadı. Lütfen tekrar deneyin.');
+                Alert.alert('Hata', e?.message || 'Satın alma işlemi tamamlanamadı. Lütfen tekrar deneyin.');
               }
             }
           }}>
@@ -760,8 +773,8 @@ export default function ProfileScreen() {
                   const isPremium = useSubscriptionStore.getState().subscription.isPremium;
                   Alert.alert(isPremium ? 'Başarılı' : 'Bilgi', isPremium ? 'Premium aboneliğiniz geri yüklendi!' : 'Aktif abonelik bulunamadı.');
                 }
-              } catch {
-                Alert.alert('Hata', 'Geri yükleme başarısız oldu.');
+              } catch (e: any) {
+                Alert.alert('Hata', e?.message || 'Geri yükleme başarısız oldu.');
               }
             }}>
               <Text style={styles.settingLabel}>Satın Alımları Geri Yükle</Text>

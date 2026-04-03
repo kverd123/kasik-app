@@ -36,6 +36,8 @@ import { AdBanner } from '../../components/ui/AdBanner';
 import { AIRecipeModal } from '../../components/recipe/AIRecipeModal';
 import { PantryItem, PantryCategory } from '../../types';
 import { usePantryStore, PantryEntry } from '../../stores/pantryStore';
+import { useAuthStore } from '../../stores/authStore';
+import { GuestBlockScreen } from '../../components/ui/GuestBanner';
 import { getDefaultFreshnessDays, isDryGood } from '../../constants/freshness';
 import { SwipeableRow } from '../../components/ui/SwipeableRow';
 import ScreenHeader from '../../components/ui/ScreenHeader';
@@ -98,6 +100,18 @@ function GestureWrapper({ children }: { children: React.ReactNode }) {
 }
 
 export default function PantryScreen() {
+  const isGuest = useAuthStore((s) => s.isGuest);
+
+  if (isGuest) {
+    return (
+      <GuestBlockScreen
+        icon="🧺"
+        title="Dolabim"
+        description="Mutfaginizdaki malzemeleri takip edin, son kullanma tarihlerini gozden kacirmayin. Kayit olarak bu ozelligi kullanabilirsiniz."
+      />
+    );
+  }
+
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const items = usePantryStore((s) => s.items);

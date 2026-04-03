@@ -48,6 +48,7 @@ import { useBabyStore } from '../../stores/babyStore';
 import { analytics } from '../../lib/analytics';
 import { RecipeGridSkeleton } from '../../components/ui/SkeletonLoader';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { GuestBanner } from '../../components/ui/GuestBanner';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - Spacing.xl * 2 - Spacing.md) / 2;
@@ -96,7 +97,7 @@ const mapRecipeToGrid = (r: RecipeData) => ({
 export default function RecipesScreen() {
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const { user } = useAuthStore();
+  const { user, isGuest } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortMode, setSortMode] = useState<SortMode>('trending');
@@ -253,6 +254,7 @@ export default function RecipesScreen() {
 
   return (
     <View style={styles.container}>
+      {isGuest && <GuestBanner />}
       <ScreenHeader
         title="Tarifler"
         emoji="📖"

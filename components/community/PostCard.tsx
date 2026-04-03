@@ -28,6 +28,7 @@ export interface PostCardProps {
   styles: ReturnType<typeof StyleSheet.create>;
   onToggleLike: (id: string) => void;
   onDeletePost?: (id: string) => void;
+  onBlockUser?: (userId: string) => void;
   isRecipeSaved: (id: string) => boolean;
   onSaveRecipe: (recipeId: string, category?: 'favorites' | 'try_later' | 'made_it') => void;
 }
@@ -39,27 +40,78 @@ const PostCard = React.memo(function PostCard({
   styles,
   onToggleLike,
   onDeletePost,
+  onBlockUser,
   isRecipeSaved,
   onSaveRecipe,
 }: PostCardProps) {
-  const handleMorePress = () => {
+  const handleReport = () => {
     Alert.alert(
-      'Gönderi Seçenekleri',
-      '',
+      'Gönderiyi Bildir',
+      'Bu gönderiyi uygunsuz olarak bildirmek istiyor musunuz?',
       [
-        ...(onDeletePost ? [{
-          text: 'Gönderiyi Sil',
-          style: 'destructive' as const,
-          onPress: () => {
-            Alert.alert('Sil', 'Bu gönderiyi silmek istediğinize emin misiniz?', [
-              { text: 'İptal', style: 'cancel' },
-              { text: 'Sil', style: 'destructive', onPress: () => onDeletePost(post.id) },
-            ]);
-          },
-        }] : []),
         { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Şikayet Et',
+          style: 'destructive',
+          onPress: () => Alert.alert('Bildirildi', 'Gönderiniz incelenecektir. Teşekkürler.'),
+        },
       ],
     );
+  };
+
+  const handleBlockUser = () => {
+    if (!post.authorId) return;
+    Alert.alert(
+      'Kullanıcıyı Engelle',
+      `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının gönderilerini artık görmeyeceksiniz.`,
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Engelle',
+          style: 'destructive',
+          onPress: () => {
+            onBlockUser?.(post.authorId!);
+            Alert.alert('Engellendi', `${post.author} engellendi. Gönderileri artık görünmeyecek.`);
+          },
+        },
+      ],
+    );
+  };
+
+  const handleMorePress = () => {
+    const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [];
+
+    // Kendi gönderisini silebilir
+    if (onDeletePost) {
+      options.push({
+        text: 'Gönderiyi Sil',
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert('Sil', 'Bu gönderiyi silmek istediğinize emin misiniz?', [
+            { text: 'İptal', style: 'cancel' },
+            { text: 'Sil', style: 'destructive', onPress: () => onDeletePost(post.id) },
+          ]);
+        },
+      });
+    }
+
+    // Başkasının gönderisini şikayet et veya engelle
+    if (post.authorId) {
+      options.push({
+        text: 'Şikayet Et',
+        style: 'destructive',
+        onPress: handleReport,
+      });
+      options.push({
+        text: 'Kullanıcıyı Engelle',
+        style: 'destructive',
+        onPress: handleBlockUser,
+      });
+    }
+
+    options.push({ text: 'İptal', style: 'cancel' });
+
+    Alert.alert('Gönderi Seçenekleri', '', options);
   };
   return (
     <React.Fragment>

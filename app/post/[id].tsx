@@ -37,7 +37,7 @@ import { useCommunityStore, CommunityComment } from '../../stores/communityStore
 
 export default function PostDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getPostById, togglePostLike, addComment, addReply, toggleCommentLike: storeToggleCommentLike } = useCommunityStore();
+  const { getPostById, togglePostLike, addComment, addReply, toggleCommentLike: storeToggleCommentLike, blockUser } = useCommunityStore();
   const post = getPostById(id || '1');
 
   const [newComment, setNewComment] = useState('');
@@ -119,11 +119,53 @@ export default function PostDetailScreen() {
     Alert.alert('Gönderiyi Bildir', 'Bu gönderiyi uygunsuz olarak bildirmek istiyor musunuz?', [
       { text: 'İptal', style: 'cancel' },
       {
-        text: 'Bildir',
+        text: 'Şikayet Et',
         style: 'destructive',
         onPress: () => Alert.alert('Bildirildi', 'Gönderiniz incelenecektir. Teşekkürler.'),
       },
     ]);
+  };
+
+  const handleBlockUser = () => {
+    if (!post?.authorId) return;
+    Alert.alert(
+      'Kullanıcıyı Engelle',
+      `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının gönderilerini artık görmeyeceksiniz.`,
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Engelle',
+          style: 'destructive',
+          onPress: () => {
+            blockUser(post.authorId!);
+            Alert.alert('Engellendi', `${post.author} engellendi.`, [
+              { text: 'Tamam', onPress: () => router.back() },
+            ]);
+          },
+        },
+      ],
+    );
+  };
+
+  const handlePostMenu = () => {
+    const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [
+      {
+        text: 'Şikayet Et',
+        style: 'destructive',
+        onPress: handleReport,
+      },
+    ];
+
+    if (post?.authorId) {
+      options.push({
+        text: 'Kullanıcıyı Engelle',
+        style: 'destructive',
+        onPress: handleBlockUser,
+      });
+    }
+
+    options.push({ text: 'İptal', style: 'cancel' });
+    Alert.alert('Gönderi Seçenekleri', '', options);
   };
 
   const renderComment = (comment: CommunityComment, isReply = false) => (
@@ -187,7 +229,7 @@ export default function PostDetailScreen() {
             <Text style={styles.headerIcon}>←</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Gönderi</Text>
-          <TouchableOpacity onPress={handleReport} style={styles.headerIconBtn}>
+          <TouchableOpacity onPress={handlePostMenu} style={styles.headerIconBtn}>
             <Text style={styles.headerIcon}>···</Text>
           </TouchableOpacity>
         </View>

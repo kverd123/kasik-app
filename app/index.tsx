@@ -11,7 +11,7 @@ import { useColors } from '../hooks/useColors';
 
 export default function Index() {
   const colors = useColors();
-  const { user, isLoading, isAuthenticated } = useAuthStore();
+  const { user, isLoading, isAuthenticated, isGuest } = useAuthStore();
   const baby = require('../stores/babyStore').useBabyStore((s: any) => s.baby);
   const [timeout, setTimeoutReached] = useState(false);
 
@@ -26,6 +26,12 @@ export default function Index() {
   useEffect(() => {
     if (isLoading && !timeout) return;
 
+    // Guest mode — go directly to recipes tab
+    if (isGuest && !isAuthenticated) {
+      router.replace('/(tabs)/recipes');
+      return;
+    }
+
     if (isAuthenticated && user) {
       // Onboarding tamamlanmışsa veya bebek profili varsa → ana ekrana git
       const onboardingDone = user.onboardingCompleted || baby?.name;
@@ -37,7 +43,7 @@ export default function Index() {
     } else {
       router.replace('/(auth)/login');
     }
-  }, [user, isLoading, isAuthenticated, timeout]);
+  }, [user, isLoading, isAuthenticated, isGuest, timeout]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.cream }]}>

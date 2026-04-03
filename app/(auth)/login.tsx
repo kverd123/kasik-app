@@ -46,7 +46,7 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState(false);
 
-  const { login, loginWithGoogle, loginWithApple, isLoading, error, clearError, user } = useAuthStore();
+  const { login, loginWithGoogle, loginWithApple, continueAsGuest, isLoading, error, clearError, user } = useAuthStore();
 
   // Race condition düzeltmesi: user state değişince navigasyon yap
   useEffect(() => {
@@ -263,6 +263,21 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </Link>
         </View>
+
+        {/* Guest Mode */}
+        <TouchableOpacity
+          style={styles.guestButton}
+          onPress={async () => {
+            await continueAsGuest();
+            analytics.login('guest');
+            router.replace('/(tabs)/recipes');
+          }}
+        >
+          <Ionicons name="eye-outline" size={18} color={colors.textLight} />
+          <Text style={[styles.guestButtonText, { color: colors.textLight }]}>
+            Misafir olarak devam et
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -384,6 +399,18 @@ const styles = StyleSheet.create({
   },
   registerLink: {
     fontFamily: FontFamily.bold,
+    fontSize: FontSize.md,
+  },
+  guestButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    marginTop: Spacing.xl,
+    paddingVertical: Spacing.md,
+  },
+  guestButtonText: {
+    fontFamily: FontFamily.medium,
     fontSize: FontSize.md,
   },
 });

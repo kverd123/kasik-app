@@ -60,10 +60,22 @@ import { scheduleMealReminder, scheduleAllergenCheck } from '../../lib/notificat
 import { haptics } from '../../lib/haptics';
 import { analytics } from '../../lib/analytics';
 import { MealSlotSkeleton } from '../../components/ui/SkeletonLoader';
+import { GuestBlockScreen } from '../../components/ui/GuestBanner';
 
 type ViewMode = 'daily' | 'weekly';
 
 export default function PlanScreen() {
+  const isGuest = useAuthStore((s) => s.isGuest);
+
+  if (isGuest) {
+    return (
+      <GuestBlockScreen
+        icon="📅"
+        title="Yemek Plani"
+        description="Bebeginiz icin haftalik yemek plani olusturun, alisveris listesi cikarin. Kayit olarak bu ozelligi kullanabilirsiniz."
+      />
+    );
+  }
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   // Bugunun gun indeksini bul (0=Pzt, 6=Paz)

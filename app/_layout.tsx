@@ -7,7 +7,6 @@ import React, { useEffect, useRef } from 'react';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, useColorScheme } from 'react-native';
-import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { ErrorBoundary } from '../components/ui/ErrorBoundary';
 import * as Notifications from 'expo-notifications';
 import { useAuthStore } from '../stores/authStore';
@@ -21,7 +20,7 @@ import {
   clearBadge,
 } from '../lib/notifications';
 import { initAnalytics, setAnalyticsUser, clearAnalyticsUser } from '../lib/analytics';
-import { initInterstitialAds, setTrackingAuthorized } from '../lib/ads';
+import { initInterstitialAds } from '../lib/ads';
 import { initializeSync } from '../lib/firestoreSync';
 import { flushQueue, onQueueChange } from '../lib/syncQueue';
 import { onNetworkChange } from '../lib/networkMonitor';
@@ -57,18 +56,8 @@ export default function RootLayout() {
     initAnalytics(); // Analytics sistemini başlat
     initializeSync(); // Offline sync sistemini başlat
 
-    // ATT izni iste (iOS), ardından reklam sistemini başlat
-    (async () => {
-      if (Platform.OS === 'ios') {
-        try {
-          const { status } = await requestTrackingPermissionsAsync();
-          setTrackingAuthorized(status === 'granted');
-        } catch {
-          setTrackingAuthorized(false);
-        }
-      }
-      initInterstitialAds(); // Reklam sistemini başlat
-    })();
+    // Reklam sistemini başlat (ATT kullanılmıyor — daima kişiselleştirilmemiş reklam)
+    initInterstitialAds();
 
     // Sync status UI güncellemeleri
     const unsubQueue = onQueueChange((count) => {

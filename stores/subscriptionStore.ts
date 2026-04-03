@@ -14,6 +14,8 @@ import { updateUserPremium } from '../lib/firestore';
 
 const REVENUECAT_API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || '';
 const ENTITLEMENT_ID = 'premium';
+// App Store Connect ürün ID'si — RevenueCat'te bu ID ile eşleşmeli
+const PRODUCT_ID = 'kasik_premium_monthly_v2';
 
 /**
  * Premium Feature Registry
@@ -138,6 +140,12 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
   initRevenueCat: async (userId: string) => {
     if (get().isInitialized) return;
     try {
+      if (!REVENUECAT_API_KEY) {
+        console.warn('[RevenueCat] API key eksik — abonelik sistemi devre dışı');
+        set({ isInitialized: true });
+        return;
+      }
+
       Purchases.configure({
         apiKey: REVENUECAT_API_KEY,
         appUserID: userId,
@@ -147,6 +155,10 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       Purchases.addCustomerInfoUpdateListener((info: CustomerInfo) => {
         const isPremium = info.entitlements.active[ENTITLEMENT_ID] !== undefined;
         set({ subscription: { isPremium, plan: isPremium ? 'monthly' : undefined } });
+        // Firestore'u güncelle
+        if (isPremium) {
+          updateUserPremium(userId, true).catch(console.error);
+        }
       });
 
       set({ isInitialized: true });
@@ -155,7 +167,7 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       await get().checkSubscription(userId);
       await get().loadOfferings();
     } catch (error) {
-      console.log('RevenueCat init error:', error);
+      console.warn('[RevenueCat] init error:', error);
       set({ isInitialized: true });
     }
   },
@@ -190,20 +202,24 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
     try {
       const offerings = await Purchases.getOfferings();
       if (offerings.current?.availablePackages) {
-        const plans: PlanOption[] = offerings.current.availablePackages.map((pkg) => ({
-          id: 'monthly' as SubscriptionPlan,
-          label: 'Aylık Premium',
-          price: pkg.product.priceString,
-          period: '/ay',
-          popular: true,
-          rcPackage: pkg,
-        }));
+        const plans: PlanOption[] = offerings.current.availablePackages
+          .filter((pkg) => pkg.product.identifier === PRODUCT_ID || offerings.current!.availablePackages.length === 1)
+          .map((pkg) => ({
+            id: 'monthly' as SubscriptionPlan,
+            label: 'Aylık Premium',
+            price: pkg.product.priceString,
+            period: '/ay',
+            popular: true,
+            rcPackage: pkg,
+          }));
         if (plans.length > 0) {
           set({ availablePlans: plans });
+        } else {
+          console.warn(`[RevenueCat] Ürün ${PRODUCT_ID} offering'lerde bulunamadı`);
         }
       }
     } catch (error) {
-      console.log('Load offerings error:', error);
+      console.warn('[RevenueCat] Load offerings error:', error);
     }
   },
 
@@ -217,43 +233,55 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const { availablePlans } = get();
       const selectedPlan = availablePlans.find((p) => p.id === plan);
 
-      if (selectedPlan?.rcPackage) {
-        // RevenueCat purchase
-        const { customerInfo } = await Purchases.purchasePackage(selectedPlan.rcPackage);
-        const isPremium = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      let pkg = selectedPlan?.rcPackage;
 
-        if (isPremium) {
-          await updateUserPremium(userId, true);
-          set({
-            subscription: { isPremium: true, plan },
-            isLoading: false,
-          });
-        } else {
-          set({ isLoading: false });
-        }
-      } else {
-        // Fallback: try to get offerings and purchase
+      // Fallback: paket yoksa offering'lerden bul
+      if (!pkg) {
         const offerings = await Purchases.getOfferings();
-        const pkg = offerings.current?.availablePackages[0];
-        if (pkg) {
-          const { customerInfo } = await Purchases.purchasePackage(pkg);
-          const isPremium = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
-          if (isPremium) {
-            await updateUserPremium(userId, true);
-            set({
-              subscription: { isPremium: true, plan },
-              isLoading: false,
-            });
-            return;
-          }
-        }
+        // Önce PRODUCT_ID ile eşleşen paketi bul
+        pkg = offerings.current?.availablePackages.find(
+          (p) => p.product.identifier === PRODUCT_ID
+        ) || offerings.current?.availablePackages[0];
+      }
+
+      if (!pkg) {
         set({ isLoading: false });
+        throw new Error('Abonelik paketi bulunamadı. Lütfen daha sonra tekrar deneyin.');
+      }
+
+      const { customerInfo } = await Purchases.purchasePackage(pkg);
+      const isPremium = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
+
+      if (isPremium) {
+        await updateUserPremium(userId, true);
+        set({
+          subscription: { isPremium: true, plan },
+          isLoading: false,
+        });
+      } else {
+        set({ isLoading: false });
+        throw new Error('Satın alma tamamlandı ancak abonelik etkinleştirilemedi. Lütfen "Satın Alımları Geri Yükle" seçeneğini deneyin.');
       }
     } catch (error: any) {
       set({ isLoading: false });
-      if (!error.userCancelled) {
+      if (error.userCancelled) {
+        // Kullanıcı iptal etti — hata fırlatma
+        return;
+      }
+      // Kullanıcı dostu Türkçe hata mesajları
+      if (error.code === 'STORE_PROBLEM' || error.code === '2') {
+        throw new Error('App Store ile bağlantı kurulamadı. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.');
+      }
+      if (error.code === 'PURCHASE_NOT_ALLOWED' || error.code === '1') {
+        throw new Error('Bu cihazda satın alma işlemi yapılamıyor. Lütfen cihaz ayarlarınızı kontrol edin.');
+      }
+      if (error.code === 'PRODUCT_NOT_AVAILABLE' || error.code === '7') {
+        throw new Error('Abonelik şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.');
+      }
+      if (error.message && !error.message.includes('Error')) {
         throw error;
       }
+      throw new Error('Satın alma sırasında bir hata oluştu. Lütfen tekrar deneyin.');
     }
   },
 
@@ -276,9 +304,9 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       });
 
       return;
-    } catch (error) {
+    } catch (error: any) {
       set({ isLoading: false });
-      throw error;
+      throw new Error('Satın alımlar geri yüklenirken bir hata oluştu. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.');
     }
   },
 

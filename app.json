@@ -25,8 +25,7 @@
           "remote-notification"
         ],
         "ITSAppUsesNonExemptEncryption": false,
-        "NSPrivacyPolicyURL": "https://kverd123.github.io/kasik-app/privacy.html",
-        "NSUserTrackingUsageDescription": "Kaşık, size daha uygun reklamlar gösterebilmek için cihaz tanımlayıcınızı kullanmak istiyor. Bu bilgi üçüncü taraflarla paylaşılmaz."
+        "NSPrivacyPolicyURL": "https://kverd123.github.io/kasik-app/privacy.html"
       },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": []
@@ -52,12 +51,6 @@
       ],
       "googleServicesFile": "./google-services.json"
     },
-    "notification": {
-      "icon": "./assets/notification-icon.png",
-      "color": "#A3BA91",
-      "androidMode": "default",
-      "androidCollapsedTitle": "Kaşık"
-    },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
@@ -80,11 +73,9 @@
         "react-native-google-mobile-ads",
         {
           "iosAppId": "ca-app-pub-8099877386187148~1136119394",
-          "androidAppId": "ca-app-pub-8099877386187148~1136119394",
-          "userTrackingUsageDescription": "Bebeğiniz için daha uygun içerikler sunabilmemiz amacıyla reklam kişiselleştirme izni istenmektedir."
+          "androidAppId": "ca-app-pub-8099877386187148~1136119394"
         }
       ],
-      "expo-tracking-transparency"
     ],
     "extra": {
       "router": {},

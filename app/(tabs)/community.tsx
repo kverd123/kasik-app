@@ -31,6 +31,7 @@ import { haptics } from '../../lib/haptics';
 import { analytics } from '../../lib/analytics';
 import { PostListSkeleton } from '../../components/ui/SkeletonLoader';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { GuestBanner } from '../../components/ui/GuestBanner';
 
 const TABS = [
   { key: 'all', label: 'Hepsi' },
@@ -45,13 +46,15 @@ const keyExtractor = (item: CommunityPost) => item.id;
 export default function CommunityScreen() {
   const colors = useColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const { user } = useAuthStore();
+  const { user, isGuest } = useAuthStore();
   const [activeTab, setActiveTab] = useState(0);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const saveRecipe = useRecipeBookStore((s) => s.saveRecipe);
   const isRecipeSaved = useRecipeBookStore((s) => s.isRecipeSaved);
-  const posts = useCommunityStore((s) => s.posts);
+  const allPosts = useCommunityStore((s) => s.posts);
+  const blockedUserIds = useCommunityStore((s) => s.blockedUserIds);
+  const blockUser = useCommunityStore((s) => s.blockUser);
   const togglePostLike = useCommunityStore((s) => s.togglePostLike);
   const deletePost = useCommunityStore((s) => s.deletePost);
   const addPostToStore = useCommunityStore((s) => s.addPost);
@@ -76,14 +79,14 @@ export default function CommunityScreen() {
 
   const toggleLike = useCallback((id: string) => {
     haptics.light();
-    const post = posts.find((p) => p.id === id);
+    const post = allPosts.find((p) => p.id === id);
     const wasLiked = post?.isLiked;
     if (!wasLiked) analytics.postLike(id);
     togglePostLike(id);
 
     // Not: Local bildirim kaldırıldı - beğeni bildirimi sadece push notification ile
     // post sahibine gönderilmeli (server-side). Local bildirim yanlış kişiye gidiyordu.
-  }, [posts, togglePostLike, notifPrefs.communityUpdates, user]);
+  }, [allPosts, togglePostLike, notifPrefs.communityUpdates, user]);
 
   const handleCreatePost = async (data: CreatePostData) => {
     let recipeId: string | undefined;
@@ -146,9 +149,12 @@ export default function CommunityScreen() {
     analytics.postCreate(data.category);
   };
 
-  // Tab'a göre filtreleme ve sıralama
+  // Engellenen kullanıcıları filtrele, tab'a göre filtreleme ve sıralama
   const sortedPosts = useMemo(() => {
-    let filtered = [...posts];
+    // Engellenen kullanıcıların gönderilerini filtrele
+    let filtered = blockedUserIds.length > 0
+      ? allPosts.filter((p) => !p.authorId || !blockedUserIds.includes(p.authorId))
+      : [...allPosts];
 
     // Kategori filtresi (0 = Hepsi, diğerleri kategori)
     const tabKey = TABS[activeTab]?.key;
@@ -160,14 +166,15 @@ export default function CommunityScreen() {
     filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     return filtered;
-  }, [posts, activeTab]);
+  }, [allPosts, blockedUserIds, activeTab]);
 
   return (
     <View style={styles.container}>
+      {isGuest && <GuestBanner />}
       <ScreenHeader
         title="Topluluk"
         emoji="👥"
-        rightActions={[
+        rightActions={isGuest ? undefined : [
           { icon: 'create-outline', onPress: () => setCreateModalVisible(true) },
         ]}
       />
@@ -210,6 +217,7 @@ export default function CommunityScreen() {
             styles={styles}
             onToggleLike={toggleLike}
             onDeletePost={deletePost}
+            onBlockUser={blockUser}
             isRecipeSaved={isRecipeSaved}
             onSaveRecipe={saveRecipe}
           />
@@ -252,22 +260,26 @@ export default function CommunityScreen() {
         }
       />
 
-      {/* FAB */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => setCreateModalVisible(true)}
-        accessibilityRole="button"
-        accessibilityLabel="Yeni gönderi oluştur"
-      >
-        <Text style={styles.fabIcon}>✏️</Text>
-      </TouchableOpacity>
+      {/* FAB — hidden for guest users */}
+      {!isGuest && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => setCreateModalVisible(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Yeni gönderi oluştur"
+        >
+          <Text style={styles.fabIcon}>✏️</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Gönderi Oluşturma Modal */}
-      <CreatePostModal
-        visible={createModalVisible}
-        onClose={() => setCreateModalVisible(false)}
-        onSubmit={handleCreatePost}
-      />
+      {!isGuest && (
+        <CreatePostModal
+          visible={createModalVisible}
+          onClose={() => setCreateModalVisible(false)}
+          onSubmit={handleCreatePost}
+        />
+      )}
     </View>
   );
 }

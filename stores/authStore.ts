@@ -5,6 +5,7 @@
 
 import { create } from 'zustand';
 import { User as FirebaseUser } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../types';
 import {
   registerWithEmail,
@@ -18,12 +19,15 @@ import {
   deleteAccount as authDeleteAccount,
 } from '../lib/auth';
 
+const GUEST_MODE_KEY = '@kasik_guest_mode';
+
 interface AuthState {
   // State
   firebaseUser: FirebaseUser | null;
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isGuest: boolean;
   error: string | null;
 
   // Actions
@@ -32,6 +36,8 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: (idToken: string) => Promise<void>;
   loginWithApple: (identityToken: string, nonce: string, fullName?: { givenName?: string | null; familyName?: string | null }) => Promise<void>;
+  continueAsGuest: () => Promise<void>;
+  exitGuestMode: () => Promise<void>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
@@ -44,9 +50,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isLoading: true,
   isAuthenticated: false,
+  isGuest: false,
   error: null,
 
   initialize: () => {
+    // Restore guest mode from AsyncStorage on init
+    AsyncStorage.getItem(GUEST_MODE_KEY).then((value) => {
+      if (value === 'true') {
+        set({ isGuest: true, isLoading: false });
+      }
+    });
+
     const unsubscribe = onAuthChange(async (firebaseUser) => {
       if (firebaseUser) {
         try {
@@ -95,6 +109,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (email, password, displayName) => {
     try {
       set({ isLoading: true, error: null });
+      await AsyncStorage.removeItem(GUEST_MODE_KEY);
       const user = await registerWithEmail(email, password, displayName);
       // Profili hemen set et, auth listener'ı bekleme
       set({
@@ -108,6 +123,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           isPremium: false,
         } as any,
         isAuthenticated: true,
+        isGuest: false,
         isLoading: false,
       });
     } catch (error: any) {
@@ -120,8 +136,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email, password) => {
     try {
       set({ isLoading: true, error: null });
+      await AsyncStorage.removeItem(GUEST_MODE_KEY);
       await signInWithEmail(email, password);
-      set({ isLoading: false });
+      set({ isGuest: false, isLoading: false });
     } catch (error: any) {
       const message = getErrorMessage(error.code);
       set({ error: message, isLoading: false });
@@ -213,14 +230,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  continueAsGuest: async () => {
+    await AsyncStorage.setItem(GUEST_MODE_KEY, 'true');
+    set({ isGuest: true, isLoading: false });
+  },
+
+  exitGuestMode: async () => {
+    await AsyncStorage.removeItem(GUEST_MODE_KEY);
+    set({ isGuest: false });
+  },
+
   logout: async () => {
     try {
+      await AsyncStorage.removeItem(GUEST_MODE_KEY);
       await authSignOut();
-      set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false });
+      set({ firebaseUser: null, user: null, isAuthenticated: false, isGuest: false, isLoading: false });
     } catch (error: any) {
       console.error('Çıkış hatası:', error);
       // Hata olsa bile state'i temizle
-      set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false, error: 'Çıkış yapılırken hata oluştu.' });
+      set({ firebaseUser: null, user: null, isAuthenticated: false, isGuest: false, isLoading: false, error: 'Çıkış yapılırken hata oluştu.' });
     }
   },
 

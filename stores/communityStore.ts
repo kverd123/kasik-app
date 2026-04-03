@@ -58,6 +58,7 @@ export interface CommunityPost {
 
 interface CommunityState {
   posts: CommunityPost[];
+  blockedUserIds: string[];
   isLoaded: boolean;
   isLoadingMore: boolean;
   hasMore: boolean;
@@ -73,9 +74,14 @@ interface CommunityState {
   addReply: (postId: string, commentId: string, reply: CommunityComment) => void;
   toggleCommentLike: (postId: string, commentId: string) => void;
   getPostById: (id: string) => CommunityPost | undefined;
+  blockUser: (userId: string) => void;
+  unblockUser: (userId: string) => void;
+  isUserBlocked: (userId: string) => boolean;
+  getFilteredPosts: () => CommunityPost[];
 }
 
 const STORAGE_KEY = '@kasik_community';
+const BLOCKED_USERS_KEY = '@kasik_blocked_users';
 
 const persistToStorage = (posts: CommunityPost[]) => {
   try {
@@ -430,6 +436,7 @@ const DEFAULT_POSTS: CommunityPost[] = [
 
 export const useCommunityStore = create<CommunityState>((set, get) => ({
   posts: [],
+  blockedUserIds: [],
   isLoaded: false,
   isLoadingMore: false,
   hasMore: true,
@@ -437,15 +444,19 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
 
   loadFromStorage: async () => {
     try {
-      const data = await AsyncStorage.getItem(STORAGE_KEY);
+      const [data, blockedData] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEY),
+        AsyncStorage.getItem(BLOCKED_USERS_KEY),
+      ]);
+      const blockedUserIds: string[] = blockedData ? JSON.parse(blockedData) : [];
       if (data) {
         const parsed = JSON.parse(data).map((p: any) => ({
           ...p,
           createdAt: new Date(p.createdAt),
         }));
-        set({ posts: parsed, isLoaded: true });
+        set({ posts: parsed, blockedUserIds, isLoaded: true });
       } else {
-        set({ posts: DEFAULT_POSTS, isLoaded: true });
+        set({ posts: DEFAULT_POSTS, blockedUserIds, isLoaded: true });
         persistToStorage(DEFAULT_POSTS);
       }
     } catch (e) {
@@ -616,5 +627,29 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
 
   getPostById: (id) => {
     return get().posts.find((p) => p.id === id);
+  },
+
+  blockUser: (userId: string) => {
+    const { blockedUserIds } = get();
+    if (blockedUserIds.includes(userId)) return;
+    const updated = [...blockedUserIds, userId];
+    set({ blockedUserIds: updated });
+    AsyncStorage.setItem(BLOCKED_USERS_KEY, JSON.stringify(updated)).catch(console.error);
+  },
+
+  unblockUser: (userId: string) => {
+    const updated = get().blockedUserIds.filter((id) => id !== userId);
+    set({ blockedUserIds: updated });
+    AsyncStorage.setItem(BLOCKED_USERS_KEY, JSON.stringify(updated)).catch(console.error);
+  },
+
+  isUserBlocked: (userId: string) => {
+    return get().blockedUserIds.includes(userId);
+  },
+
+  getFilteredPosts: () => {
+    const { posts, blockedUserIds } = get();
+    if (blockedUserIds.length === 0) return posts;
+    return posts.filter((p) => !p.authorId || !blockedUserIds.includes(p.authorId));
   },
 }));
