@@ -164,6 +164,7 @@ export default function ProfileScreen() {
   const subscription = useSubscriptionStore((s) => s.subscription);
   const getActiveFeatures = useSubscriptionStore((s) => s.getActiveFeatures);
   const purchase = useSubscriptionStore((s) => s.purchase);
+  const subscriptionLoading = useSubscriptionStore((s) => s.isLoading);
   const entries = useRecipeBookStore((s) => s.entries);
   const loadFromStorage = useRecipeBookStore((s) => s.loadFromStorage);
   const isLoaded = useRecipeBookStore((s) => s.isLoaded);
@@ -631,6 +632,7 @@ export default function ProfileScreen() {
         {/* Premium Upgrade (show only for free users) */}
         {!subscription.isPremium && (
           <Card padding="xl" style={styles.premiumCard} onPress={async () => {
+            if (subscriptionLoading) return;
             try {
               if (user?.uid) {
                 await purchase(user.uid, 'monthly');
@@ -638,7 +640,11 @@ export default function ProfileScreen() {
               }
             } catch (e: any) {
               if (!e?.userCancelled) {
-                Alert.alert('Hata', e?.message || 'Satın alma işlemi tamamlanamadı. Lütfen tekrar deneyin.');
+                Alert.alert(
+                  'Satın Alma',
+                  e?.message || 'Abonelik şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
+                  [{ text: 'Tamam' }]
+                );
               }
             }
           }}>
@@ -650,7 +656,11 @@ export default function ProfileScreen() {
                   Reklamsız + Sınırsız AI Tarif
                 </Text>
               </View>
-              <Text style={styles.premiumArrow}>→</Text>
+              {subscriptionLoading ? (
+                <ActivityIndicator size="small" color={colors.white} />
+              ) : (
+                <Text style={styles.premiumArrow}>→</Text>
+              )}
             </View>
             <View style={styles.premiumFeatures}>
               {getActiveFeatures().map((feature) => (
