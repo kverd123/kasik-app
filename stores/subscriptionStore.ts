@@ -228,6 +228,13 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
    */
   purchase: async (userId: string, plan: SubscriptionPlan) => {
     try {
+      // RevenueCat henüz başlatılmadıysa başlat
+      if (!get().isInitialized) {
+        await get().initRevenueCat(userId);
+      }
+      if (!REVENUECAT_API_KEY) {
+        throw new Error('Abonelik sistemi şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.');
+      }
       set({ isLoading: true });
 
       const { availablePlans } = get();
@@ -290,6 +297,13 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
    */
   restore: async (userId: string) => {
     try {
+      // RevenueCat henüz başlatılmadıysa başlat
+      if (!get().isInitialized) {
+        await get().initRevenueCat(userId);
+      }
+      if (!REVENUECAT_API_KEY) {
+        throw new Error('Abonelik sistemi şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.');
+      }
       set({ isLoading: true });
       const customerInfo = await Purchases.restorePurchases();
       const isPremium = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;

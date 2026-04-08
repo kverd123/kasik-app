@@ -357,6 +357,24 @@ export const updateUserPremium = async (
   }, { merge: true });
 };
 
+// ===== REPORT (ŞİKAYET) =====
+
+export const reportPost = async (
+  postId: string,
+  reporterId: string,
+  authorId: string,
+  reason: string,
+): Promise<void> => {
+  await addDoc(collection(db, 'reports'), {
+    postId,
+    reporterId,
+    authorId,
+    reason,
+    status: 'pending',
+    createdAt: serverTimestamp(),
+  });
+};
+
 // ===== PUSH TOKEN =====
 
 export const savePushToken = async (

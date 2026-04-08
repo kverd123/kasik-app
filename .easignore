@@ -1,0 +1,28 @@
+# Documentation & assets not needed for build
+docs/
+appstore-screenshots/
+beslenme verileri/
+FIREBASE_KURULUM.md
+codemagic.yaml
+*.md
+
+# Certificates (handled by EAS)
+*.p12
+*.pem
+*.mobileprovision
+distribution.cer
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+**/__tests__/
+**/*.test.ts
+**/*.test.tsx
+jest.setup.js
+jest.config.js

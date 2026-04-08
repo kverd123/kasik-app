@@ -20,6 +20,8 @@ import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { AdBanner } from '../ui/AdBanner';
 import { CommunityPost } from '../../stores/communityStore';
+import { reportPost } from '../../lib/firestore';
+import { useAuthStore } from '../../stores/authStore';
 
 export interface PostCardProps {
   post: CommunityPost;
@@ -46,14 +48,28 @@ const PostCard = React.memo(function PostCard({
 }: PostCardProps) {
   const handleReport = () => {
     Alert.alert(
-      'Gönderiyi Bildir',
-      'Bu gönderiyi uygunsuz olarak bildirmek istiyor musunuz?',
+      'Gönderiyi Şikayet Et',
+      'Bu gönderiyi şikayet etmek istiyor musunuz? Kullanıcı otomatik olarak engellenecektir.',
       [
         { text: 'İptal', style: 'cancel' },
         {
-          text: 'Şikayet Et',
+          text: 'Şikayet Et ve Engelle',
           style: 'destructive',
-          onPress: () => Alert.alert('Bildirildi', 'Gönderiniz incelenecektir. Teşekkürler.'),
+          onPress: async () => {
+            try {
+              const currentUser = useAuthStore.getState().user;
+              if (currentUser?.uid && post.authorId) {
+                await reportPost(post.id, currentUser.uid, post.authorId, 'Uygunsuz içerik');
+              }
+            } catch (e) {
+              console.error('Şikayet kayıt hatası:', e);
+            }
+            // Şikayet sonrası otomatik engelle
+            if (post.authorId) {
+              onBlockUser?.(post.authorId);
+            }
+            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kullanıcı engellendi. Teşekkürler.');
+          },
         },
       ],
     );
@@ -79,34 +95,38 @@ const PostCard = React.memo(function PostCard({
   };
 
   const handleMorePress = () => {
+    const currentUser = useAuthStore.getState().user;
+    const isOwnPost = currentUser?.uid && post.authorId === currentUser.uid;
     const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [];
 
-    // Kendi gönderisini silebilir
-    if (onDeletePost) {
-      options.push({
-        text: 'Gönderiyi Sil',
-        style: 'destructive',
-        onPress: () => {
-          Alert.alert('Sil', 'Bu gönderiyi silmek istediğinize emin misiniz?', [
-            { text: 'İptal', style: 'cancel' },
-            { text: 'Sil', style: 'destructive', onPress: () => onDeletePost(post.id) },
-          ]);
-        },
-      });
-    }
-
-    // Başkasının gönderisini şikayet et veya engelle
-    if (post.authorId) {
+    if (isOwnPost) {
+      // Kendi gönderisini silebilir
+      if (onDeletePost) {
+        options.push({
+          text: 'Gönderiyi Sil',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert('Sil', 'Bu gönderiyi silmek istediğinize emin misiniz?', [
+              { text: 'İptal', style: 'cancel' },
+              { text: 'Sil', style: 'destructive', onPress: () => onDeletePost(post.id) },
+            ]);
+          },
+        });
+      }
+    } else {
+      // Başkasının gönderisi — şikayet et ve engelle
       options.push({
         text: 'Şikayet Et',
         style: 'destructive',
         onPress: handleReport,
       });
-      options.push({
-        text: 'Kullanıcıyı Engelle',
-        style: 'destructive',
-        onPress: handleBlockUser,
-      });
+      if (post.authorId) {
+        options.push({
+          text: 'Kullanıcıyı Engelle',
+          style: 'destructive',
+          onPress: handleBlockUser,
+        });
+      }
     }
 
     options.push({ text: 'İptal', style: 'cancel' });
