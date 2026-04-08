@@ -3,7 +3,7 @@
  * Photo posts, comments, expert content, recipe sharing
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,10 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  Modal,
+  Linking,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useColors } from '../../hooks/useColors';
 import { ThemeColors } from '../../constants/colors';
@@ -66,7 +69,20 @@ export default function CommunityScreen() {
 
   const notifPrefs = useNotificationStore((s) => s.preferences);
   const [refreshing, setRefreshing] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState<boolean | null>(null);
   const loadPostsFromFirestore = useCommunityStore((s) => s.loadPosts);
+
+  // Topluluk kullanım şartları onayını kontrol et
+  useEffect(() => {
+    AsyncStorage.getItem('@kasik_community_terms').then((val) => {
+      setTermsAccepted(val === 'accepted');
+    });
+  }, []);
+
+  const handleAcceptTerms = useCallback(async () => {
+    await AsyncStorage.setItem('@kasik_community_terms', 'accepted');
+    setTermsAccepted(true);
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -167,6 +183,59 @@ export default function CommunityScreen() {
 
     return filtered;
   }, [allPosts, blockedUserIds, activeTab]);
+
+  // Şartlar henüz yüklenmedi
+  if (termsAccepted === null && !isGuest) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title="Topluluk" emoji="👥" />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colors.sage} />
+        </View>
+      </View>
+    );
+  }
+
+  // Şartlar kabul edilmedi — EULA göster
+  if (!termsAccepted && !isGuest) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title="Topluluk" emoji="👥" />
+        <ScrollView contentContainerStyle={styles.termsContainer}>
+          <Text style={styles.termsEmoji}>📋</Text>
+          <Text style={styles.termsTitle}>Topluluk Kullanım Şartları</Text>
+          <Text style={styles.termsSubtitle}>
+            Topluluğa katılmadan önce lütfen aşağıdaki kuralları okuyun ve kabul edin.
+          </Text>
+
+          <View style={styles.termsCard}>
+            <Text style={styles.termsRule}>1. Saygılı olun — Diğer ebeveynlere karşı nazik ve saygılı davranın.</Text>
+            <Text style={styles.termsRule}>2. Güvenli içerik — Bebek ve çocuk sağlığına zararlı olabilecek içerik paylaşmayın.</Text>
+            <Text style={styles.termsRule}>3. Kişisel bilgi — Başkalarının kişisel bilgilerini paylaşmayın.</Text>
+            <Text style={styles.termsRule}>4. Spam yasak — Reklam, spam veya tekrarlayan içerik paylaşmayın.</Text>
+            <Text style={styles.termsRule}>5. Şikayet ve engelleme — Uygunsuz içerik gördüğünüzde şikayet edin veya kullanıcıyı engelleyin.</Text>
+            <Text style={styles.termsRule}>6. Tıbbi tavsiye — Paylaşılan bilgiler tıbbi tavsiye yerine geçmez. Bebeğinizin sağlığı için doktorunuza danışın.</Text>
+          </View>
+
+          <Text style={styles.termsLegal}>
+            Devam ederek{' '}
+            <Text style={styles.termsLink} onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/terms.html')}>
+              Kullanım Şartları
+            </Text>
+            {' '}ve{' '}
+            <Text style={styles.termsLink} onPress={() => Linking.openURL('https://kverd123.github.io/kasik-app/privacy.html')}>
+              Gizlilik Politikası
+            </Text>
+            'nı kabul etmiş olursunuz.
+          </Text>
+
+          <TouchableOpacity style={styles.termsAcceptBtn} onPress={handleAcceptTerms}>
+            <Text style={styles.termsAcceptText}>Kabul Ediyorum</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -398,4 +467,67 @@ const createStyles = (colors: ThemeColors) => StyleSheet.create({
     ...Shadow.elevated,
   },
   fabIcon: { fontSize: 22 },
+  // Terms / EULA screen
+  termsContainer: {
+    flexGrow: 1,
+    padding: Spacing.xl,
+    alignItems: 'center',
+    paddingTop: 40,
+  },
+  termsEmoji: { fontSize: 48, marginBottom: Spacing.md },
+  termsTitle: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.xl,
+    color: colors.textDark,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  termsSubtitle: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.md,
+    color: colors.textLight,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+    lineHeight: 22,
+  },
+  termsCard: {
+    backgroundColor: colors.white,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.xl,
+    width: '100%' as any,
+    gap: Spacing.md,
+    marginBottom: Spacing.xl,
+  },
+  termsRule: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.sm,
+    color: colors.textDark,
+    lineHeight: 20,
+  },
+  termsLegal: {
+    fontFamily: FontFamily.medium,
+    fontSize: FontSize.xs,
+    color: colors.textLight,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+    lineHeight: 18,
+  },
+  termsLink: {
+    color: colors.sage,
+    fontFamily: FontFamily.semiBold,
+    textDecorationLine: 'underline',
+  },
+  termsAcceptBtn: {
+    backgroundColor: colors.sage,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xxl,
+    borderRadius: BorderRadius.md,
+    width: '100%' as any,
+    alignItems: 'center',
+  },
+  termsAcceptText: {
+    fontFamily: FontFamily.bold,
+    fontSize: FontSize.md,
+    color: colors.white,
+  },
 });
