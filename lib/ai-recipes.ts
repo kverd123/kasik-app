@@ -57,7 +57,7 @@ const AI_CONFIG = {
     apiKey: process.env.EXPO_PUBLIC_AI_API_KEY || '',
   },
   gemini: {
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
     apiKey: process.env.EXPO_PUBLIC_AI_API_KEY || '',
   },
   maxTokens: 1500,
