@@ -14,6 +14,7 @@ import {
   togglePostLike as firestoreTogglePostLike,
   addComment as firestoreAddComment,
   getPostLikeStatuses,
+  deletePostFromFirestore,
 } from '../lib/firestore';
 
 export interface CommunityComment {
@@ -70,6 +71,7 @@ interface CommunityState {
   loadMorePosts: () => Promise<void>;
   addPost: (post: CommunityPost) => void;
   deletePost: (postId: string) => void;
+  hidePost: (postId: string) => void;
   togglePostLike: (postId: string) => void;
   addComment: (postId: string, comment: CommunityComment) => void;
   addReply: (postId: string, commentId: string, reply: CommunityComment) => void;
@@ -519,7 +521,15 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   deletePost: (postId) => {
-    // Gönderiyi silmek yerine sadece gizle (local)
+    // Kendi postunu tamamen sil (local + Firestore)
+    const updated = get().posts.filter((p) => p.id !== postId);
+    set({ posts: updated });
+    persistToStorage(updated);
+    deletePostFromFirestore(postId).catch(console.error);
+  },
+
+  hidePost: (postId) => {
+    // Başkasının postunu sadece kendi ekranından gizle
     const { hiddenPostIds } = get();
     if (hiddenPostIds.includes(postId)) return;
     const updated = [...hiddenPostIds, postId];

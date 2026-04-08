@@ -375,6 +375,12 @@ export const reportPost = async (
   });
 };
 
+// ===== POST DELETE =====
+
+export const deletePostFromFirestore = async (postId: string): Promise<void> => {
+  await deleteDoc(doc(db, `posts/${postId}`));
+};
+
 // ===== PUSH TOKEN =====
 
 export const savePushToken = async (

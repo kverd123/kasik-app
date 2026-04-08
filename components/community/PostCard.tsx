@@ -30,6 +30,7 @@ export interface PostCardProps {
   styles: ReturnType<typeof StyleSheet.create>;
   onToggleLike: (id: string) => void;
   onDeletePost?: (id: string) => void;
+  onHidePost?: (id: string) => void;
   onBlockUser?: (userId: string) => void;
   isRecipeSaved: (id: string) => boolean;
   onSaveRecipe: (recipeId: string, category?: 'favorites' | 'try_later' | 'made_it') => void;
@@ -42,6 +43,7 @@ const PostCard = React.memo(function PostCard({
   styles,
   onToggleLike,
   onDeletePost,
+  onHidePost,
   onBlockUser,
   isRecipeSaved,
   onSaveRecipe,
@@ -64,11 +66,9 @@ const PostCard = React.memo(function PostCard({
             } catch (e) {
               console.error('Şikayet kayıt hatası:', e);
             }
-            // Şikayet sonrası otomatik engelle
-            if (post.authorId) {
-              onBlockUser?.(post.authorId);
-            }
-            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kullanıcı engellendi. Teşekkürler.');
+            // Şikayet sonrası postu gizle
+            onHidePost?.(post.id);
+            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve gizlendi. Teşekkürler.');
           },
         },
       ],

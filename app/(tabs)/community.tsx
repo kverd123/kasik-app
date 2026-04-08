@@ -61,6 +61,7 @@ export default function CommunityScreen() {
   const blockUser = useCommunityStore((s) => s.blockUser);
   const togglePostLike = useCommunityStore((s) => s.togglePostLike);
   const deletePost = useCommunityStore((s) => s.deletePost);
+  const hidePost = useCommunityStore((s) => s.hidePost);
   const addPostToStore = useCommunityStore((s) => s.addPost);
   const communityLoaded = useCommunityStore((s) => s.isLoaded);
   const loadMorePosts = useCommunityStore((s) => s.loadMorePosts);
@@ -290,6 +291,7 @@ export default function CommunityScreen() {
             styles={styles}
             onToggleLike={toggleLike}
             onDeletePost={deletePost}
+            onHidePost={hidePost}
             onBlockUser={blockUser}
             isRecipeSaved={isRecipeSaved}
             onSaveRecipe={saveRecipe}
