@@ -59,6 +59,7 @@ export interface CommunityPost {
 interface CommunityState {
   posts: CommunityPost[];
   blockedUserIds: string[];
+  hiddenPostIds: string[];
   isLoaded: boolean;
   isLoadingMore: boolean;
   hasMore: boolean;
@@ -437,6 +438,7 @@ const DEFAULT_POSTS: CommunityPost[] = [
 export const useCommunityStore = create<CommunityState>((set, get) => ({
   posts: [],
   blockedUserIds: [],
+  hiddenPostIds: [],
   isLoaded: false,
   isLoadingMore: false,
   hasMore: true,
@@ -444,19 +446,21 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
 
   loadFromStorage: async () => {
     try {
-      const [data, blockedData] = await Promise.all([
+      const [data, blockedData, hiddenData] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEY),
         AsyncStorage.getItem(BLOCKED_USERS_KEY),
+        AsyncStorage.getItem('@kasik_hidden_posts'),
       ]);
       const blockedUserIds: string[] = blockedData ? JSON.parse(blockedData) : [];
+      const hiddenPostIds: string[] = hiddenData ? JSON.parse(hiddenData) : [];
       if (data) {
         const parsed = JSON.parse(data).map((p: any) => ({
           ...p,
           createdAt: new Date(p.createdAt),
         }));
-        set({ posts: parsed, blockedUserIds, isLoaded: true });
+        set({ posts: parsed, blockedUserIds, hiddenPostIds, isLoaded: true });
       } else {
-        set({ posts: DEFAULT_POSTS, blockedUserIds, isLoaded: true });
+        set({ posts: DEFAULT_POSTS, blockedUserIds, hiddenPostIds, isLoaded: true });
         persistToStorage(DEFAULT_POSTS);
       }
     } catch (e) {
@@ -515,9 +519,12 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   deletePost: (postId) => {
-    const updated = get().posts.filter((p) => p.id !== postId);
-    set({ posts: updated });
-    persistToStorage(updated);
+    // Gönderiyi silmek yerine sadece gizle (local)
+    const { hiddenPostIds } = get();
+    if (hiddenPostIds.includes(postId)) return;
+    const updated = [...hiddenPostIds, postId];
+    set({ hiddenPostIds: updated });
+    debouncedSetItem('@kasik_hidden_posts', JSON.stringify(updated));
   },
 
   addPost: (post) => {
@@ -648,8 +655,11 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
   },
 
   getFilteredPosts: () => {
-    const { posts, blockedUserIds } = get();
-    if (blockedUserIds.length === 0) return posts;
-    return posts.filter((p) => !p.authorId || !blockedUserIds.includes(p.authorId));
+    const { posts, blockedUserIds, hiddenPostIds } = get();
+    return posts.filter((p) => {
+      if (hiddenPostIds.includes(p.id)) return false;
+      if (p.authorId && blockedUserIds.includes(p.authorId)) return false;
+      return true;
+    });
   },
 }));

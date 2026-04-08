@@ -99,22 +99,22 @@ const PostCard = React.memo(function PostCard({
     const isOwnPost = currentUser?.uid && post.authorId === currentUser.uid;
     const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [];
 
-    if (isOwnPost) {
-      // Kendi gönderisini silebilir
-      if (onDeletePost) {
-        options.push({
-          text: 'Gönderiyi Sil',
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert('Sil', 'Bu gönderiyi silmek istediğinize emin misiniz?', [
-              { text: 'İptal', style: 'cancel' },
-              { text: 'Sil', style: 'destructive', onPress: () => onDeletePost(post.id) },
-            ]);
-          },
-        });
-      }
-    } else {
-      // Başkasının gönderisi — şikayet et ve engelle
+    // Kendi gönderisini silebilir (sadece kendi ekranından gizler)
+    if (isOwnPost && onDeletePost) {
+      options.push({
+        text: 'Gönderiyi Sil',
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert('Sil', 'Bu gönderiyi silmek istediğinize emin misiniz?', [
+            { text: 'İptal', style: 'cancel' },
+            { text: 'Sil', style: 'destructive', onPress: () => onDeletePost(post.id) },
+          ]);
+        },
+      });
+    }
+
+    // Başkasının gönderisi — şikayet et ve engelle
+    if (!isOwnPost) {
       options.push({
         text: 'Şikayet Et',
         style: 'destructive',

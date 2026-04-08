@@ -57,6 +57,7 @@ export default function CommunityScreen() {
   const isRecipeSaved = useRecipeBookStore((s) => s.isRecipeSaved);
   const allPosts = useCommunityStore((s) => s.posts);
   const blockedUserIds = useCommunityStore((s) => s.blockedUserIds);
+  const hiddenPostIds = useCommunityStore((s) => s.hiddenPostIds);
   const blockUser = useCommunityStore((s) => s.blockUser);
   const togglePostLike = useCommunityStore((s) => s.togglePostLike);
   const deletePost = useCommunityStore((s) => s.deletePost);
@@ -165,12 +166,15 @@ export default function CommunityScreen() {
     analytics.postCreate(data.category);
   };
 
-  // Engellenen kullanıcıları filtrele, tab'a göre filtreleme ve sıralama
+  // Engellenen kullanıcıları ve gizlenen gönderileri filtrele
   const sortedPosts = useMemo(() => {
-    // Engellenen kullanıcıların gönderilerini filtrele
-    let filtered = blockedUserIds.length > 0
-      ? allPosts.filter((p) => !p.authorId || !blockedUserIds.includes(p.authorId))
-      : [...allPosts];
+    let filtered = allPosts.filter((p) => {
+      // Gizlenen gönderileri çıkar
+      if (hiddenPostIds.includes(p.id)) return false;
+      // Engellenen kullanıcıları çıkar
+      if (p.authorId && blockedUserIds.includes(p.authorId)) return false;
+      return true;
+    });
 
     // Kategori filtresi (0 = Hepsi, diğerleri kategori)
     const tabKey = TABS[activeTab]?.key;
@@ -182,7 +186,7 @@ export default function CommunityScreen() {
     filtered.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     return filtered;
-  }, [allPosts, blockedUserIds, activeTab]);
+  }, [allPosts, blockedUserIds, hiddenPostIds, activeTab]);
 
   // Şartlar henüz yüklenmedi
   if (termsAccepted === null && !isGuest) {
