@@ -350,11 +350,11 @@ export const updateUserPremium = async (
   isPremium: boolean,
   platform?: 'ios' | 'android'
 ): Promise<void> => {
-  await updateDoc(doc(db, `users/${userId}`), {
+  await setDoc(doc(db, `users/${userId}`), {
     isPremium,
     premiumSince: isPremium ? serverTimestamp() : null,
     subscriptionPlatform: platform || null,
-  });
+  }, { merge: true });
 };
 
 // ===== PUSH TOKEN =====
