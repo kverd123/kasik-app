@@ -85,7 +85,16 @@ const PostCard = React.memo(function PostCard({
         {
           text: 'Engelle',
           style: 'destructive',
-          onPress: () => {
+          onPress: async () => {
+            // Firestore'a engelleme raporu kaydet (geliştirici bilgilendirilir)
+            try {
+              const currentUser = useAuthStore.getState().user;
+              if (currentUser?.uid && post.authorId) {
+                await reportPost(post.id, currentUser.uid, post.authorId, 'Kullanıcı engellendi');
+              }
+            } catch (e) {
+              console.error('Engelleme rapor hatası:', e);
+            }
             onBlockUser?.(post.authorId!);
             Alert.alert('Engellendi', `${post.author} engellendi. Gönderileri artık görünmeyecek.`);
           },

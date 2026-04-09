@@ -225,6 +225,9 @@ export default function ProfileScreen() {
     }
   };
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
   const handleLogout = () => {
     Alert.alert('Çıkış Yap', 'Hesabınızdan çıkış yapmak istiyor musunuz?', [
       { text: 'İptal', style: 'cancel' },
@@ -232,11 +235,17 @@ export default function ProfileScreen() {
         text: 'Çıkış Yap',
         style: 'destructive',
         onPress: async () => {
+          if (isLoggingOut) return;
+          setIsLoggingOut(true);
           try {
             analytics.logout();
             await logout();
+            router.replace('/');
           } catch (e) {
             console.error('Çıkış hatası:', e);
+            Alert.alert('Hata', 'Çıkış yapılırken bir sorun oluştu. Lütfen tekrar deneyin.');
+          } finally {
+            setIsLoggingOut(false);
           }
         },
       },
@@ -253,8 +262,11 @@ export default function ProfileScreen() {
           text: 'Hesabımı Sil',
           style: 'destructive',
           onPress: async () => {
+            if (isDeletingAccount) return;
+            setIsDeletingAccount(true);
             try {
               await deleteAccountAction();
+              router.replace('/');
             } catch (e: any) {
               if (e.code === 'auth/requires-recent-login') {
                 Alert.alert(
@@ -262,8 +274,10 @@ export default function ProfileScreen() {
                   'Güvenlik nedeniyle hesabınızı silmeden önce tekrar giriş yapmanız gerekiyor. Lütfen çıkış yapıp tekrar giriş yapın.',
                 );
               } else {
-                Alert.alert('Hata', 'Hesap silinirken bir hata oluştu.');
+                Alert.alert('Hata', e?.message || 'Hesap silinirken bir hata oluştu.');
               }
+            } finally {
+              setIsDeletingAccount(false);
             }
           },
         },
@@ -800,17 +814,32 @@ export default function ProfileScreen() {
 
         {/* Logout */}
         <TouchableOpacity
-          style={styles.logoutBtn}
+          style={[styles.logoutBtn, isLoggingOut && { opacity: 0.5 }]}
           onPress={handleLogout}
+          disabled={isLoggingOut}
           accessibilityRole="button"
           accessibilityLabel="Çıkış yap"
         >
-          <Text style={styles.logoutText}>Çıkış Yap</Text>
+          {isLoggingOut ? (
+            <ActivityIndicator size="small" color={colors.textMid} />
+          ) : (
+            <Text style={styles.logoutText}>Çıkış Yap</Text>
+          )}
         </TouchableOpacity>
 
         {/* Delete Account */}
-        <TouchableOpacity style={styles.deleteBtn} accessibilityRole="button" accessibilityLabel="Hesabımı sil" onPress={handleDeleteAccount}>
-          <Text style={styles.deleteText}>Hesabımı Sil</Text>
+        <TouchableOpacity
+          style={[styles.deleteBtn, isDeletingAccount && { opacity: 0.5 }]}
+          onPress={handleDeleteAccount}
+          disabled={isDeletingAccount}
+          accessibilityRole="button"
+          accessibilityLabel="Hesabımı sil"
+        >
+          {isDeletingAccount ? (
+            <ActivityIndicator size="small" color={colors.heart} />
+          ) : (
+            <Text style={styles.deleteText}>Hesabımı Sil</Text>
+          )}
         </TouchableOpacity>
 
         {/* App Version */}
