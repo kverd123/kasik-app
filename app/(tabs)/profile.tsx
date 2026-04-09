@@ -240,7 +240,7 @@ export default function ProfileScreen() {
           try {
             analytics.logout();
             await logout();
-            router.replace('/');
+            router.replace('/(auth)/login');
           } catch (e) {
             console.error('Çıkış hatası:', e);
             Alert.alert('Hata', 'Çıkış yapılırken bir sorun oluştu. Lütfen tekrar deneyin.');
@@ -266,7 +266,7 @@ export default function ProfileScreen() {
             setIsDeletingAccount(true);
             try {
               await deleteAccountAction();
-              router.replace('/');
+              router.replace('/(auth)/login');
             } catch (e: any) {
               if (e.code === 'auth/requires-recent-login') {
                 Alert.alert(
