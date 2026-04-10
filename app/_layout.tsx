@@ -97,7 +97,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (user?.uid) {
       setAnalyticsUser(user.uid);
-      useSubscriptionStore.getState().initRevenueCat(user.uid);
+      useSubscriptionStore.getState().initRevenueCat(user.email || user.uid);
     } else {
       clearAnalyticsUser();
     }
