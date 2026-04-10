@@ -138,23 +138,34 @@ const PostCard = React.memo(function PostCard({
       <Card padding="lg" style={styles.postCard} onPress={() => router.push(`/post/${post.id}`)}>
         {/* Author row */}
         <View style={styles.authorRow}>
-          <View style={[styles.avatar, { backgroundColor: post.avatarBg }]}>
-            <Text style={styles.avatarText}>{post.avatar}</Text>
-          </View>
-          <View style={styles.authorInfo}>
-            <View style={styles.nameRow}>
-              <Text style={styles.authorName}>{post.author}</Text>
-              {post.badge === 'verified' && (
-                <View style={styles.verifiedBadge}>
-                  <Text style={styles.verifiedIcon}>✓</Text>
-                </View>
-              )}
+          <TouchableOpacity
+            style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+            onPress={(e) => {
+              e.stopPropagation?.();
+              if (post.authorId) {
+                router.push(`/user/${post.authorId}?name=${encodeURIComponent(post.author)}&avatar=${encodeURIComponent(post.avatar)}&avatarBg=${encodeURIComponent(post.avatarBg)}`);
+              }
+            }}
+            disabled={!post.authorId}
+          >
+            <View style={[styles.avatar, { backgroundColor: post.avatarBg }]}>
+              <Text style={styles.avatarText}>{post.avatar}</Text>
             </View>
-            <Text style={styles.authorMeta}>
-              {post.category === 'recipe' ? '🍽 Tarif' : post.category === 'question' ? '❓ Soru' : post.category === 'experience' ? '⭐ Deneyim' : '💡 İpucu'}
-              {' · '}{post.time}{post.babyAge ? ` · ${post.babyAge}` : ''}
-            </Text>
-          </View>
+            <View style={styles.authorInfo}>
+              <View style={styles.nameRow}>
+                <Text style={styles.authorName}>{post.author}</Text>
+                {post.badge === 'verified' && (
+                  <View style={styles.verifiedBadge}>
+                    <Text style={styles.verifiedIcon}>✓</Text>
+                  </View>
+                )}
+              </View>
+              <Text style={styles.authorMeta}>
+                {post.category === 'recipe' ? '🍽 Tarif' : post.category === 'question' ? '❓ Soru' : post.category === 'experience' ? '⭐ Deneyim' : '💡 İpucu'}
+                {' · '}{post.time}{post.babyAge ? ` · ${post.babyAge}` : ''}
+              </Text>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleMorePress}>
             <Text style={styles.moreIcon}>···</Text>
           </TouchableOpacity>

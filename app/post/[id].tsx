@@ -86,9 +86,11 @@ export default function PostDetailScreen() {
       return;
     }
 
+    const currentUser = useAuthStore.getState().user;
     const comment: CommunityComment = {
       id: `new_${Date.now()}`,
-      author: 'Ben',
+      authorId: currentUser?.uid,
+      author: currentUser?.displayName || 'Ben',
       avatar: '👤',
       avatarBg: Colors.creamMid,
       time: 'Şimdi',
@@ -195,6 +197,43 @@ export default function PostDetailScreen() {
     Alert.alert('Gönderi Seçenekleri', '', options);
   };
 
+  const handleCommentMenu = (comment: CommunityComment) => {
+    const currentUser = useAuthStore.getState().user;
+    const isOwnComment = currentUser?.uid && comment.authorId === currentUser.uid;
+    if (isOwnComment) return; // Kendi yorumuna menü gösterme
+
+    const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [
+      {
+        text: 'Yorumu Şikayet Et',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            if (currentUser?.uid && comment.authorId) {
+              await reportPost(comment.id, currentUser.uid, comment.authorId, 'Uygunsuz yorum');
+            }
+          } catch (e) {
+            console.error('Yorum şikayet hatası:', e);
+          }
+          Alert.alert('Şikayet Edildi', 'Yorum şikayet edildi. Teşekkürler.');
+        },
+      },
+    ];
+
+    if (comment.authorId) {
+      options.push({
+        text: 'Kullanıcıyı Engelle',
+        style: 'destructive',
+        onPress: () => {
+          blockUser(comment.authorId!);
+          Alert.alert('Engellendi', `${comment.author} engellendi. Tüm gönderileri artık görünmeyecek.`);
+        },
+      });
+    }
+
+    options.push({ text: 'İptal', style: 'cancel' });
+    Alert.alert('Yorum Seçenekleri', '', options);
+  };
+
   const renderComment = (comment: CommunityComment, isReply = false) => (
     <View key={comment.id} style={[styles.commentItem, isReply && styles.replyItem]}>
       <View style={[styles.commentAvatar, { backgroundColor: comment.avatarBg }]}>
@@ -210,7 +249,14 @@ export default function PostDetailScreen() {
               </View>
             )}
           </View>
-          <Text style={styles.commentTime}>{comment.time}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Text style={styles.commentTime}>{comment.time}</Text>
+            {comment.authorId && comment.authorId !== useAuthStore.getState().user?.uid && (
+              <TouchableOpacity onPress={() => handleCommentMenu(comment)}>
+                <Text style={{ fontSize: 16, color: '#999' }}>•••</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <Text style={styles.commentText}>{comment.text}</Text>
@@ -271,22 +317,32 @@ export default function PostDetailScreen() {
           <Card padding="xl" style={styles.postCard}>
             {/* Author */}
             <View style={styles.authorRow}>
-              <View style={[styles.avatar, { backgroundColor: post.avatarBg }]}>
-                <Text style={styles.avatarText}>{post.avatar}</Text>
-              </View>
-              <View style={styles.authorInfo}>
-                <View style={styles.nameRow}>
-                  <Text style={styles.authorName}>{post.author}</Text>
-                  {post.badge === 'verified' && (
-                    <View style={styles.verifiedBadge}>
-                      <Text style={styles.verifiedIcon}>✓</Text>
-                    </View>
-                  )}
+              <TouchableOpacity
+                style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+                onPress={() => {
+                  if (post.authorId) {
+                    router.push(`/user/${post.authorId}?name=${encodeURIComponent(post.author)}&avatar=${encodeURIComponent(post.avatar)}&avatarBg=${encodeURIComponent(post.avatarBg)}`);
+                  }
+                }}
+                disabled={!post.authorId}
+              >
+                <View style={[styles.avatar, { backgroundColor: post.avatarBg }]}>
+                  <Text style={styles.avatarText}>{post.avatar}</Text>
                 </View>
-                <Text style={styles.authorMeta}>
-                  {post.time} · {post.babyAge}
-                </Text>
-              </View>
+                <View style={styles.authorInfo}>
+                  <View style={styles.nameRow}>
+                    <Text style={styles.authorName}>{post.author}</Text>
+                    {post.badge === 'verified' && (
+                      <View style={styles.verifiedBadge}>
+                        <Text style={styles.verifiedIcon}>✓</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.authorMeta}>
+                    {post.time} · {post.babyAge}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
 
             {/* Content */}

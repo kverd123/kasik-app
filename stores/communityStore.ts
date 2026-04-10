@@ -22,6 +22,7 @@ import {
 
 export interface CommunityComment {
   id: string;
+  authorId?: string;
   author: string;
   avatar: string;
   avatarBg: string;
