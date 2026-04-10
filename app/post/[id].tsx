@@ -32,12 +32,14 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/ui/AdBanner';
 import { useCommunityStore, CommunityComment } from '../../stores/communityStore';
+import { useAuthStore } from '../../stores/authStore';
+import { reportPost } from '../../lib/firestore';
 
 // ===== COMPONENT =====
 
 export default function PostDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getPostById, togglePostLike, addComment, addReply, toggleCommentLike: storeToggleCommentLike, blockUser } = useCommunityStore();
+  const { getPostById, togglePostLike, addComment, addReply, toggleCommentLike: storeToggleCommentLike, blockUser, hidePost } = useCommunityStore();
   const post = getPostById(id || '1');
 
   const [newComment, setNewComment] = useState('');
@@ -116,12 +118,25 @@ export default function PostDetailScreen() {
   };
 
   const handleReport = () => {
-    Alert.alert('Gönderiyi Bildir', 'Bu gönderiyi uygunsuz olarak bildirmek istiyor musunuz?', [
+    Alert.alert('Gönderiyi Şikayet Et', 'Bu gönderiyi şikayet etmek istiyor musunuz? Gönderi gizlenecektir.', [
       { text: 'İptal', style: 'cancel' },
       {
         text: 'Şikayet Et',
         style: 'destructive',
-        onPress: () => Alert.alert('Bildirildi', 'Gönderiniz incelenecektir. Teşekkürler.'),
+        onPress: async () => {
+          try {
+            const currentUser = useAuthStore.getState().user;
+            if (currentUser?.uid && post?.authorId) {
+              await reportPost(post.id, currentUser.uid, post.authorId, 'Uygunsuz içerik');
+            }
+          } catch (e) {
+            console.error('Şikayet kayıt hatası:', e);
+          }
+          if (post) hidePost(post.id);
+          Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve gizlendi. Teşekkürler.', [
+            { text: 'Tamam', onPress: () => router.back() },
+          ]);
+        },
       },
     ]);
   };
@@ -136,7 +151,15 @@ export default function PostDetailScreen() {
         {
           text: 'Engelle',
           style: 'destructive',
-          onPress: () => {
+          onPress: async () => {
+            try {
+              const currentUser = useAuthStore.getState().user;
+              if (currentUser?.uid && post?.authorId) {
+                await reportPost(post.id, currentUser.uid, post.authorId, 'Kullanıcı engellendi');
+              }
+            } catch (e) {
+              console.error('Engelleme rapor hatası:', e);
+            }
             blockUser(post.authorId!);
             Alert.alert('Engellendi', `${post.author} engellendi.`, [
               { text: 'Tamam', onPress: () => router.back() },
