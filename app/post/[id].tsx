@@ -156,18 +156,19 @@ export default function PostDetailScreen() {
   };
 
   const handleBlockUser = () => {
-    if (!post?.authorId) return;
+    const blockId = post?.authorId || post?.id;
+    if (!blockId) return;
     Alert.alert(
       'Kullanıcıyı Engelle',
-      `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının tüm gönderilerini artık görmeyeceksiniz.`,
+      `${post!.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının tüm gönderilerini artık görmeyeceksiniz.`,
       [
         { text: 'İptal', style: 'cancel' },
         {
           text: 'Engelle',
           style: 'destructive',
           onPress: () => {
-            blockUser(post.authorId!);
-            Alert.alert('Engellendi', `${post.author} engellendi. Tüm gönderileri artık görünmeyecek.`, [
+            blockUser(blockId);
+            Alert.alert('Engellendi', `${post!.author} engellendi. Tüm gönderileri artık görünmeyecek.`, [
               { text: 'Tamam', onPress: () => router.back() },
             ]);
           },
@@ -177,19 +178,28 @@ export default function PostDetailScreen() {
   };
 
   const handlePostMenu = () => {
-    const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [
-      {
+    const currentUser = useAuthStore.getState().user;
+    const isOwnPost = currentUser?.uid && post?.authorId === currentUser.uid;
+
+    const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [];
+
+    if (!isOwnPost) {
+      options.push({
         text: 'Şikayet Et',
         style: 'destructive',
         onPress: handleReport,
-      },
-    ];
-
-    if (post?.authorId) {
+      });
       options.push({
         text: 'Kullanıcıyı Engelle',
         style: 'destructive',
         onPress: handleBlockUser,
+      });
+      options.push({
+        text: 'Profili Gör',
+        onPress: () => {
+          const userId = post!.authorId || post!.id;
+          router.push(`/user/${userId}?name=${encodeURIComponent(post!.author)}&avatar=${encodeURIComponent(post!.avatar)}&avatarBg=${encodeURIComponent(post!.avatarBg)}`);
+        },
       });
     }
 
@@ -208,8 +218,8 @@ export default function PostDetailScreen() {
         style: 'destructive',
         onPress: async () => {
           try {
-            if (currentUser?.uid && comment.authorId) {
-              await reportPost(comment.id, currentUser.uid, comment.authorId, 'Uygunsuz yorum');
+            if (currentUser?.uid) {
+              await reportPost(comment.id, currentUser.uid, comment.authorId || 'unknown', 'Uygunsuz yorum');
             }
           } catch (e) {
             console.error('Yorum şikayet hatası:', e);
@@ -217,18 +227,16 @@ export default function PostDetailScreen() {
           Alert.alert('Şikayet Edildi', 'Yorum şikayet edildi. Teşekkürler.');
         },
       },
-    ];
-
-    if (comment.authorId) {
-      options.push({
+      {
         text: 'Kullanıcıyı Engelle',
         style: 'destructive',
         onPress: () => {
-          blockUser(comment.authorId!);
+          const blockId = comment.authorId || comment.id;
+          blockUser(blockId);
           Alert.alert('Engellendi', `${comment.author} engellendi. Tüm gönderileri artık görünmeyecek.`);
         },
-      });
-    }
+      },
+    ];
 
     options.push({ text: 'İptal', style: 'cancel' });
     Alert.alert('Yorum Seçenekleri', '', options);
@@ -251,8 +259,8 @@ export default function PostDetailScreen() {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={styles.commentTime}>{comment.time}</Text>
-            {comment.authorId && comment.authorId !== useAuthStore.getState().user?.uid && (
-              <TouchableOpacity onPress={() => handleCommentMenu(comment)}>
+            {comment.author !== (useAuthStore.getState().user?.displayName || 'Ben') && (
+              <TouchableOpacity onPress={() => handleCommentMenu(comment)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
                 <Text style={{ fontSize: 16, color: '#999' }}>•••</Text>
               </TouchableOpacity>
             )}

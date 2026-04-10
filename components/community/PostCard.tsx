@@ -76,7 +76,7 @@ const PostCard = React.memo(function PostCard({
   };
 
   const handleBlockUser = () => {
-    if (!post.authorId) return;
+    const blockId = post.authorId || post.id; // authorId yoksa post.id ile engelle
     Alert.alert(
       'Kullanıcıyı Engelle',
       `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının tüm gönderilerini artık görmeyeceksiniz.`,
@@ -86,7 +86,7 @@ const PostCard = React.memo(function PostCard({
           text: 'Engelle',
           style: 'destructive',
           onPress: () => {
-            onBlockUser?.(post.authorId!);
+            onBlockUser?.(blockId);
             Alert.alert('Engellendi', `${post.author} engellendi. Tüm gönderileri artık görünmeyecek.`);
           },
         },
@@ -120,19 +120,22 @@ const PostCard = React.memo(function PostCard({
         style: 'destructive',
         onPress: handleReport,
       });
-      if (post.authorId) {
-        options.push({
-          text: 'Kullanıcıyı Engelle',
-          style: 'destructive',
-          onPress: handleBlockUser,
-        });
-      }
+      options.push({
+        text: 'Kullanıcıyı Engelle',
+        style: 'destructive',
+        onPress: handleBlockUser,
+      });
     }
 
     options.push({ text: 'İptal', style: 'cancel' });
 
     Alert.alert('Gönderi Seçenekleri', '', options);
   };
+  const navigateToUser = () => {
+    const userId = post.authorId || post.id;
+    router.push(`/user/${userId}?name=${encodeURIComponent(post.author)}&avatar=${encodeURIComponent(post.avatar)}&avatarBg=${encodeURIComponent(post.avatarBg)}`);
+  };
+
   return (
     <React.Fragment>
       <Card padding="lg" style={styles.postCard} onPress={() => router.push(`/post/${post.id}`)}>
@@ -140,20 +143,15 @@ const PostCard = React.memo(function PostCard({
         <View style={styles.authorRow}>
           <TouchableOpacity
             style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
-            onPress={(e) => {
-              e.stopPropagation?.();
-              if (post.authorId) {
-                router.push(`/user/${post.authorId}?name=${encodeURIComponent(post.author)}&avatar=${encodeURIComponent(post.avatar)}&avatarBg=${encodeURIComponent(post.avatarBg)}`);
-              }
-            }}
-            disabled={!post.authorId}
+            onPress={navigateToUser}
+            activeOpacity={0.6}
           >
             <View style={[styles.avatar, { backgroundColor: post.avatarBg }]}>
               <Text style={styles.avatarText}>{post.avatar}</Text>
             </View>
             <View style={styles.authorInfo}>
               <View style={styles.nameRow}>
-                <Text style={styles.authorName}>{post.author}</Text>
+                <Text style={styles.authorName}>{post.author} ›</Text>
                 {post.badge === 'verified' && (
                   <View style={styles.verifiedBadge}>
                     <Text style={styles.verifiedIcon}>✓</Text>
@@ -166,7 +164,7 @@ const PostCard = React.memo(function PostCard({
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleMorePress}>
+          <TouchableOpacity onPress={handleMorePress} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={styles.moreIcon}>···</Text>
           </TouchableOpacity>
         </View>
