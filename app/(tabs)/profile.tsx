@@ -650,16 +650,18 @@ export default function ProfileScreen() {
             try {
               if (user?.uid) {
                 await purchase(user.uid, 'monthly');
-                Alert.alert('Tebrikler!', 'Premium aboneliğiniz başarıyla aktif edildi!');
+                // Satın alma sonrası gerçekten premium oldu mu kontrol et
+                const nowPremium = useSubscriptionStore.getState().subscription.isPremium;
+                if (nowPremium) {
+                  Alert.alert('Tebrikler!', 'Premium aboneliğiniz başarıyla aktif edildi!');
+                }
               }
             } catch (e: any) {
-              if (!e?.userCancelled) {
-                Alert.alert(
-                  'Satın Alma',
-                  e?.message || 'Abonelik şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
-                  [{ text: 'Tamam' }]
-                );
-              }
+              Alert.alert(
+                'Satın Alma',
+                e?.message || 'Abonelik şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
+                [{ text: 'Tamam' }]
+              );
             }
           }}>
             <View style={styles.premiumContent}>
