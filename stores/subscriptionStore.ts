@@ -271,8 +271,12 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       }
     } catch (error: any) {
       set({ isLoading: false });
-      if (error.userCancelled) {
-        // Kullanıcı iptal etti — hata fırlatma
+      // Kullanıcı iptal etti — sessizce çık
+      if (error.userCancelled || error.code === 'PURCHASE_CANCELLED' || error.code === '1' && error.message?.includes('cancel')) {
+        return;
+      }
+      // RevenueCat PurchasesErrorCode.purchaseCancelledError = 1
+      if (error.code === 1 || error.code === '1') {
         return;
       }
       // Kullanıcı dostu Türkçe hata mesajları
