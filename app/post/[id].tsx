@@ -126,50 +126,46 @@ export default function PostDetailScreen() {
   };
 
   const handleReport = () => {
-    Alert.alert('Gönderiyi Şikayet Et', 'Bu gönderiyi şikayet etmek istiyor musunuz? Gönderi gizlenecektir.', [
-      { text: 'İptal', style: 'cancel' },
-      {
-        text: 'Şikayet Et',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            const currentUser = useAuthStore.getState().user;
-            if (currentUser?.uid && post?.authorId) {
-              await reportPost(post.id, currentUser.uid, post.authorId, 'Uygunsuz içerik');
+    Alert.alert(
+      'Gönderiyi Şikayet Et',
+      'Bu gönderi uygunsuz içerik mi barındırıyor? Şikayet edilen gönderi incelenmek üzere kaldırılacaktır.',
+      [
+        { text: 'İptal', style: 'cancel' },
+        {
+          text: 'Şikayet Et',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const currentUser = useAuthStore.getState().user;
+              if (currentUser?.uid && post?.authorId) {
+                await reportPost(post.id, currentUser.uid, post.authorId, 'Uygunsuz içerik');
+              }
+            } catch (e) {
+              console.error('Şikayet kayıt hatası:', e);
             }
-          } catch (e) {
-            console.error('Şikayet kayıt hatası:', e);
-          }
-          if (post) hidePost(post.id);
-          Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve gizlendi. Teşekkürler.', [
-            { text: 'Tamam', onPress: () => router.back() },
-          ]);
+            if (post) hidePost(post.id);
+            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kaldırıldı. Teşekkürler.', [
+              { text: 'Tamam', onPress: () => router.back() },
+            ]);
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   const handleBlockUser = () => {
     if (!post?.authorId) return;
     Alert.alert(
       'Kullanıcıyı Engelle',
-      `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının gönderilerini artık görmeyeceksiniz.`,
+      `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının tüm gönderilerini artık görmeyeceksiniz.`,
       [
         { text: 'İptal', style: 'cancel' },
         {
           text: 'Engelle',
           style: 'destructive',
-          onPress: async () => {
-            try {
-              const currentUser = useAuthStore.getState().user;
-              if (currentUser?.uid && post?.authorId) {
-                await reportPost(post.id, currentUser.uid, post.authorId, 'Kullanıcı engellendi');
-              }
-            } catch (e) {
-              console.error('Engelleme rapor hatası:', e);
-            }
+          onPress: () => {
             blockUser(post.authorId!);
-            Alert.alert('Engellendi', `${post.author} engellendi.`, [
+            Alert.alert('Engellendi', `${post.author} engellendi. Tüm gönderileri artık görünmeyecek.`, [
               { text: 'Tamam', onPress: () => router.back() },
             ]);
           },

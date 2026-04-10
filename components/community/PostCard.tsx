@@ -51,11 +51,11 @@ const PostCard = React.memo(function PostCard({
   const handleReport = () => {
     Alert.alert(
       'Gönderiyi Şikayet Et',
-      'Bu gönderiyi şikayet etmek istiyor musunuz? Kullanıcı otomatik olarak engellenecektir.',
+      'Bu gönderi uygunsuz içerik mi barındırıyor? Şikayet edilen gönderi incelenmek üzere kaldırılacaktır.',
       [
         { text: 'İptal', style: 'cancel' },
         {
-          text: 'Şikayet Et ve Engelle',
+          text: 'Şikayet Et',
           style: 'destructive',
           onPress: async () => {
             try {
@@ -66,9 +66,9 @@ const PostCard = React.memo(function PostCard({
             } catch (e) {
               console.error('Şikayet kayıt hatası:', e);
             }
-            // Şikayet sonrası postu gizle
+            // Şikayet edilen gönderiyi gizle
             onHidePost?.(post.id);
-            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve gizlendi. Teşekkürler.');
+            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kaldırıldı. Teşekkürler.');
           },
         },
       ],
@@ -79,24 +79,15 @@ const PostCard = React.memo(function PostCard({
     if (!post.authorId) return;
     Alert.alert(
       'Kullanıcıyı Engelle',
-      `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının gönderilerini artık görmeyeceksiniz.`,
+      `${post.author} adlı kullanıcıyı engellemek istiyor musunuz? Bu kullanıcının tüm gönderilerini artık görmeyeceksiniz.`,
       [
         { text: 'İptal', style: 'cancel' },
         {
           text: 'Engelle',
           style: 'destructive',
-          onPress: async () => {
-            // Firestore'a engelleme raporu kaydet (geliştirici bilgilendirilir)
-            try {
-              const currentUser = useAuthStore.getState().user;
-              if (currentUser?.uid && post.authorId) {
-                await reportPost(post.id, currentUser.uid, post.authorId, 'Kullanıcı engellendi');
-              }
-            } catch (e) {
-              console.error('Engelleme rapor hatası:', e);
-            }
+          onPress: () => {
             onBlockUser?.(post.authorId!);
-            Alert.alert('Engellendi', `${post.author} engellendi. Gönderileri artık görünmeyecek.`);
+            Alert.alert('Engellendi', `${post.author} engellendi. Tüm gönderileri artık görünmeyecek.`);
           },
         },
       ],
