@@ -47,12 +47,14 @@ export default function LoginScreen() {
   const [pendingNavigation, setPendingNavigation] = useState(false);
 
   const { login, loginWithGoogle, loginWithApple, continueAsGuest, isLoading, error, clearError, user } = useAuthStore();
+  const baby = require('../../stores/babyStore').useBabyStore((s: any) => s.baby);
 
   // Race condition düzeltmesi: user state değişince navigasyon yap
   useEffect(() => {
     if (pendingNavigation && user) {
       setPendingNavigation(false);
-      if (!user.onboardingCompleted) {
+      const onboardingDone = user.onboardingCompleted || baby?.name;
+      if (!onboardingDone) {
         router.replace('/(onboarding)/welcome');
       } else {
         router.replace('/(tabs)/plan');

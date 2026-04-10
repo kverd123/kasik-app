@@ -15,6 +15,9 @@ import {
   addComment as firestoreAddComment,
   getPostLikeStatuses,
   deletePostFromFirestore,
+  saveBlockedUsers,
+  saveHiddenPosts,
+  getUserBlocksAndHides,
 } from '../lib/firestore';
 
 export interface CommunityComment {
@@ -81,6 +84,7 @@ interface CommunityState {
   unblockUser: (userId: string) => void;
   isUserBlocked: (userId: string) => boolean;
   getFilteredPosts: () => CommunityPost[];
+  syncBlocksAndHides: (userId: string) => Promise<void>;
 }
 
 const STORAGE_KEY = '@kasik_community';
@@ -535,6 +539,11 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
     const updated = [...hiddenPostIds, postId];
     set({ hiddenPostIds: updated });
     debouncedSetItem('@kasik_hidden_posts', JSON.stringify(updated));
+    // Firestore'a da kaydet (hesap değişse bile korunsun)
+    const authUserId = getAuthUserId();
+    if (authUserId) {
+      saveHiddenPosts(authUserId, updated).catch(console.error);
+    }
   },
 
   addPost: (post) => {
@@ -652,12 +661,44 @@ export const useCommunityStore = create<CommunityState>((set, get) => ({
     const updated = [...blockedUserIds, userId];
     set({ blockedUserIds: updated });
     AsyncStorage.setItem(BLOCKED_USERS_KEY, JSON.stringify(updated)).catch(console.error);
+    // Firestore'a da kaydet (hesap değişse bile korunsun)
+    const authUserId = getAuthUserId();
+    if (authUserId) {
+      saveBlockedUsers(authUserId, updated).catch(console.error);
+    }
   },
 
   unblockUser: (userId: string) => {
     const updated = get().blockedUserIds.filter((id) => id !== userId);
     set({ blockedUserIds: updated });
     AsyncStorage.setItem(BLOCKED_USERS_KEY, JSON.stringify(updated)).catch(console.error);
+    const authUserId = getAuthUserId();
+    if (authUserId) {
+      saveBlockedUsers(authUserId, updated).catch(console.error);
+    }
+  },
+
+  syncBlocksAndHides: async (userId: string) => {
+    try {
+      const { blockedUserIds: remoteBlocked, hiddenPostIds: remoteHidden } = await getUserBlocksAndHides(userId);
+      const { blockedUserIds: localBlocked, hiddenPostIds: localHidden } = get();
+
+      // Merge: hem local hem remote'daki ID'leri birleştir (kayıp olmasın)
+      const mergedBlocked = [...new Set([...localBlocked, ...remoteBlocked])];
+      const mergedHidden = [...new Set([...localHidden, ...remoteHidden])];
+
+      set({ blockedUserIds: mergedBlocked, hiddenPostIds: mergedHidden });
+
+      // AsyncStorage ve Firestore'u güncel tut
+      await Promise.all([
+        AsyncStorage.setItem(BLOCKED_USERS_KEY, JSON.stringify(mergedBlocked)),
+        AsyncStorage.setItem('@kasik_hidden_posts', JSON.stringify(mergedHidden)),
+        saveBlockedUsers(userId, mergedBlocked),
+        saveHiddenPosts(userId, mergedHidden),
+      ]);
+    } catch (e) {
+      console.error('Engel/gizle sync hatası:', e);
+    }
   },
 
   isUserBlocked: (userId: string) => {

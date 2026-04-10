@@ -340,9 +340,9 @@ export const getComments = async (postId: string): Promise<Comment[]> => {
 // ===== USER UPDATES =====
 
 export const completeOnboarding = async (userId: string): Promise<void> => {
-  await updateDoc(doc(db, `users/${userId}`), {
+  await setDoc(doc(db, `users/${userId}`), {
     onboardingCompleted: true,
-  });
+  }, { merge: true });
 };
 
 export const updateUserPremium = async (
@@ -355,6 +355,30 @@ export const updateUserPremium = async (
     premiumSince: isPremium ? serverTimestamp() : null,
     subscriptionPlatform: platform || null,
   }, { merge: true });
+};
+
+// ===== BLOCKED USERS & HIDDEN POSTS =====
+
+export const saveBlockedUsers = async (userId: string, blockedUserIds: string[]): Promise<void> => {
+  await setDoc(doc(db, `users/${userId}`), {
+    blockedUserIds,
+  }, { merge: true });
+};
+
+export const saveHiddenPosts = async (userId: string, hiddenPostIds: string[]): Promise<void> => {
+  await setDoc(doc(db, `users/${userId}`), {
+    hiddenPostIds,
+  }, { merge: true });
+};
+
+export const getUserBlocksAndHides = async (userId: string): Promise<{ blockedUserIds: string[]; hiddenPostIds: string[] }> => {
+  const userDoc = await getDoc(doc(db, `users/${userId}`));
+  if (!userDoc.exists()) return { blockedUserIds: [], hiddenPostIds: [] };
+  const data = userDoc.data();
+  return {
+    blockedUserIds: data.blockedUserIds || [],
+    hiddenPostIds: data.hiddenPostIds || [],
+  };
 };
 
 // ===== REPORT (ŞİKAYET) =====

@@ -117,6 +117,7 @@ export default function RootLayout() {
           usePantryStore.getState().syncFromFirestore(uid),
           useRecipeBookStore.getState().syncFromFirestore(uid),
           useCommunityStore.getState().loadPosts(),
+          useCommunityStore.getState().syncBlocksAndHides(uid),
         ]);
 
         // 2. Alerjen programları — baby profiline bağlı

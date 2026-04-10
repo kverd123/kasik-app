@@ -242,7 +242,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
-      await AsyncStorage.removeItem(GUEST_MODE_KEY);
+      // Tüm kullanıcı verilerini AsyncStorage'dan temizle (farklı hesapla giriş yapılabilir)
+      await AsyncStorage.multiRemove([
+        GUEST_MODE_KEY,
+        '@kasik_baby',
+        '@kasik_meal_plan',
+        '@kasik_pantry',
+        '@kasik_recipe_book',
+        '@kasik_community',
+        '@kasik_blocked_users',
+        '@kasik_hidden_posts',
+        '@kasik_community_terms',
+        '@kasik_allergen_intro',
+        '@kasik_sync_queue',
+        '@kasik_community_recipes',
+        '@kasik_pantry_onboarding_done',
+      ]);
       await authSignOut();
       set({ firebaseUser: null, user: null, isAuthenticated: false, isGuest: false, isLoading: false });
     } catch (error: any) {
@@ -256,6 +271,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       await authDeleteAccount();
+      // Tüm kullanıcı verilerini AsyncStorage'dan temizle
+      await AsyncStorage.multiRemove([
+        GUEST_MODE_KEY,
+        '@kasik_baby',
+        '@kasik_meal_plan',
+        '@kasik_pantry',
+        '@kasik_recipe_book',
+        '@kasik_community',
+        '@kasik_blocked_users',
+        '@kasik_hidden_posts',
+        '@kasik_community_terms',
+        '@kasik_allergen_intro',
+        '@kasik_sync_queue',
+        '@kasik_community_recipes',
+        '@kasik_pantry_onboarding_done',
+      ]);
       set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false });
     } catch (error: any) {
       const message = error.code === 'auth/requires-recent-login'
