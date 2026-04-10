@@ -32,6 +32,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/ui/AdBanner';
 import { useCommunityStore, CommunityComment } from '../../stores/communityStore';
+import { checkContent } from '../../lib/contentModeration';
 import { useAuthStore } from '../../stores/authStore';
 import { reportPost } from '../../lib/firestore';
 
@@ -77,6 +78,13 @@ export default function PostDetailScreen() {
 
   const handleSendComment = () => {
     if (!newComment.trim()) return;
+
+    // İçerik moderasyonu
+    const moderationResult = checkContent(newComment.trim());
+    if (moderationResult) {
+      Alert.alert('İçerik Uyarısı', moderationResult);
+      return;
+    }
 
     const comment: CommunityComment = {
       id: `new_${Date.now()}`,

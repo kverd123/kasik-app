@@ -16,8 +16,10 @@ import {
   Platform,
   KeyboardAvoidingView,
   Image,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { moderatePost } from '../../lib/contentModeration';
 import { useColors } from '../../hooks/useColors';
 import {
   FontFamily,
@@ -182,6 +184,17 @@ export function CreatePostModal({ visible, onClose, onSubmit }: CreatePostModalP
 
   const handleSubmit = () => {
     if (!selectedCategory || !content.trim()) return;
+
+    // İçerik moderasyonu — sakıncalı içerik kontrolü
+    const moderationResult = moderatePost(
+      content.trim(),
+      selectedCategory === 'recipe' ? recipeTitle.trim() : undefined,
+      selectedCategory === 'recipe' ? steps.filter((s) => s.trim()) : undefined,
+    );
+    if (moderationResult) {
+      Alert.alert('İçerik Uyarısı', moderationResult);
+      return;
+    }
 
     const data: CreatePostData = {
       category: selectedCategory,
