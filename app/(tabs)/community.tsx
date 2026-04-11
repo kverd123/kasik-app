@@ -224,7 +224,7 @@ export default function CommunityScreen() {
             <Text style={styles.termsRule}>5. Şikayet ve engelleme — Uygunsuz içerik gördüğünüzde "Şikayet Et" ile bildirin veya "Kullanıcıyı Engelle" ile engelleyin. Gönderi anında kaldırılır.</Text>
             <Text style={styles.termsRule}>6. İçerik denetimi — Tüm şikayetler 24 saat içinde incelenir. Kural ihlali tespit edilen içerikler kalıcı olarak kaldırılır ve ilgili hesap askıya alınabilir.</Text>
             <Text style={styles.termsRule}>7. Tıbbi tavsiye — Paylaşılan bilgiler tıbbi tavsiye yerine geçmez. Bebeğinizin sağlığı için doktorunuza danışın.</Text>
-            <Text style={styles.termsRule}>8. İletişim — Uygunsuz içerik veya davranış bildirmek için: kasik.app.destek@gmail.com</Text>
+            <Text style={styles.termsRule}>8. İletişim — Uygunsuz içerik veya davranış bildirmek için: help@marselproject.com</Text>
           </View>
 
           <Text style={styles.termsLegal}>

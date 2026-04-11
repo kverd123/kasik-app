@@ -34,7 +34,7 @@ CONTENT MODERATION AND ENFORCEMENT:
 (iv) The Developer commits to reviewing all reported content within 24 hours of receipt.
 (v) Upon confirmation of a violation, the Developer will permanently remove the offending content and may suspend or terminate the account of the user who posted it.
 (vi) The Developer reserves the right to remove any User Content and eject any user who violates these terms, without prior notice.
-(vii) Users may report inappropriate activity directly to the Developer at kasik.app.destek@gmail.com.
+(vii) Users may report inappropriate activity directly to the Developer at help@marselproject.com.
 
 4. MAINTENANCE AND SUPPORT
 
@@ -59,7 +59,7 @@ You represent and warrant that: (i) you are not located in a country that is sub
 9. DEVELOPER CONTACT INFORMATION
 
 Developer: Erdi Ozbek
-Email: kasik.app.destek@gmail.com
+Email: help@marselproject.com
 Website: https://kverd123.github.io/kasik-privacy/privacy.html
 
 All questions, complaints, or claims with respect to the Licensed Application should be directed to the contact information above.
