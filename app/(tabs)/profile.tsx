@@ -791,6 +791,16 @@ export default function ProfileScreen() {
               <Text style={styles.settingArrow}>→</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity style={styles.settingItem} onPress={() => Linking.openURL('mailto:kasik.app.destek@gmail.com?subject=Uygunsuz%20İçerik%20Bildirimi')}>
+              <Text style={[styles.settingLabel, { color: '#D32F2F' }]}>Uygunsuz İçerik Bildir</Text>
+              <Text style={styles.settingArrow}>→</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.settingItem} onPress={() => Linking.openURL('mailto:kasik.app.destek@gmail.com?subject=Kaşık%20Uygulama%20Destek')}>
+              <Text style={styles.settingLabel}>Bize Ulaşın</Text>
+              <Text style={styles.settingArrow}>→</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.settingItem} onPress={async () => {
               try {
                 if (user?.uid) {

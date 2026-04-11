@@ -214,12 +214,17 @@ export default function CommunityScreen() {
           </Text>
 
           <View style={styles.termsCard}>
-            <Text style={styles.termsRule}>1. Saygılı olun — Diğer ebeveynlere karşı nazik ve saygılı davranın.</Text>
-            <Text style={styles.termsRule}>2. Güvenli içerik — Bebek ve çocuk sağlığına zararlı olabilecek içerik paylaşmayın.</Text>
+            <Text style={[styles.termsRule, { fontFamily: FontFamily.bold, color: colors.espresso }]}>
+              Uygunsuz içerik ve kötüye kullanım konusunda sıfır tolerans politikamız vardır.
+            </Text>
+            <Text style={styles.termsRule}>1. Saygılı olun — Diğer ebeveynlere karşı nazik ve saygılı davranın. Hakaret, zorbalık ve nefret söylemi kesinlikle yasaktır.</Text>
+            <Text style={styles.termsRule}>2. Güvenli içerik — Müstehcen, şiddet içeren veya bebek/çocuk sağlığına zararlı olabilecek içerik paylaşmayın.</Text>
             <Text style={styles.termsRule}>3. Kişisel bilgi — Başkalarının kişisel bilgilerini paylaşmayın.</Text>
             <Text style={styles.termsRule}>4. Spam yasak — Reklam, spam veya tekrarlayan içerik paylaşmayın.</Text>
-            <Text style={styles.termsRule}>5. Şikayet ve engelleme — Uygunsuz içerik gördüğünüzde şikayet edin veya kullanıcıyı engelleyin.</Text>
-            <Text style={styles.termsRule}>6. Tıbbi tavsiye — Paylaşılan bilgiler tıbbi tavsiye yerine geçmez. Bebeğinizin sağlığı için doktorunuza danışın.</Text>
+            <Text style={styles.termsRule}>5. Şikayet ve engelleme — Uygunsuz içerik gördüğünüzde "Şikayet Et" ile bildirin veya "Kullanıcıyı Engelle" ile engelleyin. Gönderi anında kaldırılır.</Text>
+            <Text style={styles.termsRule}>6. İçerik denetimi — Tüm şikayetler 24 saat içinde incelenir. Kural ihlali tespit edilen içerikler kalıcı olarak kaldırılır ve ilgili hesap askıya alınabilir.</Text>
+            <Text style={styles.termsRule}>7. Tıbbi tavsiye — Paylaşılan bilgiler tıbbi tavsiye yerine geçmez. Bebeğinizin sağlığı için doktorunuza danışın.</Text>
+            <Text style={styles.termsRule}>8. İletişim — Uygunsuz içerik veya davranış bildirmek için: kasik.app.destek@gmail.com</Text>
           </View>
 
           <Text style={styles.termsLegal}>
