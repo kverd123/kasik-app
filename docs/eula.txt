@@ -16,17 +16,25 @@ The Developer grants you a limited, non-transferable license to use the Licensed
 
 3. USER-GENERATED CONTENT
 
-The Licensed Application includes community features that allow users to post content, comments, recipes, and other materials ("User Content"). By using these features, you agree that:
+The Licensed Application includes community features that allow users to post content, comments, recipes, and other materials ("User Content"). THE DEVELOPER HAS A ZERO TOLERANCE POLICY FOR OBJECTIONABLE CONTENT AND ABUSIVE USERS. By using these features, you agree that:
 
 (a) You will not post content that is offensive, abusive, threatening, harassing, defamatory, obscene, hateful, discriminatory, or otherwise objectionable.
 (b) You will not post content that infringes any third party's intellectual property rights, privacy rights, or other legal rights.
 (c) You will not post spam, advertisements, or promotional content without authorization.
 (d) You will not post content that is harmful or dangerous to children.
-(e) The Developer reserves the right to remove any User Content that violates these terms without prior notice.
+(e) You will not post misleading or dangerous health information.
 (f) You are solely responsible for the User Content you post.
 (g) The Developer may report illegal content to the relevant authorities.
 
-Users may report objectionable content and block other users. The Developer will review reported content and take appropriate action, which may include removal of content and suspension of accounts.
+CONTENT MODERATION AND ENFORCEMENT:
+
+(i) All user-generated content is automatically screened for objectionable material before publication using automated content filtering.
+(ii) Users may report objectionable content by selecting a specific reason (inappropriate content, harassment, spam, misinformation, or copyright infringement). Reported content is immediately removed from the reporting user's feed.
+(iii) Users may block abusive users at any time. All content from blocked users will be immediately and permanently hidden.
+(iv) The Developer commits to reviewing all reported content within 24 hours of receipt.
+(v) Upon confirmation of a violation, the Developer will permanently remove the offending content and may suspend or terminate the account of the user who posted it.
+(vi) The Developer reserves the right to remove any User Content and eject any user who violates these terms, without prior notice.
+(vii) Users may report inappropriate activity directly to the Developer at kasik.app.destek@gmail.com.
 
 4. MAINTENANCE AND SUPPORT
 
