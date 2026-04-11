@@ -48,29 +48,30 @@ const PostCard = React.memo(function PostCard({
   isRecipeSaved,
   onSaveRecipe,
 }: PostCardProps) {
+  const submitReport = async (reason: string) => {
+    try {
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.uid) {
+        await reportPost(post.id, currentUser.uid, post.authorId || 'unknown', reason);
+      }
+    } catch (e) {
+      console.error('Şikayet kayıt hatası:', e);
+    }
+    onHidePost?.(post.id);
+    Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kaldırıldı. Teşekkürler.');
+  };
+
   const handleReport = () => {
     Alert.alert(
-      'Gönderiyi Şikayet Et',
-      'Bu gönderi uygunsuz içerik mi barındırıyor? Şikayet edilen gönderi incelenmek üzere kaldırılacaktır.',
+      'Şikayet Nedeni',
+      'Bu gönderiyi neden şikayet ediyorsunuz?',
       [
+        { text: 'Uygunsuz / Müstehcen İçerik', style: 'destructive', onPress: () => submitReport('Uygunsuz / Müstehcen İçerik') },
+        { text: 'Hakaret / Zorbalık', style: 'destructive', onPress: () => submitReport('Hakaret / Zorbalık') },
+        { text: 'Spam / Reklam', style: 'destructive', onPress: () => submitReport('Spam / Reklam') },
+        { text: 'Yanlış / Tehlikeli Bilgi', style: 'destructive', onPress: () => submitReport('Yanlış / Tehlikeli Bilgi') },
+        { text: 'Telif Hakkı İhlali', style: 'destructive', onPress: () => submitReport('Telif Hakkı İhlali') },
         { text: 'İptal', style: 'cancel' },
-        {
-          text: 'Şikayet Et',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const currentUser = useAuthStore.getState().user;
-              if (currentUser?.uid && post.authorId) {
-                await reportPost(post.id, currentUser.uid, post.authorId, 'Uygunsuz içerik');
-              }
-            } catch (e) {
-              console.error('Şikayet kayıt hatası:', e);
-            }
-            // Şikayet edilen gönderiyi gizle
-            onHidePost?.(post.id);
-            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kaldırıldı. Teşekkürler.');
-          },
-        },
       ],
     );
   };

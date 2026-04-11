@@ -127,30 +127,32 @@ export default function PostDetailScreen() {
     } catch (e) { console.error('Post paylaşma hatası:', e); }
   };
 
+  const submitPostReport = async (reason: string) => {
+    try {
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.uid) {
+        await reportPost(post!.id, currentUser.uid, post?.authorId || 'unknown', reason);
+      }
+    } catch (e) {
+      console.error('Şikayet kayıt hatası:', e);
+    }
+    if (post) hidePost(post.id);
+    Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kaldırıldı. Teşekkürler.', [
+      { text: 'Tamam', onPress: () => router.back() },
+    ]);
+  };
+
   const handleReport = () => {
     Alert.alert(
-      'Gönderiyi Şikayet Et',
-      'Bu gönderi uygunsuz içerik mi barındırıyor? Şikayet edilen gönderi incelenmek üzere kaldırılacaktır.',
+      'Şikayet Nedeni',
+      'Bu gönderiyi neden şikayet ediyorsunuz?',
       [
+        { text: 'Uygunsuz / Müstehcen İçerik', style: 'destructive', onPress: () => submitPostReport('Uygunsuz / Müstehcen İçerik') },
+        { text: 'Hakaret / Zorbalık', style: 'destructive', onPress: () => submitPostReport('Hakaret / Zorbalık') },
+        { text: 'Spam / Reklam', style: 'destructive', onPress: () => submitPostReport('Spam / Reklam') },
+        { text: 'Yanlış / Tehlikeli Bilgi', style: 'destructive', onPress: () => submitPostReport('Yanlış / Tehlikeli Bilgi') },
+        { text: 'Telif Hakkı İhlali', style: 'destructive', onPress: () => submitPostReport('Telif Hakkı İhlali') },
         { text: 'İptal', style: 'cancel' },
-        {
-          text: 'Şikayet Et',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const currentUser = useAuthStore.getState().user;
-              if (currentUser?.uid && post?.authorId) {
-                await reportPost(post.id, currentUser.uid, post.authorId, 'Uygunsuz içerik');
-              }
-            } catch (e) {
-              console.error('Şikayet kayıt hatası:', e);
-            }
-            if (post) hidePost(post.id);
-            Alert.alert('Şikayet Edildi', 'Gönderi şikayet edildi ve kaldırıldı. Teşekkürler.', [
-              { text: 'Tamam', onPress: () => router.back() },
-            ]);
-          },
-        },
       ],
     );
   };
@@ -212,34 +214,49 @@ export default function PostDetailScreen() {
     const isOwnComment = currentUser?.uid && comment.authorId === currentUser.uid;
     if (isOwnComment) return; // Kendi yorumuna menü gösterme
 
-    const options: { text: string; style?: 'destructive' | 'cancel' | 'default'; onPress?: () => void }[] = [
-      {
-        text: 'Yorumu Şikayet Et',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            if (currentUser?.uid) {
-              await reportPost(comment.id, currentUser.uid, comment.authorId || 'unknown', 'Uygunsuz yorum');
-            }
-          } catch (e) {
-            console.error('Yorum şikayet hatası:', e);
-          }
-          Alert.alert('Şikayet Edildi', 'Yorum şikayet edildi. Teşekkürler.');
-        },
-      },
-      {
-        text: 'Kullanıcıyı Engelle',
-        style: 'destructive',
-        onPress: () => {
-          const blockId = comment.authorId || comment.id;
-          blockUser(blockId);
-          Alert.alert('Engellendi', `${comment.author} engellendi. Tüm gönderileri artık görünmeyecek.`);
-        },
-      },
-    ];
+    const submitCommentReport = async (reason: string) => {
+      try {
+        if (currentUser?.uid) {
+          await reportPost(comment.id, currentUser.uid, comment.authorId || 'unknown', reason);
+        }
+      } catch (e) {
+        console.error('Yorum şikayet hatası:', e);
+      }
+      Alert.alert('Şikayet Edildi', 'Yorum şikayet edildi. Teşekkürler.');
+    };
 
-    options.push({ text: 'İptal', style: 'cancel' });
-    Alert.alert('Yorum Seçenekleri', '', options);
+    Alert.alert(
+      'Yorum Seçenekleri',
+      '',
+      [
+        {
+          text: 'Yorumu Şikayet Et',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              'Şikayet Nedeni',
+              'Bu yorumu neden şikayet ediyorsunuz?',
+              [
+                { text: 'Uygunsuz / Müstehcen İçerik', style: 'destructive', onPress: () => submitCommentReport('Uygunsuz / Müstehcen İçerik') },
+                { text: 'Hakaret / Zorbalık', style: 'destructive', onPress: () => submitCommentReport('Hakaret / Zorbalık') },
+                { text: 'Spam / Reklam', style: 'destructive', onPress: () => submitCommentReport('Spam / Reklam') },
+                { text: 'İptal', style: 'cancel' },
+              ],
+            );
+          },
+        },
+        {
+          text: 'Kullanıcıyı Engelle',
+          style: 'destructive',
+          onPress: () => {
+            const blockId = comment.authorId || comment.id;
+            blockUser(blockId);
+            Alert.alert('Engellendi', `${comment.author} engellendi. Tüm gönderileri artık görünmeyecek.`);
+          },
+        },
+        { text: 'İptal', style: 'cancel' },
+      ],
+    );
   };
 
   const renderComment = (comment: CommunityComment, isReply = false) => (
